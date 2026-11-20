@@ -131,12 +131,13 @@ The source is on GitHub at `https://github.com/sibtaincs/RealtorAI.git` (branch 
 2. Netlify reads `netlify.toml`:
    - Base: `frontend`
    - Build: `npm ci && npm run build`
-   - Publish: `dist/real-estate-ai`
+   - Publish: `dist/real-estate-ai/browser`
    - `API_ORIGIN` (set to your Render API URL)
 3. **Important:** in **Site configuration → Environment variables**, set
    `API_ORIGIN = https://YOUR-ACTUAL-RENDER-URL.onrender.com` (no trailing slash), then trigger a deploy.
-   The build script `frontend/scripts/write-redirects.mjs` uses it to generate `dist/_redirects`, which
-   proxies `/api/*` and `/uploads/*` to the API and falls back to `index.html` for SPA routes.
+   The build script `frontend/scripts/write-redirects.mjs` uses it to generate
+   `dist/real-estate-ai/browser/_redirects`, which proxies `/api/*` and `/uploads/*` to the API and
+   falls back to `index.html` for SPA routes.
 4. Your public URL is the Netlify site URL (e.g. `https://realestateai.netlify.app`).
    Make sure that exact URL is listed in `Cors__AllowedOrigins` on Render (step 1.4), then re-deploy Render if you changed it.
 
@@ -148,7 +149,7 @@ dotnet build backend/RealEstateAI.Api.csproj
 # frontend
 cd frontend && npm ci && npm run build
 # check generated redirects
-type dist\real-estate-ai\_redirects
+type dist\real-estate-ai\browser\_redirects
 ```
 
 > **Note:** Render's free web service has no persistent disk. Uploaded images under `wwwroot/uploads` disappear on restart/redeploy. For permanent photos, add a paid Render disk or switch `ImageService` to Azure Blob Storage / S3. The free PostgreSQL database is persistent.

@@ -11,7 +11,7 @@ const origin = (process.env.API_ORIGIN || 'https://realestateai-api-p1nb.onrende
   .trim()
   .replace(/\/+$/, '');
 
-const outDir = join(process.cwd(), 'dist', 'real-estate-ai');
+const outDir = join(process.cwd(), 'dist', 'real-estate-ai', 'browser');
 mkdirSync(outDir, { recursive: true });
 
 writeFileSync(

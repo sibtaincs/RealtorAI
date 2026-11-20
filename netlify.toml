@@ -1,6 +1,6 @@
 [build]
   base = "frontend"
-  publish = "dist/real-estate-ai"
+  publish = "dist/real-estate-ai/browser"
   command = "npm ci && npm run build"
 
 [build.environment]
