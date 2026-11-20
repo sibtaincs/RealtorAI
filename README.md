@@ -107,14 +107,14 @@ The source is on GitHub at `https://github.com/sibtaincs/RealtorAI.git` (branch 
 
 1. In Render, choose **New → Blueprint** and select the `RealtorAI` repo. It reads `render.yaml`.
 2. This creates:
-   - `realestateai-api` — free Docker web service (port 8080), health check at `/api/health`
-   - `realestateai-db` — free PostgreSQL database (connection string injected automatically)
-3. Wait for the first deploy to finish, then note the API URL, e.g. `https://realestateai-api.onrender.com`.
+   - `realestatepkai` — free Docker web service (port 8080), health check at `/api/health`
+   - `realestatepkai-db` — free PostgreSQL database (connection string injected automatically)
+3. Wait for the first deploy to finish, then note the API URL, e.g. `https://realestatepkai.onrender.com`.
 4. In the service's **Environment** tab, set `Cors__AllowedOrigins` to your **real** Netlify URL
    (comma-separated if you want both `*.netlify.app` aliases). The blueprint ships with two likely defaults.
 5. Optionally set `Ai__ApiKey`, `WhatsApp__AccessToken`, `WhatsApp__PhoneNumberId`.
    `Jwt__Key` is generated automatically by the blueprint — no need to set it.
-6. Confirm the API is alive: `GET https://realestateai-api.onrender.com/api/health` → `{"status":"ok",...}`.
+6. Confirm the API is alive: `GET https://realestatepkai.onrender.com/api/health` → `{"status":"ok",...}`.
 
 > Render's free plan **sleeps after ~15 minutes of inactivity**; the first request after sleep can take ~30–60 seconds.
 
