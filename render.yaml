@@ -24,6 +24,6 @@ services:
           property: connectionString
       - key: Jwt__Key
         generateValue: true
-      # Comma-separated. Update this to your real Netlify site URL after deploying.
+      # Comma-separated. Must include every deployed frontend origin.
       - key: Cors__AllowedOrigins
-        value: https://realestateai.netlify.app,https://realtorai.netlify.app
+        value: http://localhost:4200,https://realestateai.netlify.app,https://realtorai.netlify.app,https://polite-paletas-4014d8.netlify.app

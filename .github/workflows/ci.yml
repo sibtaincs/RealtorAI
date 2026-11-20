@@ -1,0 +1,138 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: realestateai-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend build + integration tests
+    runs-on: ubuntu-latest
+    env:
+      # Ephemeral CI database only; override with the CI_SA_PASSWORD secret if desired.
+      SA_PASSWORD: ${{ secrets.CI_SA_PASSWORD || 'RealEstateAi!Ci2026' }}
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: ${{ secrets.CI_SA_PASSWORD || 'RealEstateAi!Ci2026' }}
+          MSSQL_PID: Express
+        ports:
+          - 1433:1433
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore
+        run: |
+          dotnet restore backend/RealEstateAI.Api.csproj
+          dotnet restore tests/RealEstateAI.Api.Tests/RealEstateAI.Api.Tests.csproj
+
+      - name: Build
+        run: |
+          dotnet build backend/RealEstateAI.Api.csproj --no-restore
+          dotnet build tests/RealEstateAI.Api.Tests/RealEstateAI.Api.Tests.csproj --no-restore
+
+      - name: Wait for SQL Server
+        run: |
+          for i in $(seq 1 60); do
+            if docker exec ${{ job.services.sqlserver.id }} /opt/mssql-tools18/bin/sqlcmd \
+                -S localhost -U sa -P "$SA_PASSWORD" -C -Q 'SELECT 1' >/dev/null 2>&1; then
+              echo "SQL Server is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "SQL Server did not become ready"
+          exit 1
+
+      - name: Test
+        env:
+          ConnectionStrings__DefaultConnection: "Server=127.0.0.1,1433;Database=RealEstateAI;User Id=sa;Password=${{ env.SA_PASSWORD }};TrustServerCertificate=True;Encrypt=False;"
+        run: >-
+          dotnet test tests/RealEstateAI.Api.Tests/RealEstateAI.Api.Tests.csproj
+          --no-build --verbosity minimal
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-site
+          path: frontend/dist/real-estate-ai/browser
+          if-no-files-found: error
+
+  deploy-api:
+    name: Deploy API to Render
+    needs: backend
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy hook
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "::warning::RENDER_DEPLOY_HOOK is not configured; skipping API deployment."
+            exit 0
+          fi
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK"
+          echo "Render deployment triggered"
+
+  deploy-web:
+    name: Deploy frontend to Netlify
+    needs: frontend
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-site
+          path: site
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          if [ -z "$NETLIFY_AUTH_TOKEN" ] || [ -z "$NETLIFY_SITE_ID" ]; then
+            echo "::warning::Netlify secrets are not configured; skipping frontend deployment."
+            exit 0
+          fi
+          npx --yes netlify-cli@17 deploy --dir=site --prod \
+            --site "$NETLIFY_SITE_ID" --auth "$NETLIFY_AUTH_TOKEN"
