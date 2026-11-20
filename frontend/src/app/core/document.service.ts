@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DocumentItem } from './models';
+import { DocumentItem, OcrScanResult } from './models';
 import { API } from './api';
 
 @Injectable({ providedIn: 'root' })
@@ -22,5 +22,10 @@ export class DocumentService {
 
   remove(id: number): Observable<void> {
     return this.http.delete<void>(`${API}/documents/${id}`);
+  }
+
+  /** Send OCR-extracted document text; matching checklist items are auto-verified. */
+  scan(propertyId: number, text: string): Observable<OcrScanResult> {
+    return this.http.post<OcrScanResult>(`${API}/documents/property/${propertyId}/scan`, { text });
   }
 }

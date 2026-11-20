@@ -21,7 +21,10 @@ public record PropertyDto(
     int? AreaSqFt,
     string[] ImageUrls,
     bool IsFeatured,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    int VerifiedDocuments = 0,
+    int TotalDocuments = 0,
+    bool IsTrusted = false);
 
 public record PropertyInputDto(
     string Title,
@@ -237,3 +240,43 @@ public record ListingQualityResponseDto(
 public record WhatsAppReplyInputDto(string Message, int? PropertyId);
 
 public record WhatsAppReplyDto(string Reply, int[] RecommendedPropertyIds);
+
+// ---------- Phase 2: OCR verification, trust badges, duplicate/fraud detection ----------
+
+public record OcrScanDto(string Text);
+
+public record OcrScanResultDto(
+    int Matched,
+    int NewlyVerified,
+    IReadOnlyList<string> MatchedNames,
+    IReadOnlyList<DocumentItemDto> Items);
+
+public record DuplicateCheckInputDto(
+    string? Title,
+    string City,
+    string Locality,
+    PropertyType Type,
+    ListingType ListingType,
+    int? AreaMarla,
+    decimal Price,
+    string[]? ImageUrls);
+
+public record DuplicateMatchDto(
+    int PropertyId,
+    string Title,
+    int Similarity,
+    IReadOnlyList<string> Reasons);
+
+public record DuplicateCheckResponseDto(
+    string Risk,
+    int Score,
+    IReadOnlyList<DuplicateMatchDto> Matches,
+    IReadOnlyList<string> Warnings,
+    string Advice);
+
+public record RiskReportDto(
+    int Score,
+    string Label,
+    string MarketMedian,
+    IReadOnlyList<string> Flags,
+    string Verdict);

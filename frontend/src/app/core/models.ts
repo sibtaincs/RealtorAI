@@ -18,6 +18,9 @@ export interface PropertyDto {
   imageUrls: string[];
   isFeatured: boolean;
   createdAt: string;
+  verifiedDocuments: number;
+  totalDocuments: number;
+  isTrusted: boolean;
 }
 
 export interface PagedResult<T> {
@@ -191,6 +194,49 @@ export interface ListingQualityResponse {
 export interface WhatsAppReply {
   reply: string;
   recommendedPropertyIds: number[];
+}
+
+// ---------- Phase 2: OCR, trust badges, fraud detection ----------
+
+export interface OcrScanResult {
+  matched: number;
+  newlyVerified: number;
+  matchedNames: string[];
+  items: DocumentItem[];
+}
+
+export interface DuplicateMatch {
+  propertyId: number;
+  title: string;
+  similarity: number;
+  reasons: string[];
+}
+
+export interface DuplicateCheckInput {
+  title: string;
+  city: string;
+  locality: string;
+  type: string;
+  listingType: string;
+  areaMarla: number | null;
+  price: number;
+  imageUrls: string[];
+}
+
+export interface DuplicateCheckResponse {
+  risk: string;
+  score: number;
+  matches: DuplicateMatch[];
+  warnings: string[];
+  advice: string;
+}
+
+export interface RiskReport {
+  score: number;
+  label: string;
+  marketMedian: string;
+  flags: string[];
+  verdict: string;
 }
 
 export const PROPERTY_TYPES = ['House', 'Plot', 'Apartment', 'Shop', 'Office', 'Villa', 'Farmhouse'];

@@ -43,6 +43,14 @@
     font-size: .7rem; font-weight: 700;
     padding: 5px 10px; border-radius: 999px;
   }
+
+  .trusted, .partial-verify {
+    position: absolute; bottom: 10px; left: 12px;
+    font-size: .69rem; font-weight: 800; padding: 4px 9px; border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .15);
+  }
+  .trusted { background: #16a34a; color: #fff; }
+  .partial-verify { background: #fff; color: #0f766e; }
 }
 
 .body { padding: 16px 18px 20px; }

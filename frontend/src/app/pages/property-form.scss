@@ -126,3 +126,34 @@
   span:not(.quality-mark) { color: #64748b; font-size: .76rem; }
   .quality-points { font-weight: 700; color: #047857; white-space: nowrap; }
 }
+
+// ---------- Phase 2: duplicate/fraud detection ----------
+
+.dup-result {
+  margin-top: 16px; padding: 16px; border-radius: 10px; background: #fff;
+  border: 1px solid #a7f3d0;
+
+  .dup-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    strong { font-size: .9rem; color: #15803d; }
+    span { font-size: .78rem; font-weight: 700; color: #047857; }
+  }
+
+  .dup-advice { font-size: .84rem; color: #334155; line-height: 1.5; margin: 10px 0 0; }
+
+  .dup-matches { margin-top: 14px; font-size: .82rem;
+    > strong { display: block; margin-bottom: 6px; color: #1e293b; }
+    .dup-match {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      padding: 8px 10px; border-radius: 8px; background: #f8fafc; margin-bottom: 6px;
+      a { color: var(--primary); font-weight: 700; text-decoration: none; &:hover { text-decoration: underline; } }
+      .sim-pill { background: #fee2e2; color: #b91c1c; font-size: .7rem; font-weight: 800; padding: 2px 8px; border-radius: 12px; }
+      .reasons { font-size: .74rem; color: #64748b; }
+    }
+  }
+
+  .dup-warnings { margin: 14px 0 0; padding-left: 18px; font-size: .8rem; color: #92400e; li { margin: 4px 0; } }
+
+  &.risk-medium { border-color: #fcd34d; .dup-head strong, .dup-head span { color: #b45309; } }
+  &.risk-high { border-color: #fca5a5; .dup-head strong, .dup-head span { color: #b91c1c; } }
+}

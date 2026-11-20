@@ -8,6 +8,11 @@
       <div class="no-image">No image available</div>
     }
     <span class="badge" [class.rent]="p.listingType === 'Rent'">{{ p.listingType }}</span>
+    @if (p.isTrusted) {
+      <span class="trusted">✅ Verified</span>
+    } @else if (p.verifiedDocuments > 0) {
+      <span class="partial-verify">📄 {{ p.verifiedDocuments }}/{{ p.totalDocuments }}</span>
+    }
     @if (p.isFeatured) {
       <span class="featured">Featured</span>
     }

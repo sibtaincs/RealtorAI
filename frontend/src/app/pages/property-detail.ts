@@ -6,7 +6,8 @@ import { PropertyService } from '../core/property.service';
 import { LeadService } from '../core/lead.service';
 import { PropertyCard } from '../shared/property-card';
 import { DocumentChecklist } from '../shared/document-checklist';
-import { PropertyDto, formatPkr } from '../core/models';
+import { PropertyDto, RiskReport, formatPkr } from '../core/models';
+import { TrustService } from '../core/trust.service';
 import { assetUrl } from '../core/api';
 
 @Component({
@@ -19,6 +20,7 @@ export class PropertyDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private properties = inject(PropertyService);
   private leads = inject(LeadService);
+  private trust = inject(TrustService);
   private sanitizer = inject(DomSanitizer);
 
   format = formatPkr;
@@ -28,6 +30,7 @@ export class PropertyDetail implements OnInit {
   loading = signal(true);
   error = signal('');
   activeImage = signal(0);
+  risk = signal<RiskReport | null>(null);
 
   name = '';
   email = '';
@@ -50,6 +53,11 @@ export class PropertyDetail implements OnInit {
         this.error.set('Property not found.');
         this.loading.set(false);
       }
+    });
+
+    this.trust.report(id).subscribe({
+      next: report => this.risk.set(report),
+      error: () => this.risk.set(null)
     });
 
     this.properties.search({ pageSize: 12 }).subscribe(res => {

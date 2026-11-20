@@ -202,6 +202,43 @@
         }
       </div>
 
+      <!-- Duplicate / fraud detection -->
+      <div class="tool-panel">
+        <div class="tool-head">
+          <h3>🛡️ Duplicate & Fraud Check</h3>
+          <span class="hint">Publish karne se pehle listing verify karein</span>
+        </div>
+        <button class="btn-light" (click)="checkDuplicates()" [disabled]="checkingDuplicates()">
+          {{ checkingDuplicates() ? 'Checking...' : 'Listing check karein' }}
+        </button>
+        @if (duplicateCheck(); as d) {
+          <div class="dup-result" [class]="'dup-result risk-' + d.risk.toLowerCase()">
+            <div class="dup-head">
+              <strong>{{ d.risk }} RISK</strong>
+              <span>Score: {{ d.score }}/100</span>
+            </div>
+            <p class="dup-advice">{{ d.advice }}</p>
+            @if (d.matches.length > 0) {
+              <div class="dup-matches">
+                <strong>Milti-julti listings:</strong>
+                @for (m of d.matches; track m.propertyId) {
+                  <div class="dup-match">
+                    <a [routerLink]="['/property', m.propertyId]">{{ m.title }}</a>
+                    <span class="sim-pill">{{ m.similarity }}%</span>
+                    <span class="reasons">{{ m.reasons.join(', ') }}</span>
+                  </div>
+                }
+              </div>
+            }
+            @if (d.warnings.length > 0) {
+              <ul class="dup-warnings">
+                @for (w of d.warnings; track w) { <li>⚠ {{ w }}</li> }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+
       @if (error()) { <p class="error">{{ error() }}</p> }
 
       <div class="actions">

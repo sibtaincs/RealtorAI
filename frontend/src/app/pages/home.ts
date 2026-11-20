@@ -8,6 +8,17 @@ import { AuthService } from '../core/auth.service';
 import { PropertyCard } from '../shared/property-card';
 import { CITIES, PROPERTY_TYPES, PagedResult, PriceEstimate, PropertyDto, PropertyQuery, formatPkr } from '../core/models';
 
+/** Minimal shape of the browser Web Speech API used for voice search. */
+interface SpeechRecognizer {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+}
+
 @Component({
   selector: 'app-home',
   imports: [FormsModule, RouterLink, PropertyCard],
@@ -53,6 +64,10 @@ export class Home implements OnInit {
   saveName = '';
   savingSearch = signal(false);
   saveNotice = signal('');
+
+  // Phase 2: voice search via the browser's speech recognition (Chrome/Edge)
+  listening = signal(false);
+  voiceError = signal('');
 
   ngOnInit(): void {
     const savedId = Number(this.route.snapshot.queryParamMap.get('saved'));
@@ -159,6 +174,45 @@ export class Home implements OnInit {
         this.savingSearch.set(false);
       }
     });
+  }
+
+  /** Starts browser speech recognition and searches with the transcript. */
+  startVoiceSearch(): void {
+    const browserWindow = window as unknown as {
+      SpeechRecognition?: new () => SpeechRecognizer;
+      webkitSpeechRecognition?: new () => SpeechRecognizer;
+    };
+    const Recognition = browserWindow.SpeechRecognition || browserWindow.webkitSpeechRecognition;
+    if (!Recognition) {
+      this.voiceError.set('Is browser voice search support nahi karta. Chrome ya Edge use karein.');
+      return;
+    }
+
+    const recognition = new Recognition();
+    recognition.lang = 'ur-PK';
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    this.voiceError.set('');
+    this.listening.set(true);
+
+    recognition.onresult = event => {
+      const transcript = event.results[0][0].transcript;
+      this.search = transcript;
+      this.listening.set(false);
+      this.apply();
+    };
+    recognition.onerror = () => {
+      this.voiceError.set('Aawaz nahi suni gayi. Mic check karke dobara try karein.');
+      this.listening.set(false);
+    };
+    recognition.onend = () => this.listening.set(false);
+
+    try {
+      recognition.start();
+    } catch {
+      this.voiceError.set('Voice search start nahi hua. Dobara try karein.');
+      this.listening.set(false);
+    }
   }
 
   runEstimate(): void {

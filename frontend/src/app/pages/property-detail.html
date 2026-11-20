@@ -33,8 +33,10 @@
             <div>
               <span class="tag" [class.rent]="p.listingType === 'Rent'">{{ p.listingType }}</span>
               <span class="tag type">{{ p.type }}</span>
-              <h1>{{ p.title }}</h1>
-              <p class="location">📍 {{ p.address }}</p>
+              <h1>{{ p.title }}
+                @if (p.isTrusted) { <span class="trust-badge">✅ Verified listing</span> }
+              </h1>
+              <p class="location">📍 {{ p.address }} · 📄 {{ p.verifiedDocuments }}/{{ p.totalDocuments }} documents verified</p>
             </div>
             <div class="price">{{ format(p.price, p.listingType) }}</div>
           </div>
@@ -56,6 +58,20 @@
           </div>
           <p class="hint">Approximate location: {{ p.latitude }}, {{ p.longitude }}</p>
         </div>
+
+        @if (risk(); as r) {
+          <section class="panel market-check" [class]="'panel market-check risk-' + r.label.toLowerCase()">
+            <div class="market-head">
+              <h2>🛡️ AI Market Check</h2>
+              <span class="risk-pill">{{ r.score }}/100 · {{ r.label }}</span>
+            </div>
+            <p class="market-sub">Similar listings ke median price: <strong>{{ r.marketMedian }}</strong></p>
+            <ul>
+              @for (flag of r.flags; track flag) { <li>{{ flag }}</li> }
+            </ul>
+            <p class="market-verdict">{{ r.verdict }}</p>
+          </section>
+        }
 
         <app-document-checklist [propertyId]="p.id" />
       </div>

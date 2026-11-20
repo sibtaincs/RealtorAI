@@ -5,9 +5,10 @@ import { PropertyService } from '../core/property.service';
 import { AiService } from '../core/ai.service';
 import { AuthService } from '../core/auth.service';
 import { UploadService } from '../core/upload.service';
+import { TrustService } from '../core/trust.service';
 import { UPLOADS } from '../core/api';
 import {
-  CITIES, GeneratedListing, ListingQualityResponse, PROPERTY_TYPES,
+  CITIES, DuplicateCheckResponse, GeneratedListing, ListingQualityResponse, PROPERTY_TYPES,
   PropertyInput, SellPriceResponse, formatPkr
 } from '../core/models';
 
@@ -22,6 +23,7 @@ export class PropertyForm {
   private ai = inject(AiService);
   private router = inject(Router);
   private uploads = inject(UploadService);
+  private trust = inject(TrustService);
   auth = inject(AuthService);
 
   cities = CITIES;
@@ -65,6 +67,10 @@ export class PropertyForm {
   checkingPrice = signal(false);
   targetDays = 30;
   pkr = formatPkr;
+
+  // Phase 2: duplicate/fraud detection
+  duplicateCheck = signal<DuplicateCheckResponse | null>(null);
+  checkingDuplicates = signal(false);
 
   /** AI Listing Copilot: turns short notes + uploaded photos into a full listing. */
   runCopilot(): void {
@@ -155,6 +161,36 @@ export class PropertyForm {
   applyAdvisedPrice(): void {
     const advice = this.priceAdvice();
     if (advice) this.input.price = advice.recommendedPrice;
+  }
+
+  /** Duplicate/fraud check against live listings before publishing. */
+  checkDuplicates(): void {
+    if (!this.input.title || this.input.price <= 0) {
+      this.error.set('Duplicate check ke liye title aur price zaroori hain.');
+      return;
+    }
+
+    this.checkingDuplicates.set(true);
+    this.error.set('');
+    this.trust.checkDraft({
+      title: this.input.title,
+      city: this.input.city,
+      locality: this.input.locality,
+      type: this.input.type,
+      listingType: this.input.listingType,
+      areaMarla: this.input.areaMarla,
+      price: this.input.price,
+      imageUrls: [...this.uploadedPaths(), ...this.imageUrlsText.split(',').map(s => s.trim()).filter(Boolean)]
+    }).subscribe({
+      next: res => {
+        this.duplicateCheck.set(res);
+        this.checkingDuplicates.set(false);
+      },
+      error: () => {
+        this.error.set('Duplicate check abhi available nahi hai.');
+        this.checkingDuplicates.set(false);
+      }
+    });
   }
 
   onFilesSelected(event: Event): void {

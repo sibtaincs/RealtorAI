@@ -16,6 +16,32 @@
 }
 .progress-fill { height: 100%; background: var(--primary); transition: width .25s ease; }
 
+.ocr-panel {
+  background: linear-gradient(135deg, #f0fdfa, #eff6ff);
+  border: 1px dashed #99f6e4; border-radius: 12px; padding: 14px; margin-bottom: 16px;
+  .ocr-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-bottom: 10px;
+    strong { font-size: .9rem; color: #0f766e; }
+    span { font-size: .76rem; color: #64748b; }
+  }
+  .ocr-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .scan-btn {
+    display: inline-flex; align-items: center; background: #0f766e; color: #fff;
+    padding: 8px 14px; border-radius: 8px; font-size: .8rem; font-weight: 700;
+    cursor: pointer; &:hover { background: #115e59; }
+  }
+  .ocr-hint { font-size: .72rem; color: #94a3b8; }
+  .scan-notice { margin: 10px 0 0; font-size: .78rem; color: #0f766e; }
+  .scan-result { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+  .scan-pill { font-size: .7rem; font-weight: 700; background: #ccfbf1; color: #0f766e; padding: 3px 8px; border-radius: 12px;
+    &.good { background: #bbf7d0; color: #15803d; }
+  }
+  .scan-name { font-size: .72rem; color: #475569; background: #fff; padding: 3px 8px; border-radius: 12px; border: 1px solid #e2e8f0; }
+  .manual-scan { margin-top: 12px; font-size: .78rem; color: #64748b;
+    summary { cursor: pointer; }
+    textarea { display: block; width: 100%; margin: 8px 0; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: .8rem; }
+  }
+}
+
 .check-list {
   list-style: none; margin: 0; padding: 0;
   li {

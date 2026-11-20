@@ -41,4 +41,13 @@ public class DocumentsController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
         => await _documents.DeleteAsync(id) ? NoContent() : NotFound();
+
+    /// <summary>
+    /// OCR text from a scanned document image. Recognized checklist items are
+    /// auto-verified and the updated checklist is returned.
+    /// </summary>
+    [Authorize]
+    [HttpPost("property/{propertyId:int}/scan")]
+    public async Task<IActionResult> Scan(int propertyId, OcrScanDto input)
+        => Ok(await _documents.ScanAsync(propertyId, input.Text));
 }

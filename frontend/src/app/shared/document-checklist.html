@@ -9,6 +9,35 @@
 
   <div class="progress-track"><div class="progress-fill" [style.width.%]="progress()"></div></div>
 
+  @if (auth.isLoggedIn()) {
+    <div class="ocr-panel">
+      <div class="ocr-head">
+        <strong>📸 AI Document Scan</strong>
+        <span>Document ka photo upload karein — AI text padh kar checklist verify karega.</span>
+      </div>
+      <div class="ocr-actions">
+        <label class="scan-btn">
+          {{ scanning() ? 'Scanning...' : 'Choose document photo' }}
+          <input type="file" accept="image/*" (change)="scanFile($event)" [disabled]="scanning()" hidden />
+        </label>
+        <span class="ocr-hint">jpg / png · Registry, CNIC, NOC, agreement</span>
+      </div>
+      @if (scanNotice()) { <p class="scan-notice">{{ scanNotice() }}</p> }
+      @if (scanResult(); as r) {
+        <div class="scan-result">
+          <span class="scan-pill">matched {{ r.matched }}</span>
+          <span class="scan-pill good">+{{ r.newlyVerified }} verified</span>
+          @for (name of r.matchedNames; track name) { <span class="scan-name">{{ name }}</span> }
+        </div>
+      }
+      <details class="manual-scan">
+        <summary>OCR kaam na kare? Text paste karein</summary>
+        <textarea rows="2" [(ngModel)]="scanText" placeholder="e.g. REGISTRY SALE DEED, CNIC, NOC, Agreement to sell, Token money receipt"></textarea>
+        <button type="button" class="btn-light" (click)="scanFromText()" [disabled]="scanning()">Verify text</button>
+      </details>
+    </div>
+  }
+
   @if (error()) { <p class="error">{{ error() }}</p> }
 
   @if (loading()) {

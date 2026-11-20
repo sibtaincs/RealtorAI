@@ -30,6 +30,13 @@ An AI-powered real estate agent platform for the Pakistani property market, buil
 
 > When `Ai:ApiKey` is configured with a vision model (e.g. `gpt-4o-mini`), the Listing Copilot reads uploaded photos for extra signals. Without a key everything runs locally with the rule-based agent — no external calls.
 
+### Phase 2 — Verification & trust
+- **AI document scan (OCR)** — on the property detail page, agents upload a photo of a Registry deed, CNIC, NOC, agreement, etc. Tesseract.js reads the text **in the browser** (no server/API key needed) and the backend auto-verifies every matching checklist item. A manual "paste document text" fallback is available when OCR cannot load.
+- **Verified listing badges** — every property API response now includes `verifiedDocuments`, `totalDocuments` and `isTrusted` (≥60% of documents verified, minimum 3). Property cards show `✅ Verified` or `📄 x/y`; detail pages show a badge plus document count.
+- **Duplicate & fraud check** — the Post Property page compares a draft listing against live listings by title, locality, type and area, flags suspicious prices against comparable per-marla medians, and returns a Low / Medium / High risk score with reasons. No AI key required.
+- **AI Market Check (buyer-side)** — property detail pages show a 0–100 risk report with comparable median price, document-verification status, price flags and a plain-Roman-Urdu verdict.
+- **Voice search** — a 🎤 button in the hero uses the browser's Web Speech API (`ur-PK`) to turn speech into a property search. Works in Chrome/Edge; other browsers show a friendly hint.
+
 ## Run it locally
 
 ### 1. Backend (API) — port 5000
@@ -144,12 +151,12 @@ type dist\real-estate-ai\_redirects
 ```
 backend/
   Controllers/   Auth, Properties, Leads, Ai, Uploads, Documents,
-                 SavedSearches, Notifications, FollowUps
+                 SavedSearches, Notifications, FollowUps, Trust
   Data/          AppDbContext, DbSeeder
   Dtos/          Request/response records
   Models/        Entities and enums (including SavedSearch, Notification,
                  DocumentChecklistItem, FollowUp)
-  Services/      Property, Lead, Ai, Token, Image, Document,
+  Services/      Property, Lead, Ai, Token, Image, Document, Trust,
                  SavedSearch, Notification, WhatsApp, AlertWorker
   Dockerfile     Render container build
 frontend/
@@ -158,13 +165,14 @@ frontend/
     core/        Models, services, auth interceptor, API/asset URL helpers
     pages/       Home, property detail, login, post property, leads,
                  saved searches
-    shared/      Property card, AI chat widget, document checklist
+    shared/      Property card, AI chat widget, OCR document checklist
 render.yaml      Render API + free PostgreSQL blueprint
 netlify.toml     Netlify Angular build config
 ```
 
 ## Future ideas
 
+- Server-side OCR fallback with a vision LLM for low-quality document photos
 - Real price-prediction model trained on historical transactions
 - Azure Blob Storage for durable image hosting
 - Email/SMS follow-ups alongside WhatsApp

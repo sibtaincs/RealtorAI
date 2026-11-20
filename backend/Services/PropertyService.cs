@@ -25,7 +25,7 @@ public class PropertyService : IPropertyService
         _db = db;
     }
 
-    public static PropertyDto ToDto(PropertyListing p) => new(
+    public static PropertyDto ToDto(PropertyListing p, int verified = 0, int total = 0) => new(
         p.Id,
         p.Title,
         p.Description,
@@ -44,7 +44,10 @@ public class PropertyService : IPropertyService
         p.AreaSqFt,
         ParseImages(p.ImageUrlsJson),
         p.IsFeatured,
-        p.CreatedAt);
+        p.CreatedAt,
+        verified,
+        total,
+        total > 0 && verified >= Math.Max(3, (int)Math.Ceiling(total * 0.6)));
 
     public async Task<PagedResultDto<PropertyDto>> GetAsync(PropertyQueryDto query)
     {
@@ -94,13 +97,38 @@ public class PropertyService : IPropertyService
             .Take(pageSize)
             .ToListAsync();
 
-        return new PagedResultDto<PropertyDto>(items.Select(ToDto).ToList(), total, page, pageSize);
+        var counts = await GetVerificationCountsAsync(items.Select(i => i.Id).ToList());
+        return new PagedResultDto<PropertyDto>(
+            items.Select(p => ToDto(p, counts.GetValueOrDefault(p.Id).Verified, counts.GetValueOrDefault(p.Id).Total)).ToList(),
+            total, page, pageSize);
     }
 
     public async Task<PropertyDto?> GetByIdAsync(int id)
     {
         var p = await _db.Properties.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-        return p is null ? null : ToDto(p);
+        if (p is null) return null;
+        var counts = await GetVerificationCountsAsync(new[] { id });
+        var c = counts.GetValueOrDefault(id);
+        return ToDto(p, c.Verified, c.Total);
+    }
+
+    private async Task<Dictionary<int, (int Verified, int Total)>> GetVerificationCountsAsync(IReadOnlyCollection<int> ids)
+    {
+        if (ids.Count == 0) return new Dictionary<int, (int, int)>();
+
+        var rows = await _db.DocumentChecklist
+            .AsNoTracking()
+            .Where(d => ids.Contains(d.PropertyListingId))
+            .GroupBy(d => d.PropertyListingId)
+            .Select(g => new
+            {
+                Id = g.Key,
+                Verified = g.Count(d => d.IsVerified),
+                Total = g.Count()
+            })
+            .ToListAsync();
+
+        return rows.ToDictionary(r => r.Id, r => (r.Verified, r.Total));
     }
 
     public async Task<PropertyDto> CreateAsync(PropertyInputDto input, string? agentId)
@@ -188,7 +216,7 @@ public class PropertyService : IPropertyService
             .Take(take)
             .ToListAsync();
 
-        return items.Select(ToDto).ToList();
+        return items.Select(p => ToDto(p)).ToList();
     }
 
     private static string[] ParseImages(string? json)

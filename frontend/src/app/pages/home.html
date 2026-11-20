@@ -15,8 +15,15 @@
           [(ngModel)]="search"
           (keydown.enter)="apply()"
         />
+        <button type="button" class="mic-btn" (click)="startVoiceSearch()"
+                [class.listening]="listening()"
+                [title]="listening() ? 'Sun raha hoon...' : 'Aawaz se search karein'">
+          {{ listening() ? '🔴' : '🎤' }}
+        </button>
         <button class="btn-primary" (click)="apply()">Search Properties</button>
       </div>
+      @if (listening()) { <p class="voice-hint">🎙 Aawaz se search ho raha hai — locality ya city bolein...</p> }
+      @if (voiceError()) { <p class="voice-error">{{ voiceError() }}</p> }
 
       <div class="stats">
         <span><strong>{{ result().total }}</strong> properties</span>

@@ -23,6 +23,24 @@
 
 .overview h2 { font-size: 1.15rem; margin: 26px 0 8px; }
 
+.trust-badge {
+  display: inline-block; vertical-align: middle; font-size: .68rem; font-weight: 800;
+  background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 999px; margin-left: 8px;
+}
+
+.market-check {
+  margin-top: 22px; padding: 20px;
+  .market-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    h2 { margin: 0; font-size: 1.1rem; }
+  }
+  .risk-pill { font-size: .75rem; font-weight: 800; padding: 5px 11px; border-radius: 999px; background: #dcfce7; color: #15803d; }
+  .market-sub { margin: 10px 0; font-size: .85rem; color: #475569; }
+  ul { margin: 0; padding-left: 18px; font-size: .84rem; color: #334155; li { margin: 5px 0; } }
+  .market-verdict { margin: 12px 0 0; font-size: .8rem; color: #64748b; }
+  &.risk-fair .risk-pill { background: #fef3c7; color: #b45309; }
+  &.risk-caution .risk-pill { background: #fee2e2; color: #b91c1c; }
+}
+
 .title-row {
   display: flex; justify-content: space-between; align-items: start; gap: 16px; flex-wrap: wrap;
   h1 { margin: 10px 0 4px; font-size: 1.7rem; }
