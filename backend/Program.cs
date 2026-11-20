@@ -123,6 +123,16 @@ app.UseCors("AngularClient");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Friendly root response so the service URL never shows a bare "Not Found".
+app.MapGet("/", () => Results.Ok(new
+{
+    service = "RealEstateAI API",
+    status = "ok",
+    health = "/api/health",
+    properties = "/api/properties",
+    time = DateTime.UtcNow
+}));
+
 // Lightweight liveness probe used by Render's health check and uptime monitors.
 app.MapGet("/api/health", () => Results.Ok(new { status = "ok", time = DateTime.UtcNow }));
 
