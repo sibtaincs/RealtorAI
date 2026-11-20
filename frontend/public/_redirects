@@ -1,4 +1,5 @@
-# After deploying the API on Render, replace the hostname below with your Render URL.
+# Fallback for a plain `ng build`. The production build regenerates this file
+# from the API_ORIGIN environment variable (see scripts/write-redirects.mjs).
 /api/*       https://realestateai-api.onrender.com/api/*      200
 /uploads/*   https://realestateai-api.onrender.com/uploads/*  200
 /*           /index.html                                      200

@@ -12,7 +12,7 @@ services:
     region: oregon
     dockerfilePath: ./backend/Dockerfile
     dockerContext: .
-    healthCheckPath: /api/properties?pageSize=1
+    healthCheckPath: /api/health
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
@@ -24,8 +24,9 @@ services:
           property: connectionString
       - key: Jwt__Key
         generateValue: true
+      # Comma-separated. Update this to your real Netlify site URL after deploying.
       - key: Cors__AllowedOrigins
-        value: https://realestateai.netlify.app
+        value: https://realestateai.netlify.app,https://realtorai.netlify.app
       - key: Ai__ApiKey
         sync: false
       - key: WhatsApp__AccessToken

@@ -94,35 +94,48 @@ Without these, follow-ups open a `wa.me` link with a pre-filled message. To send
 
 ## Deploy for free (Render + Netlify)
 
+The source is on GitHub at `https://github.com/sibtaincs/RealtorAI.git` (branch `main`).
+
 ### 1. Deploy the API on Render
 
-1. Push this folder to a GitHub repository.
-2. In Render, choose **Blueprint** and select the repo. It will read `render.yaml`.
-3. This creates:
-   - `realestateai-api` — free Docker web service (port 8080)
-   - `realestateai-db` — free PostgreSQL database
-4. Note the API URL, e.g. `https://realestateai-api.onrender.com`.
-5. Set `Cors__AllowedOrigins` to your Netlify URL (step 2).
-6. Optionally set `Ai__ApiKey`, `WhatsApp__AccessToken`, `WhatsApp__PhoneNumberId`.
+1. In Render, choose **New → Blueprint** and select the `RealtorAI` repo. It reads `render.yaml`.
+2. This creates:
+   - `realestateai-api` — free Docker web service (port 8080), health check at `/api/health`
+   - `realestateai-db` — free PostgreSQL database (connection string injected automatically)
+3. Wait for the first deploy to finish, then note the API URL, e.g. `https://realestateai-api.onrender.com`.
+4. In the service's **Environment** tab, set `Cors__AllowedOrigins` to your **real** Netlify URL
+   (comma-separated if you want both `*.netlify.app` aliases). The blueprint ships with two likely defaults.
+5. Optionally set `Ai__ApiKey`, `WhatsApp__AccessToken`, `WhatsApp__PhoneNumberId`.
+   `Jwt__Key` is generated automatically by the blueprint — no need to set it.
+6. Confirm the API is alive: `GET https://realestateai-api.onrender.com/api/health` → `{"status":"ok",...}`.
 
-`render.yaml` generates a strong `Jwt__Key` for you.
+> Render's free plan **sleeps after ~15 minutes of inactivity**; the first request after sleep can take ~30–60 seconds.
 
 ### 2. Deploy the Angular app on Netlify
 
-1. **Add new site → Import from Git** and select the same repo.
+1. **Add new site → Import from Git** and select the same `RealtorAI` repo.
 2. Netlify reads `netlify.toml`:
    - Base: `frontend`
    - Build: `npm ci && npm run build`
    - Publish: `dist/real-estate-ai`
-3. Update `frontend/public/_redirects` with your real Render hostname:
+   - `API_ORIGIN` (set to your Render API URL)
+3. **Important:** in **Site configuration → Environment variables**, set
+   `API_ORIGIN = https://YOUR-ACTUAL-RENDER-URL.onrender.com` (no trailing slash), then trigger a deploy.
+   The build script `frontend/scripts/write-redirects.mjs` uses it to generate `dist/_redirects`, which
+   proxies `/api/*` and `/uploads/*` to the API and falls back to `index.html` for SPA routes.
+4. Your public URL is the Netlify site URL (e.g. `https://realestateai.netlify.app`).
+   Make sure that exact URL is listed in `Cors__AllowedOrigins` on Render (step 1.4), then re-deploy Render if you changed it.
 
-```
-/api/*       https://YOUR-API-URL.onrender.com/api/*      200
-/uploads/*   https://YOUR-API-URL.onrender.com/uploads/*  200
-/*           /index.html                                  200
-```
+### Local verification before deploying
 
-4. Redeploy Netlify. Your public URL is the Netlify site URL.
+```bash
+# backend
+dotnet build backend/RealEstateAI.Api.csproj
+# frontend
+cd frontend && npm ci && npm run build
+# check generated redirects
+type dist\real-estate-ai\_redirects
+```
 
 > **Note:** Render's free web service has no persistent disk. Uploaded images under `wwwroot/uploads` disappear on restart/redeploy. For permanent photos, add a paid Render disk or switch `ImageService` to Azure Blob Storage / S3. The free PostgreSQL database is persistent.
 

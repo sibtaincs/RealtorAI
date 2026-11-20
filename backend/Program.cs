@@ -121,6 +121,10 @@ app.UseStaticFiles();
 app.UseCors("AngularClient");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Lightweight liveness probe used by Render's health check and uptime monitors.
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok", time = DateTime.UtcNow }));
+
 app.MapControllers();
 
 app.Run();

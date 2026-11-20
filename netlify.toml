@@ -5,3 +5,13 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Override this in the Netlify dashboard with your real Render API URL.
+  # It is used by frontend/scripts/write-redirects.mjs to generate _redirects.
+  API_ORIGIN = "https://realestateai-api.onrender.com"
+
+# SPA fallback also declared in generated dist/_redirects; kept here as a
+# safety net so deep links such as /property/16 and /leads always work.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
