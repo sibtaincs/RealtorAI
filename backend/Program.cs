@@ -13,14 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Database — SQLite locally, PostgreSQL when a Postgres connection string is provided.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                        ?? "Data Source=realestateai.db";
-if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://"))
+if (connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+    connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
 {
+    // Render's internal connection string omits the port, so Uri.Port is -1.
+    // Npgsql rejects that, so fall back to the PostgreSQL default (5432).
     var uri = new Uri(connectionString);
-    var userInfo = uri.UserInfo.Split(':');
+    var userInfo = uri.UserInfo.Split(':', 2);
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    var database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/'));
+    var username = Uri.UnescapeDataString(userInfo[0]);
+    var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty;
     connectionString =
-        $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};" +
-        $"Username={Uri.UnescapeDataString(userInfo[0])};" +
-        $"Password={Uri.UnescapeDataString(userInfo[1])};SSL Mode=Require";
+        $"Host={uri.Host};Port={port};Database={database};" +
+        $"Username={username};Password={password};SSL Mode=Prefer";
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
