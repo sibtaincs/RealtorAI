@@ -46,7 +46,7 @@ cd backend
 dotnet run
 ```
 
-The SQLite database (`realestateai.db`) is created and seeded automatically on first run. If you upgrade from an older schema, delete `realestateai.db` once and restart.
+The local database is SQL Server Express (`localhost\SQLEXPRESS`, database `RealEstateAI`) using Windows authentication. EF Core migrations in `backend/Data/Migrations` are applied and seed data is loaded automatically on first run. For a schema change, add a migration with `dotnet ef migrations add <Name> --project backend --startup-project backend --context AppDbContext --output-dir Data/Migrations`, then rebuild before running the app.
 
 ### 2. Frontend (Angular) — port 4200
 
@@ -62,6 +62,14 @@ Open **http://localhost:4200**. The Angular app detects localhost and talks to `
 ```
 Email:    admin@realestateai.pk
 Password: Admin@123
+```
+
+### Integration tests
+
+Requires SQL Server Express to be running (the same `RealEstateAI` database). Tests boot the API in-process with `WebApplicationFactory` and are read-only.
+
+```bash
+dotnet test tests/RealEstateAI.Api.Tests/RealEstateAI.Api.Tests.csproj
 ```
 
 ## Configuration
@@ -95,9 +103,28 @@ Without these, follow-ups open a `wa.me` link with a pre-filled message. To send
 
 ### Database & CORS
 
-- Local: SQLite (`realestateai.db`).
+- Local: SQL Server Express (`localhost\SQLEXPRESS`), database `RealEstateAI`, Windows auth; schema managed by EF Core migrations.
 - Hosted: set `ConnectionStrings__DefaultConnection` to a PostgreSQL connection string; the app switches to Npgsql automatically.
 - `Cors__AllowedOrigins` should contain your frontend origin(s), comma-separated.
+
+## CI/CD
+
+`.github/workflows/ci.yml` runs on every push and pull request to `main`:
+
+- **Backend** — builds the API and runs the 10 integration tests against a SQL Server 2022 container in the runner.
+- **Frontend** — `npm ci` + `npm run build`, then uploads `dist/real-estate-ai/browser` as the `frontend-site` artifact.
+- **Deploys** — only on pushes to `main`, after the corresponding build passes.
+
+Add these repository secrets to enable automatic deploys (without them CI still passes and deploy steps are skipped with a warning):
+
+| Secret | Where to get it |
+|---|---|
+| `RENDER_DEPLOY_HOOK` | Render dashboard → `realestateai-api` → Settings → Deploy Hooks → Create Deploy Hook |
+| `NETLIFY_AUTH_TOKEN` | Netlify → User settings → Applications → Personal access tokens |
+| `NETLIFY_SITE_ID` | Netlify site → Site configuration → Site details → Site ID |
+| `CI_SA_PASSWORD` | Optional; overrides the throwaway password used by the CI SQL Server container |
+
+The Netlify site is an agent-runner project. If `netlify-cli` cannot deploy to it, download the `frontend-site` artifact from the workflow run and upload it as a new Netlify version.
 
 ## Deploy for free (Render + Netlify)
 
