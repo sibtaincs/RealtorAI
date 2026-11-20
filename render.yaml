@@ -27,9 +27,3 @@ services:
       # Comma-separated. Update this to your real Netlify site URL after deploying.
       - key: Cors__AllowedOrigins
         value: https://realestateai.netlify.app,https://realtorai.netlify.app
-      - key: Ai__ApiKey
-        sync: false
-      - key: WhatsApp__AccessToken
-        sync: false
-      - key: WhatsApp__PhoneNumberId
-        sync: false
