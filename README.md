@@ -113,14 +113,15 @@ The source is on GitHub at `https://github.com/sibtaincs/RealtorAI.git` (branch 
    - ⚠️ Do **not** use **New → Web Service**. The config lives in `render.yaml`, so it must be a **Blueprint**.
    - If you see "name already exists", change the service name in `render.yaml` and push before retrying.
 2. This creates:
-   - `realestatepkai` — free Docker web service (port 8080), health check at `/api/health`
-   - `realestatepkai-db` — free PostgreSQL database (connection string injected automatically)
-3. Wait for the first deploy to finish, then note the API URL, e.g. `https://realestatepkai.onrender.com`.
+   - `realestateai-api` — free Docker web service (port 8080), health check at `/api/health`
+   - `realestateai-db` — free PostgreSQL database (connection string injected automatically)
+3. Wait for the first deploy to finish, then note the API URL from the Render service page. Because the
+   plain name was already taken globally, this project's live URL is `https://realestateai-api-p1nb.onrender.com`.
 4. In the service's **Environment** tab, set `Cors__AllowedOrigins` to your **real** Netlify URL
    (comma-separated if you want both `*.netlify.app` aliases). The blueprint ships with two likely defaults.
 5. Optionally add `Ai__ApiKey`, `WhatsApp__AccessToken`, `WhatsApp__PhoneNumberId` in the **Environment** tab.
    `Jwt__Key` is generated automatically by the blueprint — no need to set it.
-6. Confirm the API is alive: `GET https://realestatepkai.onrender.com/api/health` → `{"status":"ok",...}`.
+6. Confirm the API is alive: `GET https://realestateai-api-p1nb.onrender.com/api/health` → `{"status":"ok",...}`.
 
 > Render's free plan **sleeps after ~15 minutes of inactivity**; the first request after sleep can take ~30–60 seconds.
 
