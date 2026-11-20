@@ -1,0 +1,41 @@
+# ===== .NET / ASP.NET Core =====
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Local SQLite database (app seeds itself on first run)
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# User-uploaded images (created at runtime)
+backend/wwwroot/uploads/
+
+# ===== Angular / Node =====
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ===== Environment / secrets =====
+.env
+.env.*
+!.env.example
+
+# ===== IDE / editor =====
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db

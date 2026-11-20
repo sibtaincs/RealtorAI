@@ -1,0 +1,72 @@
+<header class="site-header">
+  <div class="wrap nav">
+    <a routerLink="/" class="brand">🏠 RealEstate<span>AI</span></a>
+
+    <nav class="links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
+      <a routerLink="/post" routerLinkActive="active">Post Property</a>
+      @if (auth.isLoggedIn()) {
+        <a routerLink="/saved" routerLinkActive="active">Saved Searches</a>
+      }
+      @if (auth.isAdmin()) {
+        <a routerLink="/leads" routerLinkActive="active">Leads</a>
+      }
+    </nav>
+
+    <div class="actions">
+      @if (auth.isLoggedIn()) {
+        <div class="notif-wrap">
+          <button class="bell" (click)="toggleNotifications()" aria-label="Notifications">
+            🔔
+            @if (notifications.unread() > 0) {
+              <span class="badge">{{ notifications.unread() }}</span>
+            }
+          </button>
+          @if (notifOpen()) {
+            <div class="notif-panel panel">
+              <div class="notif-head">
+                <strong>Notifications</strong>
+                @if (notifications.unread() > 0) {
+                  <button (click)="markAllRead()">Mark all read</button>
+                }
+              </div>
+              @for (n of notifications.items(); track n.id) {
+                <button class="notif-item" [class.unread]="!n.isRead" (click)="openNotification(n)">
+                  <strong>{{ n.title }}</strong>
+                  <span>{{ n.message }}</span>
+                </button>
+              } @empty {
+                <p class="notif-empty">Abhi koi notification nahi.</p>
+              }
+            </div>
+          }
+        </div>
+        <span class="user">Hi, {{ auth.user()?.fullName }}</span>
+        <button class="btn-ghost" (click)="logout()">Logout</button>
+      } @else {
+        <a routerLink="/login" class="btn-outline">Login</a>
+      }
+    </div>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <strong>🏠 RealEstateAI</strong>
+      <p>Smart property decisions for the Pakistani market.</p>
+    </div>
+    <div class="foot-links">
+      <a routerLink="/">Properties</a>
+      <a routerLink="/post">Post Property</a>
+      <a routerLink="/login">Agent Login</a>
+    </div>
+    <p class="copy">© 2026 RealEstateAI. Built with Angular + ASP.NET Core.</p>
+  </div>
+</footer>
+
+<app-chat-widget />

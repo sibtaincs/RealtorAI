@@ -1,0 +1,11 @@
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  { path: '', pathMatch: 'full', loadComponent: () => import('./pages/home').then(m => m.Home) },
+  { path: 'property/:id', loadComponent: () => import('./pages/property-detail').then(m => m.PropertyDetail) },
+  { path: 'login', loadComponent: () => import('./pages/login').then(m => m.Login) },
+  { path: 'post', loadComponent: () => import('./pages/property-form').then(m => m.PropertyForm) },
+  { path: 'leads', loadComponent: () => import('./pages/leads').then(m => m.Leads) },
+  { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
+  { path: '**', redirectTo: '' }
+];

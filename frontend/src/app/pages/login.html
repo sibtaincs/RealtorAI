@@ -1,0 +1,50 @@
+<div class="auth-page">
+  <div class="auth-card panel">
+    <div class="brand">🏠 RealEstate<span>AI</span></div>
+    <h1>{{ mode() === 'login' ? 'Agent Login' : 'Create Agent Account' }}</h1>
+    <p class="sub">
+      {{ mode() === 'login' ? 'Properties post karne aur leads dekhne ke liye login karein.' : 'Naya agent account banayein — free mein.' }}
+    </p>
+
+    <div class="tabs">
+      <button [class.active]="mode() === 'login'" (click)="switchMode('login')">Login</button>
+      <button [class.active]="mode() === 'register'" (click)="switchMode('register')">Register</button>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      @if (mode() === 'register') {
+        <div class="field">
+          <label>Full name</label>
+          <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Ahmed Khan" required />
+        </div>
+      }
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" placeholder="you@agency.pk" required />
+      </div>
+
+      @if (mode() === 'register') {
+        <div class="field">
+          <label>Agency name (optional)</label>
+          <input type="text" [(ngModel)]="agencyName" name="agencyName" placeholder="Khan Properties" />
+        </div>
+      }
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required />
+      </div>
+
+      @if (error()) { <p class="error">{{ error() }}</p> }
+
+      <button class="btn-primary submit" type="submit" [disabled]="busy()">
+        {{ busy() ? 'Please wait...' : mode() === 'login' ? 'Login' : 'Create Account' }}
+      </button>
+    </form>
+
+    <div class="demo-note">
+      <strong>Demo admin:</strong> admin@realestateai.pk / Admin@123
+    </div>
+  </div>
+</div>

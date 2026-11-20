@@ -1,0 +1,118 @@
+<div class="wrap page">
+  <div class="breadcrumb"><a routerLink="/">Properties</a> / {{ property()?.locality }}</div>
+
+  @if (loading()) {
+    <div class="panel">Loading property...</div>
+  } @else if (error()) {
+    <div class="panel empty">{{ error() }}</div>
+  } @else if (property(); as p) {
+    <div class="detail-grid">
+      <div class="main-col">
+        <div class="gallery">
+          @if (p.imageUrls.length > 0) {
+            <img class="hero-image" [src]="imageUrl(p.imageUrls[activeImage()])" [alt]="p.title" />
+            @if (p.imageUrls.length > 1) {
+              <div class="thumbs">
+                @for (img of p.imageUrls; track img; let i = $index) {
+                  <img
+                    [src]="imageUrl(img)"
+                    [class.active]="i === activeImage()"
+                    (click)="activeImage.set(i)"
+                    alt="thumbnail"
+                  />
+                }
+              </div>
+            }
+          } @else {
+            <div class="hero-image no-image">No images available</div>
+          }
+        </div>
+
+        <div class="panel overview">
+          <div class="title-row">
+            <div>
+              <span class="tag" [class.rent]="p.listingType === 'Rent'">{{ p.listingType }}</span>
+              <span class="tag type">{{ p.type }}</span>
+              <h1>{{ p.title }}</h1>
+              <p class="location">📍 {{ p.address }}</p>
+            </div>
+            <div class="price">{{ format(p.price, p.listingType) }}</div>
+          </div>
+
+          <div class="specs">
+            @if (p.bedrooms) { <div><span>🛏</span><strong>{{ p.bedrooms }}</strong><small>Bedrooms</small></div> }
+            @if (p.bathrooms) { <div><span>🚿</span><strong>{{ p.bathrooms }}</strong><small>Bathrooms</small></div> }
+            @if (p.areaMarla) { <div><span>📐</span><strong>{{ p.areaMarla }}</strong><small>Marla</small></div> }
+            @if (p.areaSqFt) { <div><span>🏗</span><strong>{{ p.areaSqFt }}</strong><small>Sq Ft</small></div> }
+            <div><span>📍</span><strong>{{ p.city }}</strong><small>City</small></div>
+          </div>
+
+          <h2>Description</h2>
+          <p class="description">{{ p.description }}</p>
+
+          <h2>Location</h2>
+          <div class="map">
+            <iframe [src]="mapUrl()" loading="lazy" title="Property location map"></iframe>
+          </div>
+          <p class="hint">Approximate location: {{ p.latitude }}, {{ p.longitude }}</p>
+        </div>
+
+        <app-document-checklist [propertyId]="p.id" />
+      </div>
+
+      <aside class="side-col">
+        <div class="panel inquiry">
+          @if (sent()) {
+            <div class="sent">
+              <div class="check">✓</div>
+              <h3>Inquiry bhej diya gaya!</h3>
+              <p>Agent aap se jald rabta karega. Shukriya.</p>
+            </div>
+          } @else {
+            <h3>Is property mein dilchaspi hai?</h3>
+            <p class="hint">AI agent ko message bhejein, aapko call ya email mil jayega.</p>
+
+            <div class="field">
+              <label>Aapka naam</label>
+              <input type="text" [(ngModel)]="name" placeholder="Full name" />
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="email" placeholder="you@example.com" />
+            </div>
+            <div class="field">
+              <label>Phone / WhatsApp</label>
+              <input type="tel" [(ngModel)]="phone" placeholder="03XX-XXXXXXX" />
+            </div>
+            <div class="field">
+              <label>Message</label>
+              <textarea [(ngModel)]="message"></textarea>
+            </div>
+
+            @if (formError()) { <p class="error">{{ formError() }}</p> }
+
+            <button class="btn-primary send-btn" (click)="sendInquiry()" [disabled]="sending()">
+              {{ sending() ? 'Bhej rahe hain...' : 'Send Inquiry' }}
+            </button>
+          }
+        </div>
+
+        <div class="panel price-note">
+          <strong>💡 AI Price Check</strong>
+          <p>Is price ki fairness check karna hai? Chat widget mein poochhein: <em>"Is {{ format(p.price) }} ka price theek hai?"</em></p>
+        </div>
+      </aside>
+    </div>
+
+    @if (similar().length > 0) {
+      <section class="similar">
+        <h2>Similar Properties</h2>
+        <div class="grid">
+          @for (item of similar(); track item.id) {
+            <app-property-card [property]="item" />
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

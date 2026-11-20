@@ -1,0 +1,81 @@
+.fab {
+  position: fixed; right: 24px; bottom: 24px; z-index: 1000;
+  width: 58px; height: 58px; border-radius: 50%;
+  border: none; background: #0f766e; color: #fff;
+  font-size: 1.6rem; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(15, 118, 110, .4);
+
+  .dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #22c55e; border: 2px solid #fff;
+  }
+}
+
+.panel {
+  position: fixed; right: 24px; bottom: 94px; z-index: 1000;
+  width: 370px; max-width: calc(100vw - 32px);
+  height: 500px; max-height: calc(100vh - 130px);
+  background: #fff; border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, .24);
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.head {
+  padding: 14px 16px; color: #fff;
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  display: flex; justify-content: space-between; align-items: center;
+
+  strong { display: block; font-size: 1rem; }
+  small { opacity: .8; font-size: .75rem; }
+  .status { font-size: .72rem; color: #bbf7d0; }
+}
+
+.messages {
+  flex: 1; overflow-y: auto; padding: 14px;
+  background: #f8fafc; display: flex; flex-direction: column; gap: 10px;
+}
+
+.msg {
+  max-width: 85%; padding: 10px 13px; border-radius: 14px;
+  font-size: .86rem; line-height: 1.5; white-space: pre-line;
+  background: #fff; border: 1px solid #e2e8f0;
+  align-self: flex-start; border-bottom-left-radius: 4px;
+
+  &.user {
+    background: #0f766e; color: #fff; border-color: #0f766e;
+    align-self: flex-end; border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 4px;
+  }
+
+  &.typing { color: #64748b; font-style: italic; }
+}
+
+.suggestions {
+  padding: 0 12px 8px; display: flex; flex-wrap: wrap; gap: 6px;
+  background: #f8fafc;
+
+  button {
+    font-size: .73rem; padding: 6px 9px; border-radius: 999px;
+    border: 1px solid #cbd5e1; background: #fff; color: #334155;
+    cursor: pointer;
+    &:hover { border-color: #0f766e; color: #0f766e; }
+  }
+}
+
+.input-row {
+  display: flex; gap: 8px; padding: 12px; border-top: 1px solid #e2e8f0;
+
+  input {
+    flex: 1; min-width: 0; padding: 10px 12px;
+    border: 1px solid #cbd5e1; border-radius: 10px; font-size: .86rem;
+    &:focus { outline: none; border-color: #0f766e; }
+  }
+
+  button {
+    background: #0f766e; color: #fff; border: none;
+    border-radius: 10px; padding: 0 16px; font-weight: 600; cursor: pointer;
+    &:disabled { opacity: .5; cursor: not-allowed; }
+  }
+}

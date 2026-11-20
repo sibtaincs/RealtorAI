@@ -1,0 +1,215 @@
+<div class="wrap form-page">
+  @if (!auth.isLoggedIn()) {
+    <div class="panel gate">
+      <h1>Agent login required</h1>
+      <p>Property post karne ke liye pehle login ya register karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="form-head">
+      <h1>Post a New Property</h1>
+      <p>Sabse aasan raasta: neeche AI Copilot ko kuch bata dein — baaki form khud bhar dega.</p>
+    </div>
+
+    <!-- AI Listing Copilot -->
+    <div class="panel copilot-panel">
+      <div class="copilot-head">
+        <h2>✨ AI Listing Copilot</h2>
+        <span class="badge">Photo + notes → full listing</span>
+      </div>
+      <p class="hint">Kuch bhi likhein — jaise "3 bed house, 5 marla, DHA Lahore, 2.2 crore, school ke pas". Photos pehle upload kar lein to AI unse bhi hints lega.</p>
+      <textarea [(ngModel)]="copilotNotes" placeholder="Apni property ke bare mein Roman Urdu ya English mein likhein..."></textarea>
+      <div class="copilot-actions">
+        <button class="btn-primary" (click)="runCopilot()" [disabled]="generating()">
+          {{ generating() ? 'AI listing bana raha hai...' : '🚀 AI se listing banao' }}
+        </button>
+        @if (generated()) {
+          <span class="mode-pill">{{ generated()!.mode === 'ai' ? 'Real AI' : 'Local AI' }} mode</span>
+        }
+      </div>
+      @if (generated()) {
+        <div class="generated-note">
+          ✅ Form bhar diya gaya — neeche review karein aur zaroorat ke mutabik edit karein.
+        </div>
+      }
+    </div>
+
+    <div class="panel form-panel">
+      <div class="grid-form">
+        <div class="field full">
+          <label>Property title *</label>
+          <input type="text" [(ngModel)]="input.title" placeholder="e.g. 5 Marla House in DHA Phase 6" />
+        </div>
+
+        <div class="field">
+          <label>Property type</label>
+          <select [(ngModel)]="input.type">
+            @for (t of types; track t) { <option [value]="t">{{ t }}</option> }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Listing type</label>
+          <select [(ngModel)]="input.listingType">
+            <option value="Sale">For Sale</option>
+            <option value="Rent">For Rent</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Price (PKR) *</label>
+          <input type="number" [(ngModel)]="input.price" placeholder="9500000" />
+        </div>
+
+        <div class="field">
+          <label>City</label>
+          <select [(ngModel)]="input.city">
+            @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Locality / Society *</label>
+          <input type="text" [(ngModel)]="input.locality" placeholder="e.g. Bahria Town Lahore" />
+        </div>
+
+        <div class="field">
+          <label>Full address</label>
+          <input type="text" [(ngModel)]="input.address" placeholder="Block, sector, main road" />
+        </div>
+
+        <div class="field">
+          <label>Bedrooms</label>
+          <input type="number" [(ngModel)]="input.bedrooms" />
+        </div>
+        <div class="field">
+          <label>Bathrooms</label>
+          <input type="number" [(ngModel)]="input.bathrooms" />
+        </div>
+        <div class="field">
+          <label>Area (marla)</label>
+          <input type="number" [(ngModel)]="input.areaMarla" />
+        </div>
+        <div class="field">
+          <label>Area (sq ft)</label>
+          <input type="number" [(ngModel)]="input.areaSqFt" />
+        </div>
+        <div class="field">
+          <label>Latitude</label>
+          <input type="number" step="any" [(ngModel)]="input.latitude" />
+        </div>
+        <div class="field">
+          <label>Longitude</label>
+          <input type="number" step="any" [(ngModel)]="input.longitude" />
+        </div>
+
+        <div class="field full">
+          <label>
+            Description
+            <button type="button" class="ai-btn" (click)="generateDescription()" [disabled]="describing()">
+              {{ describing() ? 'Writing...' : '✨ AI se likhein' }}
+            </button>
+          </label>
+          <textarea [(ngModel)]="input.description" placeholder="Property ke bare mein likhein ya AI se banayein..."></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Property photos</label>
+          <label class="upload-box">
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple (change)="onFilesSelected($event)" hidden />
+            <span>{{ uploading() ? 'Uploading...' : '📷 Choose photos (max 8, 5 MB each)' }}</span>
+          </label>
+          @if (uploadError()) { <span class="error">{{ uploadError() }}</span> }
+
+          @if (uploadedPaths().length > 0) {
+            <div class="upload-preview">
+              @for (path of uploadedPaths(); track path) {
+                <div class="thumb-wrap">
+                  <img [src]="previewUrl(path)" alt="uploaded property photo" />
+                  <button type="button" class="thumb-remove" (click)="removeUploaded(path)" aria-label="Remove photo">✕</button>
+                </div>
+              }
+            </div>
+          }
+
+          <input type="text" [(ngModel)]="imageUrlsText" placeholder="Ya image URLs comma separated daalein" />
+          <span class="hint">Photos directly server par save hoti hain — URLs bhi chalte hain.</span>
+        </div>
+
+        <div class="field full check-row">
+          <label>
+            <input type="checkbox" [(ngModel)]="input.isFeatured" />
+            Featured listing (home page pe top par dikhega)
+          </label>
+        </div>
+      </div>
+
+      <!-- Sell-in-X-days price advisor -->
+      <div class="tool-panel">
+        <div class="tool-head">
+          <h3>💰 Sell-in-X-days Price Advisor</h3>
+          <span class="hint">Similar listings ke hisaab se</span>
+        </div>
+        <div class="tool-row">
+          <label>Kaise bechna hai?
+            <select [(ngModel)]="targetDays">
+              <option [ngValue]="15">15 din mein (jaldi)</option>
+              <option [ngValue]="30">30 din mein</option>
+              <option [ngValue]="60">60 din mein (sabras se)</option>
+            </select>
+          </label>
+          <button class="btn-light" (click)="getPriceAdvice()" [disabled]="checkingPrice()">
+            {{ checkingPrice() ? 'Checking...' : 'Price advisor chalayein' }}
+          </button>
+        </div>
+        @if (priceAdvice(); as pa) {
+          <div class="advice-result">
+            <div class="advice-price">{{ pkr(pa.recommendedPrice) }}</div>
+            <div class="advice-range">Range: {{ pkr(pa.low) }} – {{ pkr(pa.high) }}</div>
+            <div class="advice-meta">{{ pa.confidence }} confidence · {{ pa.basis }}</div>
+            <p class="advice-tip">{{ pa.advice }}</p>
+            <button class="btn-light small" (click)="applyAdvisedPrice()">Is price ko use karein</button>
+          </div>
+        }
+      </div>
+
+      <!-- Listing Quality Score -->
+      <div class="tool-panel">
+        <div class="tool-head">
+          <h3>📊 Listing Quality Score</h3>
+          <span class="hint">Buyers ko achi listing pasand hai</span>
+        </div>
+        <button class="btn-light" (click)="checkQuality()" [disabled]="checkingQuality()">
+          {{ checkingQuality() ? 'Checking...' : 'Score check karein' }}
+        </button>
+        @if (quality(); as q) {
+          <div class="quality-result">
+            <div class="quality-score">{{ q.score }}<small>/100</small></div>
+            <div class="quality-label">{{ q.label }}</div>
+            <div class="quality-list">
+              @for (check of q.checks; track check.name) {
+                <div class="quality-item" [class.done]="check.done">
+                  <span class="quality-mark">{{ check.done ? '✅' : '⬜' }}</span>
+                  <div>
+                    <strong>{{ check.name }}</strong>
+                    <span>{{ check.tip }}</span>
+                  </div>
+                  <span class="quality-points">{{ check.points }}/{{ check.maxPoints }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (error()) { <p class="error">{{ error() }}</p> }
+
+      <div class="actions">
+        <button class="btn-primary" (click)="save()" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : 'Publish Property' }}
+        </button>
+        <a routerLink="/" class="btn-light">Cancel</a>
+      </div>
+    </div>
+  }
+</div>

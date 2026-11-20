@@ -1,0 +1,27 @@
+@let p = property();
+
+<a class="card" [routerLink]="['/property', p.id]">
+  <div class="thumb">
+    @if (p.imageUrls.length > 0) {
+      <img [src]="imageUrl(p.imageUrls[0])" [alt]="p.title" loading="lazy" />
+    } @else {
+      <div class="no-image">No image available</div>
+    }
+    <span class="badge" [class.rent]="p.listingType === 'Rent'">{{ p.listingType }}</span>
+    @if (p.isFeatured) {
+      <span class="featured">Featured</span>
+    }
+  </div>
+
+  <div class="body">
+    <h3>{{ p.title }}</h3>
+    <p class="location">📍 {{ p.locality }}, {{ p.city }}</p>
+    <div class="price">{{ format(p.price, p.listingType) }}</div>
+    <div class="meta">
+      @if (p.bedrooms) { <span>🛏 {{ p.bedrooms }} beds</span> }
+      @if (p.bathrooms) { <span>🚿 {{ p.bathrooms }} baths</span> }
+      @if (p.areaMarla) { <span>📐 {{ p.areaMarla }} marla</span> }
+      <span class="type">{{ p.type }}</span>
+    </div>
+  </div>
+</a>

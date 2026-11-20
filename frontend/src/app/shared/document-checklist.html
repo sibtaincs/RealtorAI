@@ -1,0 +1,50 @@
+<section class="panel docs-panel">
+  <div class="docs-head">
+    <div>
+      <h2>📄 Document Verification</h2>
+      <p>Pakistani property transactions ke liye zaroori documents ki checklist.</p>
+    </div>
+    <div class="progress-badge">{{ verifiedCount() }}/{{ items().length }} verified</div>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" [style.width.%]="progress()"></div></div>
+
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  @if (loading()) {
+    <p class="hint">Checklist load ho rahi hai...</p>
+  } @else {
+    <ul class="check-list">
+      @for (item of items(); track item.id) {
+        <li [class.done]="item.isVerified">
+          <label>
+            <input
+              type="checkbox"
+              [checked]="item.isVerified"
+              [disabled]="busy()"
+              (change)="toggle(item)"
+            />
+            <span class="name">{{ item.name }}</span>
+          </label>
+          @if (item.isVerified && item.verifiedAt) {
+            <span class="verified-at">✓ {{ item.verifiedAt | date: 'dd MMM yyyy' }}</span>
+          }
+          @if (auth.isLoggedIn()) {
+            <button type="button" class="remove" (click)="remove(item)" aria-label="Remove item">✕</button>
+          }
+        </li>
+      } @empty {
+        <li class="empty">Is property ke liye abhi checklist nahi hai.</li>
+      }
+    </ul>
+
+    @if (auth.isLoggedIn()) {
+      <div class="add-row">
+        <input type="text" [(ngModel)]="newName" (keydown.enter)="add()" placeholder="Naya document add karein..." />
+        <button type="button" class="btn-light" (click)="add()" [disabled]="busy()">+ Add</button>
+      </div>
+    } @else {
+      <p class="hint">Verify karne ke liye <a routerLink="/login">agent login</a> karein.</p>
+    }
+  }
+</section>

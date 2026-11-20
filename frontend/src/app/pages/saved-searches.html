@@ -1,0 +1,53 @@
+<div class="wrap saved-page">
+  @if (!auth.isLoggedIn()) {
+    <div class="panel gate">
+      <h1>Login required</h1>
+      <p>Saved searches aur alerts dekhne ke liye login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <div>
+        <h1>Saved Searches & Alerts</h1>
+        <p>Jaise hi nayi matching property aaye, aapko in-app notification milega.</p>
+      </div>
+      <a routerLink="/" class="btn-light">+ New search</a>
+    </div>
+
+    @if (notice()) { <p class="success">{{ notice() }}</p> }
+    @if (error()) { <p class="error">{{ error() }}</p> }
+
+    @if (loading()) {
+      <div class="panel">Loading...</div>
+    } @else if (items().length === 0) {
+      <div class="panel empty">
+        <h3>Abhi koi saved search nahi</h3>
+        <p>Properties page par filters lagayein aur "Save search & get alerts" dabayein.</p>
+        <a routerLink="/" class="btn-primary">Browse properties</a>
+      </div>
+    } @else {
+      <div class="cards">
+        @for (item of items(); track item.id) {
+          <div class="panel card">
+            <div class="card-top">
+              <h3>{{ item.name }}</h3>
+              <button type="button" class="remove" (click)="remove(item)" aria-label="Delete">✕</button>
+            </div>
+            <p class="query">{{ describe(item.queryJson) }}</p>
+            <p class="meta">Saved {{ item.createdAt | date: 'dd MMM yyyy' }}</p>
+
+            <label class="toggle-row">
+              <input type="checkbox" [checked]="item.alertEnabled" (change)="toggle(item)" />
+              Alerts {{ item.alertEnabled ? 'on' : 'off' }}
+            </label>
+
+            <div class="card-actions">
+              <button type="button" class="btn-primary" (click)="open(item)">View results</button>
+              <button type="button" class="btn-light" (click)="run(item)">Check now</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

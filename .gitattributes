@@ -1,0 +1,13 @@
+# Normalize line endings across Windows/Linux (Render/Netlify run Linux)
+* text=auto
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.db binary
+*.db-wal binary
+*.db-shm binary

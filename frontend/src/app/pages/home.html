@@ -1,0 +1,156 @@
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">🤖 AI-powered real estate agent · Pakistan</span>
+      <h1>Apne agle <em>ghar</em> ki talash<br />smart banayein.</h1>
+      <p>
+        Find, compare and evaluate properties across Karachi, Lahore, Islamabad aur pooray Pakistan mein.
+        AI agent aapke sawaalon ka jawab deta hai — Roman Urdu mein bhi.
+      </p>
+
+      <div class="hero-search">
+        <input
+          type="text"
+          placeholder="Search locality, city ya property type..."
+          [(ngModel)]="search"
+          (keydown.enter)="apply()"
+        />
+        <button class="btn-primary" (click)="apply()">Search Properties</button>
+      </div>
+
+      <div class="stats">
+        <span><strong>{{ result().total }}</strong> properties</span>
+        <span><strong>5</strong> major cities</span>
+        <span><strong>24/7</strong> AI assistant</span>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="hero-card-head">💡 AI Price Check</div>
+      <p class="hero-card-sub">Kisi bhi property ka andaza lagayein — free mein.</p>
+
+      <div class="estimate-grid">
+        <div class="field">
+          <label>Type</label>
+          <select [(ngModel)]="estimateType">
+            @for (t of propertyTypes; track t) { <option [value]="t">{{ t }}</option> }
+          </select>
+        </div>
+        <div class="field">
+          <label>City</label>
+          <select [(ngModel)]="estimateCity">
+            @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+          </select>
+        </div>
+        <div class="field full">
+          <label>Locality</label>
+          <input type="text" [(ngModel)]="estimateLocality" placeholder="e.g. DHA Lahore Phase 6" />
+        </div>
+        <div class="field">
+          <label>Area (marla)</label>
+          <input type="number" [(ngModel)]="estimateMarla" />
+        </div>
+        <div class="field">
+          <label>Bedrooms</label>
+          <input type="number" [(ngModel)]="estimateBeds" />
+        </div>
+      </div>
+
+      <button class="btn-primary estimate-btn" (click)="runEstimate()" [disabled]="estimating()">
+        {{ estimating() ? 'Calculating...' : 'Estimate Price' }}
+      </button>
+
+      @if (estimateResult(); as e) {
+        <div class="estimate-result">
+          <small>Estimated value</small>
+          <strong>{{ format(e.estimatedPrice) }}</strong>
+          <span>Range: {{ format(e.low) }} – {{ format(e.high) }}</span>
+          <p>{{ e.basis }}</p>
+        </div>
+      }
+      @if (estimateError()) { <p class="error">{{ estimateError() }}</p> }
+    </div>
+  </div>
+</section>
+
+<section class="wrap listing-section">
+  <div class="section-head">
+    <div>
+      <h2>Available Properties</h2>
+      <p>Curated listings from trusted areas across Pakistan.</p>
+    </div>
+    <a routerLink="/post" class="btn-outline">+ Post Property</a>
+  </div>
+
+  <div class="filters panel">
+    <div class="field">
+      <label>City</label>
+      <select [(ngModel)]="city" (ngModelChange)="apply()">
+        <option value="">All cities</option>
+        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+    <div class="field">
+      <label>Property type</label>
+      <select [(ngModel)]="type" (ngModelChange)="apply()">
+        <option value="">All types</option>
+        @for (t of propertyTypes; track t) { <option [value]="t">{{ t }}</option> }
+      </select>
+    </div>
+    <div class="field">
+      <label>Listing</label>
+      <select [(ngModel)]="listingType" (ngModelChange)="apply()">
+        <option value="">Buy / Rent</option>
+        <option value="Sale">For Sale</option>
+        <option value="Rent">For Rent</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Min bedrooms</label>
+      <select [(ngModel)]="minBeds" (ngModelChange)="apply()">
+        <option [ngValue]="null">Any</option>
+        <option [ngValue]="1">1+</option>
+        <option [ngValue]="2">2+</option>
+        <option [ngValue]="3">3+</option>
+        <option [ngValue]="4">4+</option>
+      </select>
+    </div>
+    <button class="btn-light clear-btn" (click)="clear()">Clear</button>
+  </div>
+
+  <div class="save-row">
+    <input type="text" [(ngModel)]="saveName" placeholder="Search ka naam (e.g. Lahore 3-bed house)" />
+    <button class="btn-light" (click)="saveSearch()" [disabled]="savingSearch()">
+      🔔 {{ savingSearch() ? 'Saving...' : 'Save search & get alerts' }}
+    </button>
+    @if (auth.isLoggedIn()) { <a routerLink="/saved" class="saved-link">My saved searches →</a> }
+    @if (saveNotice()) { <span class="save-notice">{{ saveNotice() }}</span> }
+  </div>
+
+  @if (error()) {
+    <div class="empty panel">{{ error() }}</div>
+  } @else if (loading()) {
+    <div class="grid">
+      @for (i of [1,2,3,4,5,6]; track i) { <div class="skeleton"></div> }
+    </div>
+  } @else if (result().items.length === 0) {
+    <div class="empty panel">
+      <h3>Koi property nahi mili</h3>
+      <p>Filters badal kar dobara try karein, ya AI agent se poochhein.</p>
+    </div>
+  } @else {
+    <div class="grid">
+      @for (p of result().items; track p.id) {
+        <app-property-card [property]="p" />
+      }
+    </div>
+
+    <div class="pagination">
+      <button (click)="goTo(page - 1)" [disabled]="page === 1">← Previous</button>
+      @for (n of pages(); track n) {
+        <button (click)="goTo(n)" [class.active]="n === page">{{ n }}</button>
+      }
+      <button (click)="goTo(page + 1)" [disabled]="page === totalPages()">Next →</button>
+    </div>
+  }
+</section>

@@ -1,0 +1,4 @@
+# After deploying the API on Render, replace the hostname below with your Render URL.
+/api/*       https://realestateai-api.onrender.com/api/*      200
+/uploads/*   https://realestateai-api.onrender.com/uploads/*  200
+/*           /index.html                                      200

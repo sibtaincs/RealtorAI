@@ -1,0 +1,45 @@
+<button class="fab" (click)="toggle()" [attr.aria-label]="open() ? 'Close AI chat' : 'Open AI chat'">
+  @if (open()) { ✕ } @else { 🤖 }
+  @if (!open()) { <span class="dot"></span> }
+</button>
+
+@if (open()) {
+  <div class="panel">
+    <div class="head">
+      <div>
+        <strong>RealEstate AI</strong>
+        <small>Your property assistant</small>
+      </div>
+      <span class="status">● Online</span>
+    </div>
+
+    <div class="messages">
+      @for (m of messages(); track $index) {
+        <div class="msg" [class.user]="m.from === 'user'">
+          {{ m.text }}
+        </div>
+      }
+      @if (busy()) {
+        <div class="msg ai typing">Soch raha hoon...</div>
+      }
+    </div>
+
+    @if (messages().length === 1) {
+      <div class="suggestions">
+        @for (s of suggestions; track s) {
+          <button (click)="send(s)">{{ s }}</button>
+        }
+      </div>
+    }
+
+    <div class="input-row">
+      <input
+        type="text"
+        placeholder="Apna sawaal likhein..."
+        [(ngModel)]="inputText"
+        (keydown.enter)="send()"
+      />
+      <button (click)="send()" [disabled]="busy()">Send</button>
+    </div>
+  </div>
+}

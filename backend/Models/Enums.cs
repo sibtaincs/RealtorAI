@@ -1,0 +1,35 @@
+namespace RealEstateAI.Api.Models;
+
+public enum PropertyType
+{
+    House,
+    Plot,
+    Apartment,
+    Shop,
+    Office,
+    Villa,
+    Farmhouse
+}
+
+public enum ListingType
+{
+    Sale,
+    Rent
+}
+
+public enum ListingStatus
+{
+    Active,
+    Pending,
+    Sold,
+    Rented
+}
+
+public enum LeadStatus
+{
+    New,
+    Contacted,
+    Interested,
+    Closed,
+    Lost
+}

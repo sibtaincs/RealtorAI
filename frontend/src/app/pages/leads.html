@@ -1,0 +1,117 @@
+<div class="wrap leads-page">
+  @if (!auth.isAdmin()) {
+    <div class="panel gate">
+      <h1>Admin access only</h1>
+      <p>Leads dekhne ke liye admin account se login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <div>
+        <h1>Leads Inbox</h1>
+        <p>Aapki properties par aane wale inquiries.</p>
+      </div>
+      <div class="head-controls">
+        <div class="field filter-field">
+          <label>Status filter</label>
+          <select [(ngModel)]="status" (ngModelChange)="load()">
+            <option value="">All leads</option>
+            @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+          </select>
+        </div>
+        <button type="button" class="mini-btn" (click)="sortByScore.set(!sortByScore())">
+          {{ sortByScore() ? '🔥 Sorted by hot leads' : 'Sort by hot leads' }}
+        </button>
+      </div>
+    </div>
+
+    @if (error()) { <p class="error">{{ error() }}</p> }
+
+    @if (loading()) {
+      <div class="panel">Loading leads...</div>
+    } @else if (leads().length === 0) {
+      <div class="panel empty">
+        <h3>Abhi koi lead nahi</h3>
+        <p>Jaise hi koi property inquiry bhejega, yahan dikh jayega.</p>
+      </div>
+    } @else {
+      <div class="panel table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Contact</th>
+              <th>Property</th>
+              <th>Message</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Follow-up</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of sortedLeads(); track l.id) {
+              <tr>
+                <td><strong>{{ l.name }}</strong></td>
+                <td>
+                  <span class="score-badge" [class]="'score score-' + l.scoreLabel.toLowerCase()"
+                        [title]="l.scoreReasons.join(', ')">
+                    {{ l.score }} · {{ l.scoreLabel }}
+                  </span>
+                </td>
+                <td class="contact">{{ l.email }}<br /><span>{{ l.phone }}</span></td>
+                <td>{{ l.propertyTitle ?? 'General inquiry' }}</td>
+                <td class="message">{{ l.message }}</td>
+                <td class="date">{{ l.createdAt | date: 'dd MMM, HH:mm' }}</td>
+                <td>
+                  <select [ngModel]="l.status" (ngModelChange)="changeStatus(l, $event)" [class]="'status ' + l.status.toLowerCase()">
+                    @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+                  </select>
+                </td>
+                <td class="follow-actions">
+                  @if (whatsappLink(l)) {
+                    <a class="wa-btn" [href]="whatsappLink(l)" target="_blank" rel="noopener" title="Open WhatsApp chat">💬 WhatsApp</a>
+                  }
+                  <button type="button" class="mini-btn ai-reply" (click)="generateAiReply(l)" [disabled]="generatingReply()">
+                    {{ generatingReply() && expanded() === l.id ? 'AI typing...' : '🤖 AI Reply' }}
+                  </button>
+                  <button type="button" class="mini-btn" (click)="createFollowUp(l)">Generate message</button>
+                  <button type="button" class="mini-btn" (click)="toggleFollowUps(l)">
+                    {{ expanded() === l.id ? 'Hide' : 'History' }}
+                  </button>
+                </td>
+              </tr>
+              @if (expanded() === l.id) {
+                <tr class="follow-row">
+                  <td colspan="8">
+                    @if (generatedLink()) {
+                      <p class="generated">
+                        <a [href]="generatedLink()" target="_blank" rel="noopener">💬 Open pre-filled WhatsApp message →</a>
+                      </p>
+                    }
+                    @if (loadingFollowUps()) {
+                      <span class="hint">Loading history...</span>
+                    } @else if (followUps().length === 0) {
+                      <span class="hint">Abhi koi follow-up nahi. "Generate message" dabayein.</span>
+                    } @else {
+                      <div class="follow-list">
+                        @for (f of followUps(); track f.id) {
+                          <div class="follow-item">
+                            <span class="channel">{{ f.channel }}</span>
+                            <span class="when">{{ f.createdAt | date: 'dd MMM, HH:mm' }}</span>
+                            <span class="state">{{ f.sent ? 'Sent via API' : 'Link ready' }}</span>
+                            <p>{{ f.message }}</p>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>
