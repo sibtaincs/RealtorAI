@@ -13,23 +13,12 @@ public static class DbSeeder
         UserManager<ApplicationUser> users,
         RoleManager<IdentityRole> roles)
     {
-        // EnsureCreated() does not alter an existing database. When new tables are
-        // introduced, recreate the local SQLite demo DB once (it only holds seed data).
-        // Hosted PostgreSQL databases are created fresh, so this branch is skipped there.
-        var schemaReady = true;
-        try
-        {
-            await db.DocumentChecklist.AnyAsync();
-        }
-        catch
-        {
-            schemaReady = false;
-        }
-
-        if (!schemaReady && db.Database.ProviderName?.Contains("Sqlite", StringComparison.OrdinalIgnoreCase) == true)
-            await db.Database.EnsureDeletedAsync();
-
-        await db.Database.EnsureCreatedAsync();
+        // Local SQL Server uses EF migrations so schema changes are versioned.
+        // Hosted PostgreSQL keeps EnsureCreated (its database is created fresh on deploy).
+        if (db.Database.ProviderName?.Contains("SqlServer", StringComparison.OrdinalIgnoreCase) == true)
+            await db.Database.MigrateAsync();
+        else
+            await db.Database.EnsureCreatedAsync();
 
         foreach (var roleName in new[] { "Admin", "Agent" })
         {

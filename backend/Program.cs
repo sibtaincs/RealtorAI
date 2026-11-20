@@ -10,7 +10,7 @@ using RealEstateAI.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database — SQLite locally, PostgreSQL when a Postgres connection string is provided.
+// Database — SQL Server locally, PostgreSQL when a Postgres connection string is provided.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                        ?? "Data Source=realestateai.db";
 if (connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
@@ -31,9 +31,10 @@ if (connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCas
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase) ||
-        connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase))
+    if (connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
         options.UseNpgsql(connectionString);
+    else if (connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlServer(connectionString);
     else
         options.UseSqlite(connectionString);
 });
@@ -145,3 +146,6 @@ app.MapGet("/api/health", () => Results.Ok(new { status = "ok", time = DateTime.
 app.MapControllers();
 
 app.Run();
+
+// Public entry point for WebApplicationFactory<Program> in the integration tests.
+public partial class Program;
