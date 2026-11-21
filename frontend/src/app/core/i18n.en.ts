@@ -4,6 +4,7 @@ export const en: Record<TranslationKey, string> = {
   'nav.properties': 'Properties',
   'nav.post': 'Post Property',
   'nav.map': 'Map',
+  'nav.tools': 'Tools',
   'nav.dashboard': 'Dashboard',
   'nav.saved': 'Saved Searches',
   'nav.leads': 'Leads',

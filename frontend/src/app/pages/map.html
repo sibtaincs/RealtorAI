@@ -40,7 +40,7 @@
         @for (p of items(); track p.id) {
           <a class="result" [routerLink]="['/property', p.id]">
             <strong>{{ p.title }}</strong>
-            <span>{{ p.city }} · {{ formatPkr(p.price, p.listingType) }}</span>
+            <span>{{ p.city }} · {{ display.money(p.price, p.listingType) }}</span>
           </a>
         }
       }

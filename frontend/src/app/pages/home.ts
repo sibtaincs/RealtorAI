@@ -6,7 +6,8 @@ import { AiService } from '../core/ai.service';
 import { SavedSearchService } from '../core/saved-search.service';
 import { AuthService } from '../core/auth.service';
 import { PropertyCard } from '../shared/property-card';
-import { CITIES, PROPERTY_TYPES, PagedResult, PriceEstimate, PropertyDto, PropertyQuery, formatPkr } from '../core/models';
+import { CITIES, PROPERTY_TYPES, PagedResult, PriceEstimate, PropertyDto, PropertyQuery } from '../core/models';
+import { DisplayService } from '../core/display.service';
 
 /** Minimal shape of the browser Web Speech API used for voice search. */
 interface SpeechRecognizer {
@@ -34,7 +35,7 @@ export class Home implements OnInit {
 
   cities = CITIES;
   propertyTypes = PROPERTY_TYPES;
-  format = formatPkr;
+  display = inject(DisplayService);
 
   // filters
   search = '';

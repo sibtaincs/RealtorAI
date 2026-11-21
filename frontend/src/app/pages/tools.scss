@@ -1,0 +1,25 @@
+.tools-page { padding: 36px 20px; }
+
+.head { margin-bottom: 22px;
+  h1 { margin: 0 0 6px; font-size: 1.7rem; }
+  p { margin: 0; color: #64748b; font-size: .9rem; }
+}
+
+.tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.tool { display: flex; flex-direction: column; gap: 12px;
+  h2 { margin: 0; font-size: 1.05rem; }
+  .sub { margin: -8px 0 2px; color: #94a3b8; font-size: .8rem; }
+}
+
+.result { display: flex; flex-direction: column; gap: 3px; margin-top: auto;
+  padding: 14px 16px; border-radius: 12px; background: #ecfdf5; color: #065f46;
+  small { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
+  strong { font-size: 1.5rem; }
+  span { font-size: .78rem; }
+}
+
+.note { color: #94a3b8; font-size: .78rem; margin-top: 18px; }

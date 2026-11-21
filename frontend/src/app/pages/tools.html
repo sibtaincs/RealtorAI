@@ -1,0 +1,58 @@
+<section class="wrap tools-page">
+  <div class="head">
+    <h1>Property Tools</h1>
+    <p>Quick calculators for home loans, construction cost and area units.</p>
+  </div>
+
+  <div class="tool-grid">
+    <div class="panel tool">
+      <h2>🏦 Home Loan Calculator</h2>
+      <p class="sub">Estimate your monthly instalment.</p>
+      <div class="field"><label>Loan amount (PKR)</label><input type="number" min="0" [(ngModel)]="loanAmount" /></div>
+      <div class="field"><label>Interest rate (% per year)</label><input type="number" min="0" step="0.1" [(ngModel)]="loanRate" /></div>
+      <div class="field"><label>Term (years)</label><input type="number" min="1" [(ngModel)]="loanYears" /></div>
+      <div class="result">
+        <small>Monthly instalment</small>
+        <strong>{{ display.money(emi) }}</strong>
+        <span>Total payable {{ display.money(totalPayable) }}</span>
+        <span>Total interest {{ display.money(totalInterest) }}</span>
+      </div>
+    </div>
+
+    <div class="panel tool">
+      <h2>🏗 Construction Cost Calculator</h2>
+      <p class="sub">Rough build cost for a plot.</p>
+      <div class="field"><label>Area (sq ft)</label><input type="number" min="0" [(ngModel)]="buildAreaSqFt" /></div>
+      <div class="field"><label>Rate (PKR per sq ft)</label><input type="number" min="0" [(ngModel)]="buildRatePerSqFt" /></div>
+      <div class="result">
+        <small>Estimated build cost</small>
+        <strong>{{ display.money(buildCost) }}</strong>
+        <span>Area ≈ {{ display.area(null, buildAreaSqFt) }}</span>
+      </div>
+    </div>
+
+    <div class="panel tool">
+      <h2>📐 Area Unit Converter</h2>
+      <p class="sub">Marla, Kanal, square feet, yards and metres.</p>
+      <div class="field"><label>Value</label><input type="number" [(ngModel)]="convertValue" /></div>
+      <div class="field">
+        <label>From</label>
+        <select [(ngModel)]="convertFrom">
+          @for (u of areaUnits; track u) { <option [ngValue]="u">{{ u }}</option> }
+        </select>
+      </div>
+      <div class="field">
+        <label>To</label>
+        <select [(ngModel)]="convertTo">
+          @for (u of areaUnits; track u) { <option [ngValue]="u">{{ u }}</option> }
+        </select>
+      </div>
+      <div class="result">
+        <small>Converted value</small>
+        <strong>{{ converted | number:'1.0-4' }} {{ convertTo }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">Currency conversions use indicative rates for display only — not live market rates.</p>
+</section>

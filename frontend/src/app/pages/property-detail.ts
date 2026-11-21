@@ -13,6 +13,7 @@ import { ReviewService } from '../core/review.service';
 import { ModerationService } from '../core/moderation.service';
 import { assetUrl } from '../core/api';
 import { SeoService } from '../core/seo.service';
+import { DisplayService } from '../core/display.service';
 
 @Component({
   selector: 'app-property-detail',
@@ -29,6 +30,7 @@ export class PropertyDetail implements OnInit {
   private moderation = inject(ModerationService);
   private sanitizer = inject(DomSanitizer);
   private seo = inject(SeoService);
+  display = inject(DisplayService);
   auth = inject(AuthService);
 
   format = formatPkr;

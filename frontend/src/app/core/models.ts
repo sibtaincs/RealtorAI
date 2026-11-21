@@ -320,5 +320,5 @@ export function formatPkr(amount: number, listingType?: string): string {
   const suffix = listingType === 'Rent' ? '/month' : '';
   if (amount >= 1e7) return `${(amount / 1e7).toFixed(2).replace(/\.00$/, '')} crore PKR${suffix}`;
   if (amount >= 1e5) return `${(amount / 1e5).toFixed(2).replace(/\.00$/, '')} lakh PKR${suffix}`;
-  return `${amount.toLocaleString('en-PK')} PKR${suffix}`;
+  return `${Math.round(amount).toLocaleString('en-PK')} PKR${suffix}`;
 }

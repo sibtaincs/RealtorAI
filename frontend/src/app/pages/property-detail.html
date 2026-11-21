@@ -39,14 +39,13 @@
               <p class="location">📍 {{ p.address }} · 📄 {{ p.verifiedDocuments }}/{{ p.totalDocuments }} documents verified</p>
               @if (p.agentId) { <p class="agent-link"><a [routerLink]="['/agent', p.agentId]">👤 Agent profile dekhein</a></p> }
             </div>
-            <div class="price">{{ format(p.price, p.listingType) }}</div>
+            <div class="price">{{ display.money(p.price, p.listingType) }}</div>
           </div>
 
           <div class="specs">
             @if (p.bedrooms) { <div><span>🛏</span><strong>{{ p.bedrooms }}</strong><small>Bedrooms</small></div> }
             @if (p.bathrooms) { <div><span>🚿</span><strong>{{ p.bathrooms }}</strong><small>Bathrooms</small></div> }
-            @if (p.areaMarla) { <div><span>📐</span><strong>{{ p.areaMarla }}</strong><small>Marla</small></div> }
-            @if (p.areaSqFt) { <div><span>🏗</span><strong>{{ p.areaSqFt }}</strong><small>Sq Ft</small></div> }
+            @if (p.areaMarla || p.areaSqFt) { <div><span>📐</span><strong>{{ display.area(p.areaMarla, p.areaSqFt) }}</strong><small>Area</small></div> }
             <div><span>📍</span><strong>{{ p.city }}</strong><small>City</small></div>
           </div>
 

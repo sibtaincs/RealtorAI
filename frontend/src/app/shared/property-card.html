@@ -21,11 +21,11 @@
   <div class="body">
     <h3>{{ p.title }}</h3>
     <p class="location">📍 {{ p.locality }}, {{ p.city }}</p>
-    <div class="price">{{ format(p.price, p.listingType) }}</div>
+    <div class="price">{{ display.money(p.price, p.listingType) }}</div>
     <div class="meta">
       @if (p.bedrooms) { <span>🛏 {{ p.bedrooms }} beds</span> }
       @if (p.bathrooms) { <span>🚿 {{ p.bathrooms }} baths</span> }
-      @if (p.areaMarla) { <span>📐 {{ p.areaMarla }} marla</span> }
+      @if (p.areaMarla || p.areaSqFt) { <span>📐 {{ display.area(p.areaMarla, p.areaSqFt) }}</span> }
       <span class="type">{{ p.type }}</span>
     </div>
   </div>

@@ -70,8 +70,8 @@
       @if (estimateResult(); as e) {
         <div class="estimate-result">
           <small>Estimated value</small>
-          <strong>{{ format(e.estimatedPrice) }}</strong>
-          <span>Range: {{ format(e.low) }} – {{ format(e.high) }}</span>
+          <strong>{{ display.money(e.estimatedPrice) }}</strong>
+          <span>Range: {{ display.money(e.low) }} – {{ display.money(e.high) }}</span>
           <p>{{ e.basis }}</p>
         </div>
       }

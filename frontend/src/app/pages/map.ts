@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import type * as Leaflet from 'leaflet';
 import { PropertyService } from '../core/property.service';
-import { CITIES, PropertyDto, formatPkr as pkr } from '../core/models';
+import { CITIES, PropertyDto } from '../core/models';
+import { DisplayService } from '../core/display.service';
 
 @Component({
   selector: 'app-map',
@@ -16,6 +17,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   private props = inject(PropertyService);
   private router = inject(Router);
+  display = inject(DisplayService);
   private map?: Leaflet.Map;
   private markers?: Leaflet.LayerGroup;
 
@@ -25,7 +27,6 @@ export class MapPage implements AfterViewInit, OnDestroy {
   cities = CITIES;
   city = '';
   listingType = '';
-  formatPkr = pkr;
 
   async ngAfterViewInit(): Promise<void> {
     const L = await import('leaflet');
@@ -89,7 +90,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
     const title = document.createElement('strong');
     title.textContent = p.title;
     const price = document.createElement('div');
-    price.textContent = pkr(p.price, p.listingType);
+    price.textContent = this.display.money(p.price, p.listingType);
     const link = document.createElement('a');
     link.href = `/property/${p.id}`;
     link.textContent = 'View details →';

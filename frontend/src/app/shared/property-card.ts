@@ -1,7 +1,8 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PropertyDto, formatPkr } from '../core/models';
+import { PropertyDto } from '../core/models';
 import { assetUrl } from '../core/api';
+import { DisplayService } from '../core/display.service';
 
 @Component({
   selector: 'app-property-card',
@@ -11,6 +12,6 @@ import { assetUrl } from '../core/api';
 })
 export class PropertyCard {
   property = input.required<PropertyDto>();
-  format = formatPkr;
+  display = inject(DisplayService);
   imageUrl = assetUrl;
 }
