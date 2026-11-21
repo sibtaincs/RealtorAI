@@ -37,6 +37,7 @@
                 @if (p.isTrusted) { <span class="trust-badge">✅ Verified listing</span> }
               </h1>
               <p class="location">📍 {{ p.address }} · 📄 {{ p.verifiedDocuments }}/{{ p.totalDocuments }} documents verified</p>
+              @if (p.agentId) { <p class="agent-link"><a [routerLink]="['/agent', p.agentId]">👤 Agent profile dekhein</a></p> }
             </div>
             <div class="price">{{ format(p.price, p.listingType) }}</div>
           </div>
@@ -74,6 +75,64 @@
         }
 
         <app-document-checklist [propertyId]="p.id" />
+
+        <section class="panel reviews">
+          <h2>Reviews</h2>
+          @for (r of approvedReviews(); track r.id) {
+            <div class="review">
+              <div class="review-head"><strong>{{ r.authorName }}</strong><span>⭐ {{ r.rating }}/5</span></div>
+              <p>{{ r.comment }}</p>
+            </div>
+          } @empty {
+            <p class="hint">Is property par abhi koi approved review nahi hai.</p>
+          }
+
+          @if (auth.isLoggedIn()) {
+            <div class="review-forms">
+              @if (reviewDone()) {
+                <p class="success">Review bhej diya gaya — approve hone par yahan dikhega.</p>
+              } @else {
+                <h3>Review likhein</h3>
+                <div class="field">
+                  <label>Rating</label>
+                  <select [(ngModel)]="rating">
+                    <option [ngValue]="5">5 ⭐</option>
+                    <option [ngValue]="4">4 ⭐</option>
+                    <option [ngValue]="3">3 ⭐</option>
+                    <option [ngValue]="2">2 ⭐</option>
+                    <option [ngValue]="1">1 ⭐</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Comment</label>
+                  <textarea [(ngModel)]="reviewComment" maxlength="2000" placeholder="Apna tajurba share karein"></textarea>
+                </div>
+                @if (reviewError()) { <p class="error">{{ reviewError() }}</p> }
+                <button class="btn-primary" (click)="submitReview()" [disabled]="reviewSending()">
+                  {{ reviewSending() ? 'Bhej rahe hain...' : 'Submit review' }}
+                </button>
+              }
+
+              <div class="report-box">
+                <h3>Listing report karein</h3>
+                @if (reportDone()) {
+                  <p class="success">Report admin ko bhej diya gaya. Shukriya.</p>
+                } @else {
+                  <div class="field">
+                    <label>Reason</label>
+                    <input type="text" [(ngModel)]="reportReason" maxlength="500" placeholder="Kya galat hai?" />
+                  </div>
+                  @if (reportError()) { <p class="error">{{ reportError() }}</p> }
+                  <button class="mini-btn" (click)="submitReport()" [disabled]="reportSending()">
+                    {{ reportSending() ? 'Bhej rahe hain...' : 'Report listing' }}
+                  </button>
+                }
+              </div>
+            </div>
+          } @else {
+            <p class="hint">Review ya report bhejne ke liye <a routerLink="/login">login</a> karein.</p>
+          }
+        </section>
       </div>
 
       <aside class="side-col">

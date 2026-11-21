@@ -18,6 +18,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FollowUp> FollowUps => Set<FollowUp>();
     public DbSet<NotificationPreference> NotificationPreferences => Set<NotificationPreference>();
     public DbSet<NotificationDelivery> NotificationDeliveries => Set<NotificationDelivery>();
+    public DbSet<AgentProfile> AgentProfiles => Set<AgentProfile>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Report> Reports => Set<Report>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -78,6 +81,45 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<NotificationDelivery>(entity =>
         {
             entity.HasIndex(d => new { d.SavedSearchId, d.PropertyListingId, d.Channel }).IsUnique();
+        });
+
+        builder.Entity<AgentProfile>(entity =>
+        {
+            entity.HasKey(p => p.UserId);
+            entity.HasOne(p => p.User)
+                  .WithMany()
+                  .HasForeignKey(p => p.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.Property(p => p.Bio).HasMaxLength(1000);
+            entity.Property(p => p.Phone).HasMaxLength(50);
+        });
+
+        builder.Entity<Review>(entity =>
+        {
+            entity.HasOne(r => r.PropertyListing)
+                  .WithMany()
+                  .HasForeignKey(r => r.PropertyListingId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(r => r.Author)
+                  .WithMany()
+                  .HasForeignKey(r => r.AuthorId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(r => new { r.ModerationStatus, r.CreatedAt });
+            entity.Property(r => r.Comment).HasMaxLength(2000);
+        });
+
+        builder.Entity<Report>(entity =>
+        {
+            entity.HasOne(r => r.PropertyListing)
+                  .WithMany()
+                  .HasForeignKey(r => r.PropertyListingId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(r => r.Reporter)
+                  .WithMany()
+                  .HasForeignKey(r => r.ReporterId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(r => new { r.Status, r.CreatedAt });
+            entity.Property(r => r.Reason).HasMaxLength(500);
         });
     }
 }

@@ -47,7 +47,8 @@ public class PropertyService : IPropertyService
         p.CreatedAt,
         verified,
         total,
-        total > 0 && verified >= Math.Max(3, (int)Math.Ceiling(total * 0.6)));
+        total > 0 && verified >= Math.Max(3, (int)Math.Ceiling(total * 0.6)),
+        p.AgentId);
 
     public async Task<PagedResultDto<PropertyDto>> GetAsync(PropertyQueryDto query)
     {
@@ -84,6 +85,9 @@ public class PropertyService : IPropertyService
 
         if (query.MinMarla.HasValue)
             q = q.Where(p => p.AreaMarla >= query.MinMarla.Value);
+
+        if (!string.IsNullOrWhiteSpace(query.AgentId))
+            q = q.Where(p => p.AgentId == query.AgentId);
 
         if (query.MinLat.HasValue)
             q = q.Where(p => p.Latitude >= query.MinLat.Value);

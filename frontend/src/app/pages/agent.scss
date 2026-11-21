@@ -1,0 +1,19 @@
+.page { padding: 26px 20px 40px; }
+
+.profile { display: flex; gap: 22px; align-items: center; flex-wrap: wrap;
+  .photo { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; }
+  .fallback { display: grid; place-items: center; font-size: 2.4rem; background: #ecfdf5; }
+  h1 { margin: 0 0 6px; font-size: 1.6rem; }
+  .agency, .rating, .bio, .phone { margin: 4px 0; color: #475569; font-size: .9rem; }
+  .verified { font-size: .7rem; font-weight: 800; color: #15803d; background: #dcfce7; padding: 4px 10px; border-radius: 999px; vertical-align: middle; }
+}
+
+.listings { margin-top: 34px;
+  h2 { font-size: 1.4rem; margin-bottom: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 600px) { grid-template-columns: 1fr; }
+  }
+}
+
+.empty { text-align: center; padding: 40px; color: #64748b; }

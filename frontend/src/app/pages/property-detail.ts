@@ -6,8 +6,11 @@ import { PropertyService } from '../core/property.service';
 import { LeadService } from '../core/lead.service';
 import { PropertyCard } from '../shared/property-card';
 import { DocumentChecklist } from '../shared/document-checklist';
-import { PropertyDto, RiskReport, formatPkr } from '../core/models';
+import { PropertyDto, Review, RiskReport, formatPkr } from '../core/models';
 import { TrustService } from '../core/trust.service';
+import { AuthService } from '../core/auth.service';
+import { ReviewService } from '../core/review.service';
+import { ModerationService } from '../core/moderation.service';
 import { assetUrl } from '../core/api';
 
 @Component({
@@ -21,7 +24,10 @@ export class PropertyDetail implements OnInit {
   private properties = inject(PropertyService);
   private leads = inject(LeadService);
   private trust = inject(TrustService);
+  private reviews = inject(ReviewService);
+  private moderation = inject(ModerationService);
   private sanitizer = inject(DomSanitizer);
+  auth = inject(AuthService);
 
   format = formatPkr;
 
@@ -31,6 +37,17 @@ export class PropertyDetail implements OnInit {
   error = signal('');
   activeImage = signal(0);
   risk = signal<RiskReport | null>(null);
+  approvedReviews = signal<Review[]>([]);
+
+  rating = 5;
+  reviewComment = '';
+  reviewSending = signal(false);
+  reviewDone = signal(false);
+  reviewError = signal('');
+  reportReason = '';
+  reportSending = signal(false);
+  reportDone = signal(false);
+  reportError = signal('');
 
   name = '';
   email = '';
@@ -60,6 +77,11 @@ export class PropertyDetail implements OnInit {
       error: () => this.risk.set(null)
     });
 
+    this.reviews.list(id).subscribe({
+      next: items => this.approvedReviews.set(items),
+      error: () => this.approvedReviews.set([])
+    });
+
     this.properties.search({ pageSize: 12 }).subscribe(res => {
       this.similar.set(res.items
         .filter(p => p.id !== id)
@@ -79,6 +101,52 @@ export class PropertyDetail implements OnInit {
     const bbox = `${p.longitude - d},${p.latitude - d},${p.longitude + d},${p.latitude + d}`;
     const url = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${p.latitude},${p.longitude}`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  submitReview(): void {
+    const p = this.property();
+    if (!p || !this.reviewComment.trim()) {
+      this.reviewError.set('Comment likhna zaroori hai.');
+      return;
+    }
+    this.reviewSending.set(true);
+    this.reviewError.set('');
+    this.reviews.create({
+      propertyListingId: p.id, rating: this.rating, comment: this.reviewComment.trim()
+    }).subscribe({
+      next: () => {
+        this.reviewDone.set(true);
+        this.reviewComment = '';
+        this.reviewSending.set(false);
+      },
+      error: () => {
+        this.reviewError.set('Review submit nahi hui. Dobara try karein.');
+        this.reviewSending.set(false);
+      }
+    });
+  }
+
+  submitReport(): void {
+    const p = this.property();
+    if (!p || !this.reportReason.trim()) {
+      this.reportError.set('Reason likhna zaroori hai.');
+      return;
+    }
+    this.reportSending.set(true);
+    this.reportError.set('');
+    this.moderation.report({
+      propertyListingId: p.id, reason: this.reportReason.trim()
+    }).subscribe({
+      next: () => {
+        this.reportDone.set(true);
+        this.reportReason = '';
+        this.reportSending.set(false);
+      },
+      error: () => {
+        this.reportError.set('Report submit nahi hua. Dobara try karein.');
+        this.reportSending.set(false);
+      }
+    });
   }
 
   sendInquiry(): void {

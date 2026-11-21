@@ -1,0 +1,35 @@
+<div class="wrap page">
+  @if (loading()) {
+    <div class="panel">Loading profile...</div>
+  } @else if (error()) {
+    <div class="panel empty">{{ error() }}</div>
+  } @else if (profile(); as agent) {
+    <div class="panel profile">
+      @if (agent.photoUrl) {
+        <img class="photo" [src]="assetUrl(agent.photoUrl)" [alt]="agent.fullName" />
+      } @else {
+        <div class="photo fallback">🏠</div>
+      }
+      <div class="info">
+        <h1>{{ agent.fullName }} @if (agent.verified) { <span class="verified">✅ Verified agent</span> }</h1>
+        <p class="agency">{{ agent.agencyName }}</p>
+        <p class="rating">⭐ {{ agent.ratingAvg }} · {{ agent.ratingCount }} approved reviews</p>
+        <p class="bio">{{ agent.bio }}</p>
+        @if (agent.phone) { <p class="phone">📞 {{ agent.phone }}</p> }
+      </div>
+    </div>
+
+    <section class="listings">
+      <h2>Listings by {{ agent.fullName }}</h2>
+      @if (listings().length === 0) {
+        <div class="panel empty">Abhi koi listing nahi hai.</div>
+      } @else {
+        <div class="grid">
+          @for (item of listings(); track item.id) {
+            <app-property-card [property]="item" />
+          }
+        </div>
+      }
+    </section>
+  }
+</div>

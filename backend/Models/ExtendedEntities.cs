@@ -68,3 +68,43 @@ public class NotificationDelivery
     public string Channel { get; set; } = string.Empty;
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
 }
+
+public class AgentProfile
+{
+    public string UserId { get; set; } = string.Empty;
+    public ApplicationUser User { get; set; } = null!;
+
+    public string Bio { get; set; } = string.Empty;
+    public string? Phone { get; set; }
+    public string? PhotoUrl { get; set; }
+    public bool Verified { get; set; }
+    public double RatingAvg { get; set; }
+    public int RatingCount { get; set; }
+}
+
+public class Review
+{
+    public int Id { get; set; }
+    public int PropertyListingId { get; set; }
+    public PropertyListing PropertyListing { get; set; } = null!;
+    public string AuthorId { get; set; } = string.Empty;
+    public ApplicationUser Author { get; set; } = null!;
+
+    public int Rating { get; set; }
+    public string Comment { get; set; } = string.Empty;
+    public ReviewModerationStatus ModerationStatus { get; set; } = ReviewModerationStatus.Pending;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+public class Report
+{
+    public int Id { get; set; }
+    public int PropertyListingId { get; set; }
+    public PropertyListing PropertyListing { get; set; } = null!;
+    public string ReporterId { get; set; } = string.Empty;
+    public ApplicationUser Reporter { get; set; } = null!;
+
+    public string Reason { get; set; } = string.Empty;
+    public ReportStatus Status { get; set; } = ReportStatus.Open;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}

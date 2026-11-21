@@ -21,6 +21,7 @@ export interface PropertyDto {
   verifiedDocuments: number;
   totalDocuments: number;
   isTrusted: boolean;
+  agentId?: string | null;
 }
 
 export interface PagedResult<T> {
@@ -49,6 +50,7 @@ export interface PropertyQuery {
   centerLat?: number;
   centerLng?: number;
   radiusKm?: number;
+  agentId?: string;
 }
 
 export interface PropertyInput {
@@ -276,6 +278,39 @@ export interface NotificationPreferences {
   inAppEnabled: boolean;
   emailEnabled: boolean;
   whatsappEnabled: boolean;
+}
+
+// ---------- Phase 3: agent profiles, reviews and moderation ----------
+
+export interface AgentProfile {
+  userId: string;
+  fullName: string;
+  agencyName: string;
+  bio: string;
+  phone: string | null;
+  photoUrl: string | null;
+  verified: boolean;
+  ratingAvg: number;
+  ratingCount: number;
+}
+
+export interface Review {
+  id: number;
+  propertyListingId: number;
+  authorName: string;
+  rating: number;
+  comment: string;
+  moderationStatus: string;
+  createdAt: string;
+}
+
+export interface Report {
+  id: number;
+  propertyListingId: number;
+  reporterName: string;
+  reason: string;
+  status: string;
+  createdAt: string;
 }
 
 export const PROPERTY_TYPES = ['House', 'Plot', 'Apartment', 'Shop', 'Office', 'Villa', 'Farmhouse'];

@@ -42,29 +42,112 @@ public static class DbSeeder
                 await users.AddToRoleAsync(admin, "Admin");
         }
 
-        if (await db.Properties.AnyAsync()) return;
-
-        var listings = BuildSeedListings();
-        foreach (var listing in listings)
-            listing.AgentId = admin?.Id;
-
-        db.Properties.AddRange(listings);
-        await db.SaveChangesAsync();
-
-        foreach (var listing in listings)
+        var agentEmail = "agent@realestateai.pk";
+        var agent = await users.FindByEmailAsync(agentEmail);
+        if (agent is null)
         {
-            var names = DocumentDefaults.For(listing.Type, listing.ListingType);
-            for (var i = 0; i < names.Count; i++)
+            agent = new ApplicationUser
             {
-                db.DocumentChecklist.Add(new DocumentChecklistItem
+                UserName = agentEmail,
+                Email = agentEmail,
+                FullName = "Ayesha Khan",
+                AgencyName = "RealEstate AI"
+            };
+            var created = await users.CreateAsync(agent, "Agent@123");
+            if (created.Succeeded)
+                await users.AddToRoleAsync(agent, "Agent");
+        }
+
+        if (admin is not null && agent is not null && !await db.AgentProfiles.AnyAsync())
+        {
+            db.AgentProfiles.AddRange(
+                new AgentProfile
                 {
-                    PropertyListingId = listing.Id,
-                    Name = names[i],
-                    SortOrder = i
+                    UserId = admin.Id, Bio = "RealEstate AI lead agent. Helping buyers and sellers across Pakistan.",
+                    Phone = "+92 300 1234567", Verified = true
+                },
+                new AgentProfile
+                {
+                    UserId = agent.Id, Bio = "Lahore-based property specialist with 8 years of experience.",
+                    Phone = "+92 301 7654321", Verified = true, RatingAvg = 4.5, RatingCount = 2
                 });
+            await db.SaveChangesAsync();
+        }
+
+        if (!await db.Properties.AnyAsync())
+        {
+            var listings = BuildSeedListings();
+            for (var i = 0; i < listings.Count; i++)
+                listings[i].AgentId = i < 3 ? agent?.Id : admin?.Id;
+
+            db.Properties.AddRange(listings);
+            await db.SaveChangesAsync();
+
+            foreach (var listing in listings)
+            {
+                var names = DocumentDefaults.For(listing.Type, listing.ListingType);
+                for (var i = 0; i < names.Count; i++)
+                {
+                    db.DocumentChecklist.Add(new DocumentChecklistItem
+                    {
+                        PropertyListingId = listing.Id,
+                        Name = names[i],
+                        SortOrder = i
+                    });
+                }
+            }
+            await db.SaveChangesAsync();
+        }
+
+        // Existing databases were seeded before agents existed — give the demo agent a few listings.
+        if (agent is not null && !await db.Properties.AnyAsync(p => p.AgentId == agent.Id))
+        {
+            var owned = await db.Properties.OrderBy(p => p.Id).Take(3).ToListAsync();
+            foreach (var listing in owned) listing.AgentId = agent.Id;
+            await db.SaveChangesAsync();
+        }
+
+        if (admin is not null && agent is not null && !await db.Reviews.AnyAsync())
+        {
+            var listing = await db.Properties.OrderBy(p => p.Id).FirstOrDefaultAsync();
+            if (listing is not null)
+            {
+                db.Reviews.AddRange(
+                    new Review
+                    {
+                        PropertyListingId = listing.Id, AuthorId = admin.Id, Rating = 5,
+                        Comment = "Great communication and honest advice throughout the site visit.",
+                        ModerationStatus = ReviewModerationStatus.Approved
+                    },
+                    new Review
+                    {
+                        PropertyListingId = listing.Id, AuthorId = agent.Id, Rating = 4,
+                        Comment = "Very smooth process, documents were ready on time.",
+                        ModerationStatus = ReviewModerationStatus.Approved
+                    },
+                    new Review
+                    {
+                        PropertyListingId = listing.Id, AuthorId = admin.Id, Rating = 3,
+                        Comment = "Awaiting moderation seed.",
+                        ModerationStatus = ReviewModerationStatus.Pending
+                    });
+                await db.SaveChangesAsync();
             }
         }
-        await db.SaveChangesAsync();
+
+        if (agent is not null && !await db.Reports.AnyAsync())
+        {
+            var listing = await db.Properties.OrderBy(p => p.Id).FirstOrDefaultAsync();
+            if (listing is not null)
+            {
+                db.Reports.Add(new Report
+                {
+                    PropertyListingId = listing.Id, ReporterId = agent.Id,
+                    Reason = "Please verify the advertised area before approval."
+                });
+                await db.SaveChangesAsync();
+            }
+        }
     }
 
     private static List<PropertyListing> BuildSeedListings()

@@ -24,7 +24,8 @@ public record PropertyDto(
     DateTime CreatedAt,
     int VerifiedDocuments = 0,
     int TotalDocuments = 0,
-    bool IsTrusted = false);
+    bool IsTrusted = false,
+    string? AgentId = null);
 
 public record PropertyInputDto(
     string Title,
@@ -62,7 +63,8 @@ public record PropertyQueryDto(
     double? MaxLng = null,
     double? CenterLat = null,
     double? CenterLng = null,
-    double? RadiusKm = null);
+    double? RadiusKm = null,
+    string? AgentId = null);
 
 public record PagedResultDto<T>(IReadOnlyList<T> Items, int Total, int Page, int PageSize);
 
@@ -321,3 +323,42 @@ public record UpdateNotificationPreferenceDto(
     bool InAppEnabled,
     bool EmailEnabled,
     bool WhatsAppEnabled);
+
+// ---------- Phase 3: trust, reviews and moderation ----------
+
+public record AgentProfileDto(
+    string UserId,
+    string FullName,
+    string AgencyName,
+    string Bio,
+    string? Phone,
+    string? PhotoUrl,
+    bool Verified,
+    double RatingAvg,
+    int RatingCount);
+
+public record ReviewDto(
+    int Id,
+    int PropertyListingId,
+    string AuthorName,
+    int Rating,
+    string Comment,
+    string ModerationStatus,
+    DateTime CreatedAt);
+
+public record CreateReviewDto(
+    int PropertyListingId,
+    int Rating,
+    string Comment);
+
+public record ReportDto(
+    int Id,
+    int PropertyListingId,
+    string ReporterName,
+    string Reason,
+    string Status,
+    DateTime CreatedAt);
+
+public record CreateReportDto(
+    int PropertyListingId,
+    string Reason);

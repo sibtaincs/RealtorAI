@@ -33,3 +33,17 @@ public enum LeadStatus
     Closed,
     Lost
 }
+
+public enum ReviewModerationStatus
+{
+    Pending,
+    Approved,
+    Rejected
+}
+
+public enum ReportStatus
+{
+    Open,
+    Resolved,
+    Dismissed
+}

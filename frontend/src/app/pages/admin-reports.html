@@ -1,0 +1,53 @@
+<div class="wrap page">
+  @if (!auth.isAdmin()) {
+    <div class="panel gate">
+      <h1>Admin access only</h1>
+      <p>Moderation queue dekhne ke liye admin account se login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head"><h1>Reports & Moderation</h1><p>Approve hone tak nayi reviews public nahi dikhti.</p></div>
+    @if (error()) { <p class="error">{{ error() }}</p> }
+
+    <section class="panel">
+      <h2>Pending reviews</h2>
+      @if (pending().length === 0) {
+        <p class="hint">Koi pending review nahi hai.</p>
+      } @else {
+        @for (r of pending(); track r.id) {
+          <div class="row">
+            <div class="body">
+              <strong>{{ r.authorName }} · ⭐ {{ r.rating }}/5</strong>
+              <p>{{ r.comment }}</p>
+              <small>Property <a [routerLink]="['/property', r.propertyListingId]">#{{ r.propertyListingId }}</a> · {{ r.createdAt | date:'short' }}</small>
+            </div>
+            <div class="actions">
+              <button class="btn-primary" [disabled]="working() === r.id" (click)="decide(r.id, 'approve')">Approve</button>
+              <button class="mini-btn" [disabled]="working() === r.id" (click)="decide(r.id, 'reject')">Reject</button>
+            </div>
+          </div>
+        }
+      }
+    </section>
+
+    <section class="panel">
+      <h2>Open reports</h2>
+      @if (reports().length === 0) {
+        <p class="hint">Koi open report nahi hai.</p>
+      } @else {
+        @for (r of reports(); track r.id) {
+          <div class="row">
+            <div class="body">
+              <strong>Reported by {{ r.reporterName }}</strong>
+              <p>{{ r.reason }}</p>
+              <small>Property <a [routerLink]="['/property', r.propertyListingId]">#{{ r.propertyListingId }}</a> · {{ r.createdAt | date:'short' }}</small>
+            </div>
+            <div class="actions">
+              <button class="mini-btn" [disabled]="working() === r.id" (click)="resolve(r.id)">Resolve</button>
+            </div>
+          </div>
+        }
+      }
+    </section>
+  }
+</div>

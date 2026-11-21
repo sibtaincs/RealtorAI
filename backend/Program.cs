@@ -91,6 +91,10 @@ builder.Services.AddScoped<INotificationPreferenceService, NotificationPreferenc
 builder.Services.AddScoped<IAlertDeliveryService, AlertDeliveryService>();
 builder.Services.AddScoped<ITrustService, TrustService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IAgentService, AgentService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IModerationService, ModerationService>();
 builder.Services.AddHostedService<AlertWorker>();
 
 builder.Services.AddControllers()
