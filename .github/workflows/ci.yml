@@ -68,7 +68,7 @@ jobs:
           --no-build --verbosity minimal
 
   frontend:
-    name: Frontend build
+    name: Frontend build + tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -86,6 +86,10 @@ jobs:
       - name: Build
         working-directory: frontend
         run: npm run build
+
+      - name: Test
+        working-directory: frontend
+        run: npm test
 
       - uses: actions/upload-artifact@v4
         with:

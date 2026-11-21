@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RealEstateAI.Api.Data;
+using RealEstateAI.Api.Middleware;
 using RealEstateAI.Api.Models;
 using RealEstateAI.Api.Services;
 
@@ -75,6 +76,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddHttpClient();
+builder.Services.AddSingleton<RequestMetrics>();
 
 // Application services
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -112,7 +114,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AngularClient", policy =>
         policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .WithExposedHeaders("X-Correlation-Id"));
 });
 
 var app = builder.Build();
@@ -133,6 +136,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<RequestObservabilityMiddleware>();
 app.UseStaticFiles();
 app.UseCors("AngularClient");
 app.UseAuthentication();
@@ -149,7 +153,12 @@ app.MapGet("/", () => Results.Ok(new
 }));
 
 // Lightweight liveness probe used by Render's health check and uptime monitors.
-app.MapGet("/api/health", () => Results.Ok(new { status = "ok", time = DateTime.UtcNow }));
+app.MapGet("/api/health", (RequestMetrics metrics) => Results.Ok(new
+{
+    status = "ok",
+    time = DateTime.UtcNow,
+    metrics = metrics.Snapshot()
+}));
 
 app.MapControllers();
 

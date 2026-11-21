@@ -96,6 +96,15 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "buildTarget": "real-estate-ai:build:development",
+            "providersFile": "src/test-providers.ts",
+            "watch": false
+          }
         }
       }
     }

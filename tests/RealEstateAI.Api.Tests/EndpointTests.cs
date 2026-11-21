@@ -18,6 +18,25 @@ public sealed class EndpointTests(ApiFixture fixture)
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         Assert.Equal("ok", body.RootElement.GetProperty("status").GetString());
+        Assert.True(body.RootElement.GetProperty("metrics").GetProperty("total").GetInt64() >= 1);
+        Assert.True(body.RootElement.GetProperty("metrics").GetProperty("byStatusClass")
+            .TryGetProperty("2xx", out _));
+    }
+
+    [Fact]
+    public async Task Correlation_id_is_generated_and_echoed()
+    {
+        var generated = await _client.GetAsync("/api/health");
+        Assert.True(generated.Headers.Contains("X-Correlation-Id"));
+        Assert.False(string.IsNullOrWhiteSpace(
+            generated.Headers.GetValues("X-Correlation-Id").Single()));
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/health");
+        request.Headers.Add("X-Correlation-Id", "m6-test-correlation");
+        var echoed = await _client.SendAsync(request);
+
+        Assert.Equal("m6-test-correlation",
+            echoed.Headers.GetValues("X-Correlation-Id").Single());
     }
 
     [Fact]
@@ -111,5 +130,8 @@ public sealed class EndpointTests(ApiFixture fixture)
 
         Assert.Equal("http://localhost:4200",
             response.Headers.GetValues("Access-Control-Allow-Origin").Single());
+        Assert.Contains("X-Correlation-Id",
+            response.Headers.GetValues("Access-Control-Expose-Headers").Single()
+                .Split(',', StringSplitOptions.TrimEntries));
     }
 }
