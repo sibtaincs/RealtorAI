@@ -1,0 +1,47 @@
+<div class="wrap page">
+  @if (!auth.isAdmin()) {
+    <div class="panel gate">
+      <h1>Admin access only</h1>
+      <p>Site content manage karne ke liye admin account se login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <h1>Site Content</h1>
+      <p>Projects, agencies, area guides and tools content — all stored in the database.</p>
+    </div>
+
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    @if (message()) { <p class="ok">{{ message() }}</p> }
+
+    <div class="kinds panel">
+      @for (k of kinds; track k) {
+        <button class="chip" [class.active]="kind() === k" (click)="selectKind(k)">{{ k }}</button>
+      }
+    </div>
+
+    <section class="panel editor">
+      <h2>{{ editingId() ? 'Edit' : 'Add' }} {{ kind() }} item</h2>
+      <textarea [(ngModel)]="draft" rows="10" spellcheck="false" aria-label="Content JSON"></textarea>
+      <div class="actions">
+        <button class="btn-primary" [disabled]="busy()" (click)="save()">Save</button>
+        @if (editingId()) { <button class="mini-btn" (click)="cancel()">Cancel</button> }
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>{{ kind() }} items ({{ filtered().length }})</h2>
+      @for (item of filtered(); track item.id) {
+        <div class="row">
+          <code>{{ item.payloadJson }}</code>
+          <div class="actions">
+            <button class="mini-btn" (click)="edit(item)">Edit</button>
+            <button class="mini-btn danger" [disabled]="busy()" (click)="remove(item.id)">Delete</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="hint">Is section ka abhi koi content nahi hai.</p>
+      }
+    </section>
+  }
+</div>

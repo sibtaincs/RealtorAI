@@ -154,6 +154,34 @@ public sealed class EndpointTests(ApiFixture fixture)
     }
 
     [Fact]
+    public async Task Content_is_served_by_kind()
+    {
+        var response = await _client.GetAsync("/api/content?kind=area-guide");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var items = body.RootElement.EnumerateArray().ToList();
+
+        Assert.NotEmpty(items);
+        Assert.All(items, item =>
+        {
+            Assert.Equal("area-guide", item.GetProperty("kind").GetString());
+            using var payload = JsonDocument.Parse(item.GetProperty("payloadJson").GetString()!);
+            Assert.True(payload.RootElement.TryGetProperty("pricePerSqFt", out _));
+        });
+    }
+
+    [Fact]
+    public async Task Unknown_content_kind_returns_empty_list()
+    {
+        var response = await _client.GetAsync("/api/content?kind=does-not-exist");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Empty(body.RootElement.EnumerateArray());
+    }
+
+    [Fact]
     public async Task Allowed_frontend_origin_is_reflected_in_cors_headers()
     {
         using var client = fixture.Factory.CreateClient();

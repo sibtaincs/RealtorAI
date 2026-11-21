@@ -1,6 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AGENCIES } from '../core/directory.data';
+import { ContentService } from '../core/content.service';
+import { Agency } from '../core/directory.data';
 import { CITIES } from '../core/models';
 
 @Component({
@@ -9,14 +10,19 @@ import { CITIES } from '../core/models';
   templateUrl: './agencies.html',
   styleUrl: './directory.scss'
 })
-export class AgenciesPage {
+export class AgenciesPage implements OnInit {
+  private content = inject(ContentService);
   cities = CITIES;
-  agencies = AGENCIES;
+  agencies = signal<Agency[]>([]);
   city = signal('');
   propertyTypes = ['Residential', 'Plots', 'Apartments', 'Commercial', 'Houses', 'Rentals', 'Farms'];
   propertyType = signal('');
 
-  filtered = computed(() => this.agencies.filter(a =>
+  ngOnInit(): void {
+    this.content.list<Agency>('agency').subscribe(items => this.agencies.set(items));
+  }
+
+  filtered = computed(() => this.agencies().filter(a =>
     (!this.city() || a.city === this.city()) &&
     (!this.propertyType() || a.specialty.toLowerCase().includes(this.propertyType().toLowerCase()))
   ));

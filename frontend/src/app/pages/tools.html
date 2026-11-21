@@ -66,21 +66,21 @@
 
     <div class="panel tool" id="valuation">
       <h2>🏷 Z-Value</h2>
-      <p class="sub">Sample estimate based on area guide rates.</p>
+      <p class="sub">Indicative estimate based on area guide rates.</p>
       <div class="field">
         <label>Area</label>
-        <select [(ngModel)]="valuationArea">
-          @for (a of valuationAreas; track a.name) { <option [value]="a.name">{{ a.name }} · {{ a.city }}</option> }
+        <select [ngModel]="valuationArea()" (ngModelChange)="valuationArea.set($event)">
+          @for (a of valuationAreas(); track a.name) { <option [value]="a.name">{{ a.name }} · {{ a.city }}</option> }
         </select>
       </div>
       <div class="field"><label>Property area (sq ft)</label><input type="number" min="0" [(ngModel)]="valuationSqFt" /></div>
       <div class="result">
         <small>Estimated value</small>
         <strong>{{ display.money(estimatedValue) }}</strong>
-        <span>Sample rate {{ display.money(valuationRate) }}/sq ft — not an appraisal.</span>
+        <span>Area rate {{ display.money(valuationRate) }}/sq ft — not an appraisal.</span>
       </div>
     </div>
   </div>
 
-  <p class="note">Valuation and market figures use seeded sample data for guidance only — not live rates or an appraisal.</p>
+  <p class="note">Valuation and market figures are admin-managed guidance only — not live rates or an appraisal.</p>
 </section>

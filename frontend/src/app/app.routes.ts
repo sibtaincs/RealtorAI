@@ -17,5 +17,6 @@ export const routes: Routes = [
   { path: 'shortlist', loadComponent: () => import('./pages/shortlist').then(m => m.ShortlistPage) },
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
   { path: 'admin/reports', loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },
+  { path: 'admin/content', loadComponent: () => import('./pages/admin-content').then(m => m.AdminContent) },
   { path: '**', redirectTo: '' }
 ];

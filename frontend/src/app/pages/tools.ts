@@ -1,9 +1,10 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
-import { AREA_GUIDES } from '../core/market.data';
+import { AreaGuide } from '../core/market.data';
 import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateValue, monthlyInstallment } from '../core/tools';
 
 @Component({
@@ -12,8 +13,9 @@ import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateV
   templateUrl: './tools.html',
   styleUrl: './tools.scss'
 })
-export class ToolsPage {
+export class ToolsPage implements OnInit {
   display = inject(DisplayService);
+  private content = inject(ContentService);
   areaUnits = TOOL_AREA_UNITS;
 
   toolLinks = [
@@ -28,8 +30,8 @@ export class ToolsPage {
     { icon: '📊', label: 'Property Price Index', route: '/market', fragment: 'price-index' }
   ];
 
-  valuationAreas = AREA_GUIDES;
-  valuationArea = AREA_GUIDES[0].name;
+  valuationAreas = signal<AreaGuide[]>([]);
+  valuationArea = signal('');
   valuationSqFt = 2250;
 
   loanAmount = 5000000;
@@ -43,7 +45,14 @@ export class ToolsPage {
   convertFrom: ToolAreaUnit = 'Marla';
   convertTo: ToolAreaUnit = 'Sq Ft';
 
-  get valuationRate(): number { return this.valuationAreas.find(a => a.name === this.valuationArea)?.pricePerSqFt ?? 0; }
+  ngOnInit(): void {
+    this.content.list<AreaGuide>('area-guide').subscribe(items => {
+      this.valuationAreas.set(items);
+      if (items.length && !items.some(a => a.name === this.valuationArea())) this.valuationArea.set(items[0].name);
+    });
+  }
+
+  get valuationRate(): number { return this.valuationAreas().find(a => a.name === this.valuationArea())?.pricePerSqFt ?? 0; }
   get estimatedValue(): number { return estimateValue(this.valuationSqFt, this.valuationRate); }
   get emi(): number { return monthlyInstallment(this.loanAmount, this.loanRate, this.loanYears); }
   get totalPayable(): number { return this.emi * this.loanYears * 12; }

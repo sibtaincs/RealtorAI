@@ -20,9 +20,12 @@ describe('tools hub', () => {
     expect(page.toolLinks.map(l => l.fragment)).toContain('land-records');
   });
 
-  it('estimates value from the selected sample area rate', () => {
+  it('estimates value from the selected area rate', () => {
     const page = TestBed.createComponent(ToolsPage).componentInstance;
-    page.valuationArea = 'DHA Phase 6';
+    page.valuationAreas.set([
+      { city: 'Lahore', name: 'DHA Phase 6', summary: '', pricePerSqFt: 18000, safety: '', commute: '', schools: '' }
+    ]);
+    page.valuationArea.set('DHA Phase 6');
     page.valuationSqFt = 1000;
     expect(page.valuationRate).toBe(18000);
     expect(page.estimatedValue).toBe(18_000_000);

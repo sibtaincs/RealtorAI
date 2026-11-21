@@ -21,6 +21,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AgentProfile> AgentProfiles => Set<AgentProfile>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Report> Reports => Set<Report>();
+    public DbSet<ContentItem> ContentItems => Set<ContentItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -120,6 +121,12 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(r => new { r.Status, r.CreatedAt });
             entity.Property(r => r.Reason).HasMaxLength(500);
+        });
+
+        builder.Entity<ContentItem>(entity =>
+        {
+            entity.HasIndex(c => c.Kind);
+            entity.Property(c => c.Kind).HasMaxLength(50);
         });
     }
 }

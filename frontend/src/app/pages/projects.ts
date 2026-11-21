@@ -1,7 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
-import { NEW_PROJECTS } from '../core/directory.data';
+import { NewProject } from '../core/directory.data';
 import { CITIES } from '../core/models';
 
 @Component({
@@ -10,16 +11,21 @@ import { CITIES } from '../core/models';
   templateUrl: './projects.html',
   styleUrl: './directory.scss'
 })
-export class ProjectsPage {
+export class ProjectsPage implements OnInit {
   display = inject(DisplayService);
+  private content = inject(ContentService);
   cities = CITIES;
-  projects = NEW_PROJECTS;
+  projects = signal<NewProject[]>([]);
   statuses = ['Launching', 'Under Construction', 'Nearing Completion'];
 
   city = signal('');
   status = signal('');
 
-  filtered = computed(() => this.projects.filter(p =>
+  ngOnInit(): void {
+    this.content.list<NewProject>('project').subscribe(items => this.projects.set(items));
+  }
+
+  filtered = computed(() => this.projects().filter(p =>
     (!this.city() || p.city === this.city()) &&
     (!this.status() || p.status === this.status())));
 }

@@ -363,3 +363,15 @@ public record ReportDto(
 public record CreateReportDto(
     int PropertyListingId,
     string Reason);
+
+// ---------- Admin-managed site content ----------
+
+public record ContentItemDto(
+    int Id,
+    string Kind,
+    string PayloadJson,
+    DateTime UpdatedAt);
+
+public record ContentUpsertDto(
+    string Kind,
+    string PayloadJson);

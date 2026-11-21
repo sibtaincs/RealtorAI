@@ -1,8 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
-import { COMMUNITY_ARTICLES, LAND_RECORDS, SOCIETIES } from '../core/explore.data';
+import { CommunityArticle, LandRecord, Society } from '../core/explore.data';
 import { CITIES } from '../core/models';
 
 @Component({
@@ -11,11 +12,13 @@ import { CITIES } from '../core/models';
   templateUrl: './explore.html',
   styleUrl: './directory.scss'
 })
-export class ExplorePage {
+export class ExplorePage implements OnInit {
   display = inject(DisplayService);
+  private content = inject(ContentService);
   cities = CITIES;
-  societies = SOCIETIES;
-  articles = COMMUNITY_ARTICLES;
+  societies = signal<Society[]>([]);
+  articles = signal<CommunityArticle[]>([]);
+  landRecords = signal<LandRecord[]>([]);
 
   city = signal('');
   category = signal('');
@@ -24,11 +27,17 @@ export class ExplorePage {
 
   categories = ['News', 'Guide', 'Community'];
 
-  filteredSocieties = computed(() => this.societies.filter(s => !this.city() || s.city === this.city()));
-  filteredArticles = computed(() => this.articles.filter(a => !this.category() || a.category === this.category()));
+  ngOnInit(): void {
+    this.content.list<Society>('society').subscribe(items => this.societies.set(items));
+    this.content.list<CommunityArticle>('article').subscribe(items => this.articles.set(items));
+    this.content.list<LandRecord>('land-record').subscribe(items => this.landRecords.set(items));
+  }
+
+  filteredSocieties = computed(() => this.societies().filter(s => !this.city() || s.city === this.city()));
+  filteredArticles = computed(() => this.articles().filter(a => !this.category() || a.category === this.category()));
   record = computed(() => {
     const plot = this.recordPlot().trim().toLowerCase();
     if (!plot) return null;
-    return LAND_RECORDS.find(r => r.city === this.recordCity() && r.plot.toLowerCase() === plot) ?? null;
+    return this.landRecords().find(r => r.city === this.recordCity() && r.plot.toLowerCase() === plot) ?? null;
   });
 }
