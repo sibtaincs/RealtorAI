@@ -1,0 +1,136 @@
+<div class="wrap dashboard-page">
+  @if (!auth.isLoggedIn()) {
+    <div class="panel gate">
+      <h1>Agent workspace</h1>
+      <p>Dashboard dekhne ke liye apne agent account se login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <div>
+        <h1>Agent Dashboard</h1>
+        <p>Aaj ka overview — leads, response time aur listing quality.</p>
+      </div>
+      <a routerLink="/leads" class="head-link">Full leads inbox →</a>
+    </div>
+
+    @if (error()) { <p class="error">{{ error() }}</p> }
+
+    @if (summary(); as s) {
+      <section class="kpis">
+        <div class="kpi">
+          <span class="label">New leads · 7 days</span>
+          <strong>{{ s.newLeads7Days }}</strong>
+          <span class="sub">of {{ s.totalLeads }} total</span>
+        </div>
+        <div class="kpi hot">
+          <span class="label">🔥 Hot leads</span>
+          <strong>{{ s.hotLeads }}</strong>
+          <span class="sub">{{ s.warmLeads }} warm · {{ s.coldLeads }} cold</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Avg first response</span>
+          <strong>{{ s.averageFirstResponseHours }}h</strong>
+          <span class="sub">from inquiry to first follow-up</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Active listings</span>
+          <strong>{{ s.activeListings }}</strong>
+          <span class="sub">{{ s.verifiedListings }} verified</span>
+        </div>
+        <div class="kpi">
+          <span class="label">Unread alerts</span>
+          <strong>{{ s.unreadNotifications }}</strong>
+          <span class="sub">saved-search notifications</span>
+        </div>
+      </section>
+    }
+
+    <div class="dashboard-grid">
+      <section class="panel queue">
+        <div class="section-head">
+          <div>
+            <h2>Priority leads</h2>
+            <p>Score ke hisaab se sorted — pehle hot leads call karein.</p>
+          </div>
+          <div class="filters">
+            @for (t of temperatures; track t) {
+              <button type="button" class="chip" [class.selected]="temperature === t" (click)="filterBy(t)">
+                {{ t }}
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (loading()) {
+          <p class="hint">Loading leads...</p>
+        } @else if (leads().length === 0) {
+          <p class="hint">Is filter mein koi lead nahi.</p>
+        } @else {
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Score</th><th>Property</th><th>Status</th><th>Date</th></tr>
+              </thead>
+              <tbody>
+                @for (lead of leads(); track lead.id) {
+                  <tr>
+                    <td><strong>{{ lead.name }}</strong><br /><span class="muted">{{ lead.phone }}</span></td>
+                    <td><span class="score" [class]="'score score-' + lead.scoreLabel.toLowerCase()">{{ lead.score }} · {{ lead.scoreLabel }}</span></td>
+                    <td>{{ lead.propertyTitle ?? 'General inquiry' }}</td>
+                    <td>{{ lead.status }}</td>
+                    <td class="muted">{{ lead.createdAt | date: 'dd MMM, HH:mm' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="pager">
+            <button type="button" class="mini-btn" [disabled]="page === 1" (click)="previousPage()">← Previous</button>
+            <span>Page {{ page }} · {{ total }} leads</span>
+            <button type="button" class="mini-btn" [disabled]="page * pageSize >= total" (click)="nextPage()">Next →</button>
+          </div>
+        }
+      </section>
+
+      <section class="panel listings">
+        <div class="section-head">
+          <div>
+            <h2>Listing performance</h2>
+            <p>Inquiries aur document verification status.</p>
+          </div>
+        </div>
+        @if (listings().length === 0) {
+          <p class="hint">Abhi koi listing nahi.</p>
+        } @else {
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Listing</th><th>Leads</th><th>Documents</th><th>Listed</th></tr>
+              </thead>
+              <tbody>
+                @for (item of listings(); track item.id) {
+                  <tr>
+                    <td>
+                      <a [routerLink]="['/property', item.id]">{{ item.title }}</a>
+                      <span class="muted">{{ item.city }} · {{ item.status }}</span>
+                    </td>
+                    <td>{{ item.leadCount }}</td>
+                    <td>
+                      @if (item.isTrusted) {
+                        <span class="trusted">✅ {{ item.verifiedDocuments }}/{{ item.totalDocuments }}</span>
+                      } @else {
+                        <span class="muted">📄 {{ item.verifiedDocuments }}/{{ item.totalDocuments }}</span>
+                      }
+                    </td>
+                    <td class="muted">{{ item.daysListed }}d</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

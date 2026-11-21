@@ -6,6 +6,7 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
       <a routerLink="/post" routerLinkActive="active">Post Property</a>
       @if (auth.isLoggedIn()) {
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
         <a routerLink="/saved" routerLinkActive="active">Saved Searches</a>
       }
       @if (auth.isAdmin()) {

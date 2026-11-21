@@ -280,3 +280,27 @@ public record RiskReportDto(
     string MarketMedian,
     IReadOnlyList<string> Flags,
     string Verdict);
+
+// ---------- Phase 3: agent dashboard ----------
+
+public record DashboardSummaryDto(
+    int NewLeads7Days,
+    int TotalLeads,
+    int HotLeads,
+    int WarmLeads,
+    int ColdLeads,
+    int ActiveListings,
+    int VerifiedListings,
+    double AverageFirstResponseHours,
+    int UnreadNotifications);
+
+public record ListingPerformanceDto(
+    int Id,
+    string Title,
+    string City,
+    string Status,
+    int LeadCount,
+    int VerifiedDocuments,
+    int TotalDocuments,
+    bool IsTrusted,
+    int DaysListed);

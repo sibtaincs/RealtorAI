@@ -239,6 +239,32 @@ export interface RiskReport {
   verdict: string;
 }
 
+// ---------- Phase 3: agent dashboard ----------
+
+export interface DashboardSummary {
+  newLeads7Days: number;
+  totalLeads: number;
+  hotLeads: number;
+  warmLeads: number;
+  coldLeads: number;
+  activeListings: number;
+  verifiedListings: number;
+  averageFirstResponseHours: number;
+  unreadNotifications: number;
+}
+
+export interface ListingPerformance {
+  id: number;
+  title: string;
+  city: string;
+  status: string;
+  leadCount: number;
+  verifiedDocuments: number;
+  totalDocuments: number;
+  isTrusted: boolean;
+  daysListed: number;
+}
+
 export const PROPERTY_TYPES = ['House', 'Plot', 'Apartment', 'Shop', 'Office', 'Villa', 'Farmhouse'];
 export const CITIES = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Multan', 'Faisalabad', 'Gujranwala', 'Peshawar', 'Hyderabad', 'Quetta'];
 

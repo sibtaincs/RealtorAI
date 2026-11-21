@@ -6,6 +6,7 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./pages/login').then(m => m.Login) },
   { path: 'post', loadComponent: () => import('./pages/property-form').then(m => m.PropertyForm) },
   { path: 'leads', loadComponent: () => import('./pages/leads').then(m => m.Leads) },
+  { path: 'dashboard', loadComponent: () => import('./pages/dashboard').then(m => m.Dashboard) },
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
   { path: '**', redirectTo: '' }
 ];

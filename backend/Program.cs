@@ -87,6 +87,7 @@ builder.Services.AddScoped<ISavedSearchService, SavedSearchService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IWhatsAppService, WhatsAppService>();
 builder.Services.AddScoped<ITrustService, TrustService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddHostedService<AlertWorker>();
 
 builder.Services.AddControllers()
