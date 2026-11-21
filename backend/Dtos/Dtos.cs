@@ -55,7 +55,14 @@ public record PropertyQueryDto(
     int? MinBeds,
     int? MinMarla,
     int Page = 1,
-    int PageSize = 12);
+    int PageSize = 12,
+    double? MinLat = null,
+    double? MaxLat = null,
+    double? MinLng = null,
+    double? MaxLng = null,
+    double? CenterLat = null,
+    double? CenterLng = null,
+    double? RadiusKm = null);
 
 public record PagedResultDto<T>(IReadOnlyList<T> Items, int Total, int Page, int PageSize);
 

@@ -1,0 +1,49 @@
+<div class="wrap map-page">
+  <div class="head">
+    <div>
+      <h1>Explore on Map</h1>
+      <p>Map move karein — andar ki sab properties automatically refresh.</p>
+    </div>
+    <a routerLink="/" class="btn-light">← Back to search</a>
+  </div>
+
+  <div class="filters panel">
+    <label>
+      City
+      <select [(ngModel)]="city" (ngModelChange)="apply()">
+        <option value="">All cities</option>
+        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </label>
+    <label>
+      Listing
+      <select [(ngModel)]="listingType" (ngModelChange)="apply()">
+        <option value="">All</option>
+        <option value="Sale">Sale</option>
+        <option value="Rent">Rent</option>
+      </select>
+    </label>
+    <span class="count">{{ items().length }} properties in view</span>
+  </div>
+
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <div class="layout">
+    <div #canvas class="canvas"></div>
+    <aside class="panel results">
+      <h2>In this area</h2>
+      @if (loading()) {
+        <p class="hint">Loading...</p>
+      } @else if (items().length === 0) {
+        <p class="hint">Is area mein koi property nahi.</p>
+      } @else {
+        @for (p of items(); track p.id) {
+          <a class="result" [routerLink]="['/property', p.id]">
+            <strong>{{ p.title }}</strong>
+            <span>{{ p.city }} · {{ formatPkr(p.price, p.listingType) }}</span>
+          </a>
+        }
+      }
+    </aside>
+  </div>
+</div>

@@ -85,6 +85,29 @@ public class PropertyService : IPropertyService
         if (query.MinMarla.HasValue)
             q = q.Where(p => p.AreaMarla >= query.MinMarla.Value);
 
+        if (query.MinLat.HasValue)
+            q = q.Where(p => p.Latitude >= query.MinLat.Value);
+        if (query.MaxLat.HasValue)
+            q = q.Where(p => p.Latitude <= query.MaxLat.Value);
+        if (query.MinLng.HasValue)
+            q = q.Where(p => p.Longitude >= query.MinLng.Value);
+        if (query.MaxLng.HasValue)
+            q = q.Where(p => p.Longitude <= query.MaxLng.Value);
+
+        // Radius is a lat/lng box approximation so it stays translatable on SQL Server and Postgres.
+        if (query.CenterLat.HasValue && query.CenterLng.HasValue &&
+            query.RadiusKm.HasValue && query.RadiusKm.Value > 0)
+        {
+            var latDelta = query.RadiusKm.Value / 111.0;
+            var lngDelta = query.RadiusKm.Value /
+                (111.0 * Math.Cos(query.CenterLat.Value * Math.PI / 180.0));
+            q = q.Where(p =>
+                p.Latitude >= query.CenterLat.Value - latDelta &&
+                p.Latitude <= query.CenterLat.Value + latDelta &&
+                p.Longitude >= query.CenterLng.Value - lngDelta &&
+                p.Longitude <= query.CenterLng.Value + lngDelta);
+        }
+
         var total = await q.CountAsync();
 
         var page = Math.Max(query.Page, 1);

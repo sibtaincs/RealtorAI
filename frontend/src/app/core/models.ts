@@ -42,6 +42,13 @@ export interface PropertyQuery {
   minMarla?: number;
   page?: number;
   pageSize?: number;
+  minLat?: number;
+  maxLat?: number;
+  minLng?: number;
+  maxLng?: number;
+  centerLat?: number;
+  centerLng?: number;
+  radiusKm?: number;
 }
 
 export interface PropertyInput {

@@ -7,6 +7,7 @@ export const routes: Routes = [
   { path: 'post', loadComponent: () => import('./pages/property-form').then(m => m.PropertyForm) },
   { path: 'leads', loadComponent: () => import('./pages/leads').then(m => m.Leads) },
   { path: 'dashboard', loadComponent: () => import('./pages/dashboard').then(m => m.Dashboard) },
+  { path: 'map', loadComponent: () => import('./pages/map').then(m => m.MapPage) },
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
   { path: '**', redirectTo: '' }
 ];
