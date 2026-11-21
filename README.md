@@ -37,6 +37,10 @@ An AI-powered real estate agent platform for the Pakistani property market, buil
 - **AI Market Check (buyer-side)** — property detail pages show a 0–100 risk report with comparable median price, document-verification status, price flags and a plain-Roman-Urdu verdict.
 - **Voice search** — a 🎤 button in the hero uses the browser's Web Speech API (`ur-PK`) to turn speech into a property search. Works in Chrome/Edge; other browsers show a friendly hint.
 
+### Phase 3 — Roadmap
+
+The next planned milestone set (agent dashboard, alert delivery, map discovery, reviews/moderation, PWA/i18n/SEO and quality hardening) is tracked in [docs/PLAN.md](docs/PLAN.md).
+
 ## Run it locally
 
 ### 1. Backend (API) — port 5000
