@@ -2,7 +2,9 @@
   <div class="wrap nav">
     <a routerLink="/" class="brand">🏠 RealEstate<span>AI</span></a>
 
-    <nav class="links">
+    <button class="hamburger" type="button" (click)="mobileMenuOpen.set(!mobileMenuOpen())" aria-label="Toggle menu">☰</button>
+
+    <nav class="links" [class.open]="mobileMenuOpen()" (click)="mobileMenuOpen.set(false)">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ t('nav.properties') }}</a>
       <a routerLink="/post" routerLinkActive="active">{{ t('nav.post') }}</a>
       <a routerLink="/map" routerLinkActive="active">{{ t('nav.map') }}</a>

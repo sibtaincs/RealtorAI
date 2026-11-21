@@ -6,8 +6,9 @@
 }
 
 .filters { display: flex; gap: 14px; flex-wrap: wrap; align-items: end; margin-bottom: 20px;
-  .field { min-width: 190px; }
+  .field { min-width: min(190px, 100%); flex: 1 1 190px; }
 }
+@media (max-width: 480px) { .directory-page .filters .field { min-width: 100%; } }
 
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
   @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
@@ -29,7 +30,7 @@
 
 h2 { margin: 28px 0 14px; font-size: 1.15rem; }
 h2[id], .tag.link[id] { scroll-margin-top: 84px; }
-.table-wrap { overflow-x: auto; margin-bottom: 8px;
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 8px;
   table { width: 100%; border-collapse: collapse; font-size: .85rem; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
   th { color: #64748b; font-size: .75rem; text-transform: uppercase; }

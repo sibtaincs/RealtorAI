@@ -33,12 +33,14 @@ export class App implements OnInit {
   @ViewChild('settings') private settingsMenu?: ElementRef<HTMLDetailsElement>;
 
   notifOpen = signal(false);
+  mobileMenuOpen = signal(false);
   installEvent = signal<InstallPromptEvent | null>(null);
   t = (key: TranslationKey) => this.i18n.t(key);
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!(event.target as HTMLElement).closest('.nav-menu, .notif-wrap')) this.closeMenus();
+    if (!(event.target as HTMLElement).closest('.links, .hamburger')) this.mobileMenuOpen.set(false);
   }
 
   @HostListener('document:keydown', ['$event'])

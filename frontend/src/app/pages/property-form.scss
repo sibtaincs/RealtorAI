@@ -37,7 +37,7 @@
   input { width: auto; }
 }
 
-.actions { display: flex; gap: 12px; margin-top: 24px; align-items: center;
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; align-items: center;
   a { text-decoration: none; display: inline-block; }
 }
 
@@ -67,7 +67,7 @@
   .hint { font-size: .82rem; color: #047857; }
   textarea { min-height: 82px; background: #fff; border-color: #a7f3d0; }
 
-  .copilot-actions { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  .copilot-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
   .mode-pill {
     background: #d1fae5; color: #065f46; border-radius: 20px;
     font-size: .72rem; font-weight: 700; padding: 5px 10px;
@@ -90,8 +90,8 @@
 
   .tool-row {
     display: flex; align-items: end; gap: 12px; flex-wrap: wrap;
-    label { flex-direction: column; font-size: .78rem; min-width: 190px; }
-    select { min-width: 180px; }
+    label { flex-direction: column; font-size: .78rem; min-width: min(190px, 100%); }
+    select { min-width: 0; width: 100%; }
   }
 
   .btn-light.small { font-size: .75rem; padding: 6px 12px; }

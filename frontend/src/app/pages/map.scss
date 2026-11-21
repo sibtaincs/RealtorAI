@@ -7,10 +7,11 @@
 }
 
 .filters { display: flex; align-items: end; gap: 14px; flex-wrap: wrap; padding: 14px 16px; margin-bottom: 14px;
-  label { display: flex; flex-direction: column; gap: 5px; font-size: .76rem; font-weight: 700; color: #475569; }
-  select { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-family: inherit; font-size: .82rem; background: #fff; }
+  label { display: flex; flex-direction: column; gap: 5px; font-size: .76rem; font-weight: 700; color: #475569; min-width: 0; }
+  select { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-family: inherit; font-size: .82rem; background: #fff; max-width: 100%; }
   .count { margin-left: auto; color: #94a3b8; font-size: .8rem; }
 }
+@media (max-width: 640px) { .map-page .filters .count { margin-left: 0; } .map-page .canvas { height: 360px; } .map-page .results { height: 320px; } }
 
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px;
   @media (max-width: 900px) { grid-template-columns: 1fr; }
