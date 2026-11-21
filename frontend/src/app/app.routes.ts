@@ -14,6 +14,7 @@ export const routes: Routes = [
   { path: 'market', loadComponent: () => import('./pages/market').then(m => m.MarketPage) },
   { path: 'explore', loadComponent: () => import('./pages/explore').then(m => m.ExplorePage) },
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
+  { path: 'shortlist', loadComponent: () => import('./pages/shortlist').then(m => m.ShortlistPage) },
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
   { path: 'admin/reports', loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },
   { path: '**', redirectTo: '' }

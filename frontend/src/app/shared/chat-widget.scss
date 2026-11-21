@@ -52,6 +52,20 @@
   &.typing { color: #64748b; font-style: italic; }
 }
 
+.recommendations {
+  padding: 8px 12px; background: #f8fafc; border-top: 1px solid #e2e8f0;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+
+  small { width: 100%; color: #64748b; font-size: .72rem; font-weight: 700; }
+
+  a {
+    font-size: .73rem; padding: 6px 9px; border-radius: 999px;
+    background: #ecfdf5; color: #0f766e; text-decoration: none;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    &:hover { background: #0f766e; color: #fff; }
+  }
+}
+
 .suggestions {
   padding: 0 12px 8px; display: flex; flex-wrap: wrap; gap: 6px;
   background: #f8fafc;

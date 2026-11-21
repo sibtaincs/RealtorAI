@@ -1,0 +1,32 @@
+.shortlist-page {
+  padding: 32px 0 64px;
+
+  .head {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 28px;
+
+    h1 { margin: 0 0 6px; font-size: 2rem; color: #0f172a; }
+    p { margin: 0; color: #64748b; }
+  }
+
+  section { margin-bottom: 36px; }
+
+  h2 {
+    font-size: 1.2rem; color: #0f172a; margin: 0 0 16px;
+
+    span {
+      display: inline-block; margin-left: 8px; padding: 2px 9px;
+      border-radius: 999px; background: #ecfdf5; color: #0f766e; font-size: .8rem;
+    }
+  }
+
+  .grid {
+    display: grid; gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  .empty {
+    h3 { margin: 0 0 6px; }
+    p { margin: 0; color: #64748b; }
+  }
+}

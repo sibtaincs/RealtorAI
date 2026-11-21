@@ -1,32 +1,42 @@
 @let p = property();
 
-<a class="card" [routerLink]="['/property', p.id]">
-  <div class="thumb">
-    @if (p.imageUrls.length > 0) {
-      <img [src]="imageUrl(p.imageUrls[0])" [alt]="p.title" loading="lazy" />
-    } @else {
-      <div class="no-image">No image available</div>
-    }
-    <span class="badge" [class.rent]="p.listingType === 'Rent'">{{ p.listingType }}</span>
-    @if (p.isTrusted) {
-      <span class="trusted">✅ Verified</span>
-    } @else if (p.verifiedDocuments > 0) {
-      <span class="partial-verify">📄 {{ p.verifiedDocuments }}/{{ p.totalDocuments }}</span>
-    }
-    @if (p.isFeatured) {
-      <span class="featured">Featured</span>
-    }
-  </div>
-
-  <div class="body">
-    <h3>{{ p.title }}</h3>
-    <p class="location">📍 {{ p.locality }}, {{ p.city }}</p>
-    <div class="price">{{ display.money(p.price, p.listingType) }}</div>
-    <div class="meta">
-      @if (p.bedrooms) { <span>🛏 {{ p.bedrooms }} beds</span> }
-      @if (p.bathrooms) { <span>🚿 {{ p.bathrooms }} baths</span> }
-      @if (p.areaMarla || p.areaSqFt) { <span>📐 {{ display.area(p.areaMarla, p.areaSqFt) }}</span> }
-      <span class="type">{{ p.type }}</span>
+<div class="card">
+  <a class="card-link" [routerLink]="['/property', p.id]">
+    <div class="thumb">
+      @if (p.imageUrls.length > 0) {
+        <img [src]="imageUrl(p.imageUrls[0])" [alt]="p.title" loading="lazy" />
+      } @else {
+        <div class="no-image">No image available</div>
+      }
+      <span class="badge" [class.rent]="p.listingType === 'Rent'">{{ p.listingType }}</span>
+      @if (p.isTrusted) {
+        <span class="trusted">✅ Verified</span>
+      } @else if (p.verifiedDocuments > 0) {
+        <span class="partial-verify">📄 {{ p.verifiedDocuments }}/{{ p.totalDocuments }}</span>
+      }
+      @if (p.isFeatured) {
+        <span class="featured">Featured</span>
+      }
     </div>
-  </div>
-</a>
+
+    <div class="body">
+      <h3>{{ p.title }}</h3>
+      <p class="location">📍 {{ p.locality }}, {{ p.city }}</p>
+      <div class="price">{{ display.money(p.price, p.listingType) }}</div>
+      <div class="meta">
+        @if (p.bedrooms) { <span>🛏 {{ p.bedrooms }} beds</span> }
+        @if (p.bathrooms) { <span>🚿 {{ p.bathrooms }} baths</span> }
+        @if (p.areaMarla || p.areaSqFt) { <span>📐 {{ display.area(p.areaMarla, p.areaSqFt) }}</span> }
+        <span class="type">{{ p.type }}</span>
+      </div>
+    </div>
+  </a>
+
+  <button
+    type="button"
+    class="fav"
+    [class.active]="shortlist.isFavorite(p.id)"
+    [attr.aria-label]="shortlist.isFavorite(p.id) ? 'Remove from saved homes' : 'Save this home'"
+    (click)="shortlist.toggle(p.id)"
+  >{{ shortlist.isFavorite(p.id) ? '❤️' : '♡' }}</button>
+</div>

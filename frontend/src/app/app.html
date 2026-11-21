@@ -29,6 +29,7 @@
           <a routerLink="/explore" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.explorePage') }}</a>
         </div>
       </details>
+      <a routerLink="/shortlist" routerLinkActive="active">{{ t('nav.shortlist') }}</a>
       @if (auth.isLoggedIn()) {
         <a routerLink="/dashboard" routerLinkActive="active">{{ t('nav.dashboard') }}</a>
         <a routerLink="/saved" routerLinkActive="active">{{ t('nav.saved') }}</a>

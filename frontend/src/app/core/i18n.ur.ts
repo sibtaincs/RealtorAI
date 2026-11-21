@@ -19,6 +19,7 @@ export const ur = {
   'tools.priceIndex': 'Property Price Index',
   'nav.dashboard': 'Dashboard',
   'nav.saved': 'Saved Searches',
+  'nav.shortlist': 'Saved Homes',
   'nav.leads': 'Leads',
   'nav.reports': 'Reports',
   'auth.login': 'Login',

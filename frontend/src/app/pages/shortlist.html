@@ -1,0 +1,45 @@
+<div class="wrap shortlist-page">
+  <div class="head">
+    <div>
+      <h1>Saved Homes & Recently Viewed</h1>
+      <p>Shortlist properties with the ♥ button. Your list stays on this device.</p>
+    </div>
+    <a routerLink="/" class="btn-light">Browse properties</a>
+  </div>
+
+  @if (loading()) {
+    <div class="panel">Loading...</div>
+  } @else {
+    <section>
+      <h2>Saved homes <span>{{ favorites().length }}</span></h2>
+      @if (favorites().length > 0) {
+        <div class="grid">
+          @for (property of favorites(); track property.id) {
+            <app-property-card [property]="property" />
+          }
+        </div>
+      } @else {
+        <div class="panel empty">
+          <h3>Koi saved home nahi</h3>
+          <p>Property card par ♡ dabayein — yahan dikhega.</p>
+        </div>
+      }
+    </section>
+
+    <section>
+      <h2>Recently viewed <span>{{ recent().length }}</span></h2>
+      @if (recent().length > 0) {
+        <div class="grid">
+          @for (property of recent(); track property.id) {
+            <app-property-card [property]="property" />
+          }
+        </div>
+      } @else {
+        <div class="panel empty">
+          <h3>Abhi koi history nahi</h3>
+          <p>Koi property detail kholein, yahan automatically dikhegi.</p>
+        </div>
+      }
+    </section>
+  }
+</div>

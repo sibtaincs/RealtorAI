@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { PropertyDto } from '../core/models';
 import { assetUrl } from '../core/api';
 import { DisplayService } from '../core/display.service';
+import { ShortlistService } from '../core/shortlist.service';
 
 @Component({
   selector: 'app-property-card',
@@ -13,5 +14,6 @@ import { DisplayService } from '../core/display.service';
 export class PropertyCard {
   property = input.required<PropertyDto>();
   display = inject(DisplayService);
+  shortlist = inject(ShortlistService);
   imageUrl = assetUrl;
 }

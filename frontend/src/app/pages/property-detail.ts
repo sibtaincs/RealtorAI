@@ -14,6 +14,7 @@ import { ModerationService } from '../core/moderation.service';
 import { assetUrl } from '../core/api';
 import { SeoService } from '../core/seo.service';
 import { DisplayService } from '../core/display.service';
+import { ShortlistService } from '../core/shortlist.service';
 
 @Component({
   selector: 'app-property-detail',
@@ -31,6 +32,7 @@ export class PropertyDetail implements OnInit {
   private sanitizer = inject(DomSanitizer);
   private seo = inject(SeoService);
   display = inject(DisplayService);
+  shortlist = inject(ShortlistService);
   auth = inject(AuthService);
 
   format = formatPkr;
@@ -68,6 +70,7 @@ export class PropertyDetail implements OnInit {
       next: p => {
         const listing = { ...p, imageUrls: p.imageUrls.map(assetUrl) };
         this.property.set(listing);
+        this.shortlist.viewed(id);
         this.seo.setProperty(listing);
         this.loading.set(false);
         this.message = `I am interested in "${p.title}" (${formatPkr(p.price, p.listingType)}). Please contact me.`;

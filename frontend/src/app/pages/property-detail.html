@@ -40,6 +40,12 @@
               @if (p.agentId) { <p class="agent-link"><a [routerLink]="['/agent', p.agentId]">👤 Agent profile dekhein</a></p> }
             </div>
             <div class="price">{{ display.money(p.price, p.listingType) }}</div>
+            <button
+              type="button"
+              class="fav-detail"
+              [class.active]="shortlist.isFavorite(p.id)"
+              (click)="shortlist.toggle(p.id)"
+            >{{ shortlist.isFavorite(p.id) ? '❤️ Saved' : '♡ Save home' }}</button>
           </div>
 
           <div class="specs">

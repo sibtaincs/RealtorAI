@@ -24,6 +24,15 @@
       }
     </div>
 
+    @if (recommendations().length > 0) {
+      <div class="recommendations">
+        <small>Recommended for you</small>
+        @for (property of recommendations(); track property.id) {
+          <a [routerLink]="['/property', property.id]" (click)="toggle()">{{ property.title }}</a>
+        }
+      </div>
+    }
+
     @if (messages().length === 1) {
       <div class="suggestions">
         @for (s of suggestions; track s) {

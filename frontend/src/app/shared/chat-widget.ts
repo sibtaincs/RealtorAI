@@ -1,6 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AiService } from '../core/ai.service';
+import { PropertyService } from '../core/property.service';
+import { PropertyDto } from '../core/models';
 
 interface ChatMessage {
   from: 'ai' | 'user';
@@ -9,16 +14,18 @@ interface ChatMessage {
 
 @Component({
   selector: 'app-chat-widget',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './chat-widget.html',
   styleUrl: './chat-widget.scss'
 })
 export class ChatWidget {
   private ai = inject(AiService);
+  private properties = inject(PropertyService);
 
   open = signal(false);
   busy = signal(false);
   inputText = '';
+  recommendations = signal<PropertyDto[]>([]);
 
   messages = signal<ChatMessage[]>([{
     from: 'ai',
@@ -45,7 +52,17 @@ export class ChatWidget {
     this.busy.set(true);
 
     this.ai.chat(text).subscribe({
-      next: res => this.messages.update(m => [...m, { from: 'ai', text: res.reply }]),
+      next: res => {
+        this.messages.update(m => [...m, { from: 'ai', text: res.reply }]);
+        const ids = (res.recommendedPropertyIds || []).slice(0, 3);
+        if (ids.length === 0) {
+          this.recommendations.set([]);
+          return;
+        }
+        forkJoin(ids.map(id => this.properties.get(id).pipe(catchError(() => of(null))))).subscribe({
+          next: results => this.recommendations.set(results.filter((p): p is PropertyDto => !!p))
+        });
+      },
       error: () => this.messages.update(m => [...m, {
         from: 'ai', text: 'Sorry, abhi reply nahi mila. Thodi der baad dobara koshish karein.'
       }]),

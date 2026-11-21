@@ -46,6 +46,19 @@
   h1 { margin: 10px 0 4px; font-size: 1.7rem; }
   .location { color: #64748b; margin: 0; font-size: .9rem; }
   .price { font-size: 1.7rem; font-weight: 800; color: var(--primary); white-space: nowrap; }
+
+  .fav-detail {
+    align-self: center;
+    border: 1px solid #e6e9ef;
+    background: #fff;
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &.active { background: var(--primary); color: #fff; }
+  }
 }
 
 .tag {

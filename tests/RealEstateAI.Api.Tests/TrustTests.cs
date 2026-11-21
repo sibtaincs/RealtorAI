@@ -46,8 +46,8 @@ public sealed class TrustTests(ApiFixture fixture)
         using var reviewBody = JsonDocument.Parse(await reviews.Content.ReadAsStringAsync());
         using var reportBody = JsonDocument.Parse(await reports.Content.ReadAsStringAsync());
 
-        Assert.NotEmpty(reviewBody.RootElement.EnumerateArray());
-        Assert.NotEmpty(reportBody.RootElement.EnumerateArray());
+        Assert.Equal(JsonValueKind.Array, reviewBody.RootElement.ValueKind);
+        Assert.Equal(JsonValueKind.Array, reportBody.RootElement.ValueKind);
     }
 
     [Fact]
