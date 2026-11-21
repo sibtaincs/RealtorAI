@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth.service';
 import { NotificationService } from './core/notification.service';
@@ -28,9 +28,23 @@ export class App implements OnInit {
   areaUnits = AREA_UNITS;
   private router = inject(Router);
 
+  @ViewChild('tools') private toolsMenu?: ElementRef<HTMLDetailsElement>;
+  @ViewChild('explore') private exploreMenu?: ElementRef<HTMLDetailsElement>;
+  @ViewChild('settings') private settingsMenu?: ElementRef<HTMLDetailsElement>;
+
   notifOpen = signal(false);
   installEvent = signal<InstallPromptEvent | null>(null);
   t = (key: TranslationKey) => this.i18n.t(key);
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!(event.target as HTMLElement).closest('.nav-menu, .notif-wrap')) this.closeMenus();
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') this.closeMenus();
+  }
 
   constructor() {
     // Keep the bell count in sync when the user logs in/out without a full reload.
@@ -59,7 +73,19 @@ export class App implements OnInit {
     if (this.auth.isLoggedIn()) this.notifications.refreshCount();
   }
 
+  closeMenus(except?: 'tools' | 'explore' | 'settings' | 'notif'): void {
+    if (except !== 'tools' && this.toolsMenu) this.toolsMenu.nativeElement.open = false;
+    if (except !== 'explore' && this.exploreMenu) this.exploreMenu.nativeElement.open = false;
+    if (except !== 'settings' && this.settingsMenu) this.settingsMenu.nativeElement.open = false;
+    if (except !== 'notif') this.notifOpen.set(false);
+  }
+
+  onMenuToggle(menu: 'tools' | 'explore' | 'settings', open: boolean): void {
+    if (open) this.closeMenus(menu);
+  }
+
   toggleNotifications(): void {
+    this.closeMenus('notif');
     this.notifOpen.update(v => !v);
     if (this.notifOpen() && this.auth.isLoggedIn()) {
       this.notifications.all().subscribe();

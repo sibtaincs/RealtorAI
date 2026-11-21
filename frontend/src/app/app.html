@@ -6,7 +6,7 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ t('nav.properties') }}</a>
       <a routerLink="/post" routerLinkActive="active">{{ t('nav.post') }}</a>
       <a routerLink="/map" routerLinkActive="active">{{ t('nav.map') }}</a>
-      <details class="nav-menu" #tools>
+      <details class="nav-menu" #tools (toggle)="onMenuToggle('tools', tools.open)">
         <summary>{{ t('nav.tools') }} ▾</summary>
         <div class="menu panel">
           <a routerLink="/explore" fragment="plot-finder" (click)="tools.open = false">{{ t('tools.plotFinder') }}</a>
@@ -20,7 +20,7 @@
           <a routerLink="/market" fragment="price-index" (click)="tools.open = false">{{ t('tools.priceIndex') }}</a>
         </div>
       </details>
-      <details class="nav-menu" #explore>
+      <details class="nav-menu" #explore (toggle)="onMenuToggle('explore', explore.open)">
         <summary>{{ t('nav.explore') }} ▾</summary>
         <div class="menu panel">
           <a routerLink="/projects" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.projects') }}</a>
@@ -41,7 +41,7 @@
     </nav>
 
     <div class="actions">
-      <details class="nav-menu settings" #settings>
+      <details class="nav-menu settings" #settings (toggle)="onMenuToggle('settings', settings.open)">
         <summary aria-label="Display settings">⚙</summary>
         <div class="menu panel settings-menu">
           <label class="field">Currency
