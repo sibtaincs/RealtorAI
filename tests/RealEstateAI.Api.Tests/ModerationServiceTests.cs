@@ -66,7 +66,7 @@ public sealed class ModerationServiceTests
         db.Properties.Add(new PropertyListing
         {
             Id = 1, Title = "Test", Description = "Test", Price = 1m,
-            Type = PropertyType.House, ListingType = ListingType.Sale, Status = ListingStatus.Active,
+            Type = "House", ListingType = "Sale", Status = ListingStatus.Active,
             City = "Lahore", Locality = "DHA", Address = "Test", Latitude = 0, Longitude = 0,
             ImageUrlsJson = "[]", AgentId = "a1"
         });

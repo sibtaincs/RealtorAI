@@ -12,15 +12,14 @@
       City
       <select [(ngModel)]="city" (ngModelChange)="apply()">
         <option value="">All cities</option>
-        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
       </select>
     </label>
     <label>
       Listing
       <select [(ngModel)]="listingType" (ngModelChange)="apply()">
         <option value="">All</option>
-        <option value="Sale">Sale</option>
-        <option value="Rent">Rent</option>
+        @for (o of master.options('listing-type'); track o.id) { <option [value]="o.value">{{ o.label }}</option> }
       </select>
     </label>
     <span class="count">{{ items().length }} properties in view</span>

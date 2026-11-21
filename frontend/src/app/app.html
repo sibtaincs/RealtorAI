@@ -38,6 +38,7 @@
         <a routerLink="/leads" routerLinkActive="active">{{ t('nav.leads') }}</a>
         <a routerLink="/admin/reports" routerLinkActive="active">{{ t('nav.reports') }}</a>
         <a routerLink="/admin/content" routerLinkActive="active">Content</a>
+        <a routerLink="/admin/master-data" routerLinkActive="active">Master Data</a>
       }
     </nav>
 
@@ -47,12 +48,12 @@
         <div class="menu panel settings-menu">
           <label class="field">Currency
             <select [value]="display.currency()" (change)="display.setCurrency($any($event.target).value)">
-              @for (c of currencies; track c) { <option [value]="c">{{ c }}</option> }
+              @for (c of master.values('currency'); track c) { <option [value]="c">{{ c }}</option> }
             </select>
           </label>
           <label class="field">Area unit
             <select [value]="display.areaUnit()" (change)="display.setAreaUnit($any($event.target).value)">
-              @for (u of areaUnits; track u) { <option [value]="u">{{ u }}</option> }
+              @for (u of master.values('area-unit'); track u) { <option [value]="u">{{ u }}</option> }
             </select>
           </label>
         </div>

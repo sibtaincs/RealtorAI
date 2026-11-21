@@ -6,7 +6,8 @@ import { NotificationItem } from './core/models';
 import { I18nService } from './core/i18n.service';
 import { TranslationKey } from './core/i18n.ur';
 import { ChatWidget } from './shared/chat-widget';
-import { AREA_UNITS, CURRENCIES, DisplayService } from './core/display.service';
+import { DisplayService } from './core/display.service';
+import { MasterDataService } from './core/master-data.service';
 
 interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -24,8 +25,7 @@ export class App implements OnInit {
   notifications = inject(NotificationService);
   i18n = inject(I18nService);
   display = inject(DisplayService);
-  currencies = CURRENCIES;
-  areaUnits = AREA_UNITS;
+  master = inject(MasterDataService);
   private router = inject(Router);
 
   @ViewChild('tools') private toolsMenu?: ElementRef<HTMLDetailsElement>;
@@ -70,6 +70,7 @@ export class App implements OnInit {
   }
 
   ngOnInit(): void {
+    this.master.load().subscribe();
     if (this.auth.isLoggedIn()) this.notifications.refreshCount();
   }
 

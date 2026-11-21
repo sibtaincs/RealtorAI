@@ -154,6 +154,60 @@ public static class DbSeeder
             db.ContentItems.AddRange(BuildContentItems());
             await db.SaveChangesAsync();
         }
+
+        if (!await db.MasterData.AnyAsync())
+        {
+            db.MasterData.AddRange(BuildMasterData());
+            await db.SaveChangesAsync();
+        }
+    }
+
+    private static List<MasterData> BuildMasterData()
+    {
+        var items = new List<MasterData>();
+        void Add(string kind, params string[] values)
+        {
+            foreach (var value in values)
+                items.Add(new MasterData
+                {
+                    Kind = kind,
+                    Value = value,
+                    Label = value,
+                    SortOrder = items.Count(i => i.Kind == kind) + 1
+                });
+        }
+        void AddLabeled(string kind, params (string Value, string Label)[] values)
+        {
+            foreach (var (value, label) in values)
+                items.Add(new MasterData
+                {
+                    Kind = kind,
+                    Value = value,
+                    Label = label,
+                    SortOrder = items.Count(i => i.Kind == kind) + 1
+                });
+        }
+
+        Add("city", "Karachi", "Lahore", "Islamabad", "Rawalpindi", "Multan", "Faisalabad", "Gujranwala", "Peshawar", "Hyderabad", "Quetta");
+        Add("property-type", "House", "Plot", "Apartment", "Shop", "Office", "Villa", "Farmhouse");
+        AddLabeled("listing-type", ("Sale", "For Sale"), ("Rent", "For Rent"));
+        Add("currency", "PKR", "USD", "AED", "SAR", "GBP", "CAD");
+        Add("area-unit", "Marla", "Kanal", "Sq Ft", "Sq Yd", "Sq M");
+        AddLabeled("bedroom", ("1", "1+"), ("2", "2+"), ("3", "3+"), ("4", "4+"));
+        AddLabeled("sort-option",
+            ("newest", "Newest first"), ("price-asc", "Price: low to high"),
+            ("price-desc", "Price: high to low"), ("area-desc", "Largest area"));
+        Add("project-status", "Launching", "Under Construction", "Nearing Completion", "Completed");
+        Add("agency-specialty", "Residential", "Plots", "Apartments", "Commercial", "Houses", "Rentals", "Farms");
+        Add("article-category", "Guide", "News", "Community");
+        Add("land-record-status", "Verified", "Pending");
+        Add("lead-status", "New", "Contacted", "Interested", "Closed", "Lost");
+        Add("listing-status", "Active", "Pending", "Sold", "Rented");
+        Add("report-status", "Open", "Resolved", "Dismissed");
+        Add("moderation-status", "Pending", "Approved", "Rejected");
+        AddLabeled("price-advisor-days", ("15", "15 din mein (jaldi)"), ("30", "30 din mein"), ("60", "60 din mein (sabras se)"));
+
+        return items;
     }
 
     private static List<ContentItem> BuildContentItems()
@@ -236,72 +290,72 @@ public static class DbSeeder
         {
             New("Modern 10 Marla House in DHA Phase 6",
                 "Spacious 10 marla house with 4 bedrooms, modern kitchen, lawn and car parking. Prime location near park and school.",
-                22_500_000m, PropertyType.House, ListingType.Sale, "Lahore", "DHA Lahore Phase 6", "Block R, DHA Phase 6, Lahore",
+                22_500_000m, "House", "Sale", "Lahore", "DHA Lahore Phase 6", "Block R, DHA Phase 6, Lahore",
                 31.448, 74.380, 4, 5, 10, 2500, home1, true),
 
             New("5 Marla Family House in Bahria Town",
                 "Well-maintained 5 marla house in a secure gated community. Near mosque, park and commercial area.",
-                9_500_000m, PropertyType.House, ListingType.Sale, "Lahore", "Bahria Town Lahore", "Sector E, Bahria Town, Lahore",
+                9_500_000m, "House", "Sale", "Lahore", "Bahria Town Lahore", "Sector E, Bahria Town, Lahore",
                 31.326, 74.190, 3, 4, 5, 1250, home2, true),
 
             New("1 Kanal Plot in DHA Phase 7",
                 "Corner plot, ideal for a dream home. All utilities available. Located on a wide road.",
-                18_000_000m, PropertyType.Plot, ListingType.Sale, "Lahore", "DHA Lahore Phase 7", "Block T, DHA Phase 7, Lahore",
+                18_000_000m, "Plot", "Sale", "Lahore", "DHA Lahore Phase 7", "Block T, DHA Phase 7, Lahore",
                 31.430, 74.370, null, null, 20, 5000, plot, false),
 
             New("Furnished 2 Bed Apartment in Gulberg",
                 "Bright apartment in the heart of Gulberg. Close to shops, restaurants and main boulevard.",
-                6_800_000m, PropertyType.Apartment, ListingType.Sale, "Lahore", "Gulberg III", "Gulberg III, Lahore",
+                6_800_000m, "Apartment", "Sale", "Lahore", "Gulberg III", "Gulberg III, Lahore",
                 31.559, 74.341, 2, 2, 3, 750, flat, false),
 
             New("10 Marla Plot in Bahria Town Karachi",
                 "Investment plot in a fast-developing area. Easy access to main highway and amenities.",
-                4_200_000m, PropertyType.Plot, ListingType.Sale, "Karachi", "Bahria Town Karachi", "Precinct 12, Bahria Town, Karachi",
+                4_200_000m, "Plot", "Sale", "Karachi", "Bahria Town Karachi", "Precinct 12, Bahria Town, Karachi",
                 25.196, 67.334, null, null, 10, 2500, plot, true),
 
             New("10 Marla House in DHA City Karachi",
                 "Brand new 10 marla house with 4 bedrooms, drawing room and rooftop terrace.",
-                8_900_000m, PropertyType.House, ListingType.Sale, "Karachi", "DHA City Karachi", "Sector 5, DHA City, Karachi",
+                8_900_000m, "House", "Sale", "Karachi", "DHA City Karachi", "Sector 5, DHA City, Karachi",
                 24.790, 67.330, 4, 4, 10, 2500, home3, false),
 
             New("2 Bed Apartment for Rent in Clifton",
                 "Fully furnished apartment available for rent. Lift, parking and 24/7 security.",
-                85_000m, PropertyType.Apartment, ListingType.Rent, "Karachi", "Clifton", "Clifton Block 4, Karachi",
+                85_000m, "Apartment", "Rent", "Karachi", "Clifton", "Clifton Block 4, Karachi",
                 24.807, 67.030, 2, 2, null, 900, flat, false),
 
             New("Shop for Rent in Gulshan-e-Iqbal",
                 "Ground floor shop on a busy main road. Suitable for retail, office or clinic.",
-                120_000m, PropertyType.Shop, ListingType.Rent, "Karachi", "Gulshan-e-Iqbal", "Block 13-D, Gulshan-e-Iqbal, Karachi",
+                120_000m, "Shop", "Rent", "Karachi", "Gulshan-e-Iqbal", "Block 13-D, Gulshan-e-Iqbal, Karachi",
                 24.893, 67.099, null, null, 4, 900, shop, false),
 
             New("Elegant 10 Marla House in DHA Islamabad",
                 "Modern design with 4 bedrooms, basement and landscaped lawn. Close to schools and parks.",
-                16_500_000m, PropertyType.House, ListingType.Sale, "Islamabad", "DHA Islamabad Phase 2", "Phase 2, DHA Islamabad",
+                16_500_000m, "House", "Sale", "Islamabad", "DHA Islamabad Phase 2", "Phase 2, DHA Islamabad",
                 33.646, 73.070, 4, 5, 10, 2500, home1, true),
 
             New("5 Marla House in Bahria Town Rawalpindi",
                 "Affordable family home in a secure society with all facilities nearby.",
-                11_500_000m, PropertyType.House, ListingType.Sale, "Rawalpindi", "Bahria Town Phase 8", "Phase 8, Bahria Town, Rawalpindi",
+                11_500_000m, "House", "Sale", "Rawalpindi", "Bahria Town Phase 8", "Phase 8, Bahria Town, Rawalpindi",
                 33.536, 73.045, 3, 4, 5, 1250, home2, false),
 
             New("8 Marla Plot in Gulberg Greens",
                 "Farmhouse society plot with beautiful views. Ideal for a weekend home or investment.",
-                7_600_000m, PropertyType.Plot, ListingType.Sale, "Islamabad", "Gulberg Greens", "Gulberg Greens, Islamabad",
+                7_600_000m, "Plot", "Sale", "Islamabad", "Gulberg Greens", "Gulberg Greens, Islamabad",
                 33.545, 73.180, null, null, 8, 2000, plot, false),
 
             New("2 Bed Apartment for Rent in Johar Town",
                 "Clean and comfortable apartment near hospitals, metro station and shopping malls.",
-                55_000m, PropertyType.Apartment, ListingType.Rent, "Lahore", "Johar Town", "Phase 1, Johar Town, Lahore",
+                55_000m, "Apartment", "Rent", "Lahore", "Johar Town", "Phase 1, Johar Town, Lahore",
                 31.467, 74.273, 2, 2, 3, 750, flat, false),
 
             New("Luxury Villa in Bahria Town Karachi",
                 "20 marla villa with 5 bedrooms, swimming pool and ample parking. Premium living.",
-                15_000_000m, PropertyType.Villa, ListingType.Sale, "Karachi", "Bahria Town Karachi", "Precinct 8, Bahria Town, Karachi",
+                15_000_000m, "Villa", "Sale", "Karachi", "Bahria Town Karachi", "Precinct 8, Bahria Town, Karachi",
                 25.200, 67.340, 5, 6, 20, 5000, home3, true),
 
             New("10 Marla House for Rent in F-11",
                 "Well-maintained family house available for rent. Close to schools, markets and main roads.",
-                140_000m, PropertyType.House, ListingType.Rent, "Islamabad", "F-11", "F-11/2, Islamabad",
+                140_000m, "House", "Rent", "Islamabad", "F-11", "F-11/2, Islamabad",
                 33.750, 73.050, 4, 4, 10, 2500, home2, false)
         };
     }
@@ -310,8 +364,8 @@ public static class DbSeeder
         string title,
         string description,
         decimal price,
-        PropertyType type,
-        ListingType listingType,
+        string type,
+        string listingType,
         string city,
         string locality,
         string address,

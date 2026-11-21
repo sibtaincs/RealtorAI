@@ -98,6 +98,7 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IModerationService, ModerationService>();
 builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddHostedService<AlertWorker>();
 
 builder.Services.AddControllers()

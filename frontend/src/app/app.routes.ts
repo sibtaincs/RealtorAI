@@ -18,5 +18,6 @@ export const routes: Routes = [
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
   { path: 'admin/reports', loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },
   { path: 'admin/content', loadComponent: () => import('./pages/admin-content').then(m => m.AdminContent) },
+  { path: 'admin/master-data', loadComponent: () => import('./pages/admin-master-data').then(m => m.AdminMasterData) },
   { path: '**', redirectTo: '' }
 ];

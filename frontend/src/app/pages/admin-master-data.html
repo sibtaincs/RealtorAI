@@ -1,0 +1,64 @@
+<div class="wrap page">
+  @if (!auth.isAdmin()) {
+    <div class="panel gate">
+      <h1>Admin access only</h1>
+      <p>Master data manage karne ke liye admin account se login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <h1>Master Data</h1>
+      <p>Cities, property types, units and dropdown options — all stored in the database.</p>
+    </div>
+
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    @if (message()) { <p class="ok">{{ message() }}</p> }
+
+    <div class="kinds panel">
+      @for (k of kinds; track k) {
+        <button class="chip" [class.active]="kind() === k" (click)="selectKind(k)">{{ k }}</button>
+      }
+    </div>
+
+    <section class="panel editor">
+      <h2>{{ editingId() ? 'Edit' : 'Add' }} {{ kind() }} value</h2>
+      @if (master.isFixed(kind())) {
+        <p class="hint">Is list ke system values fixed hain — sirf label, order aur active status badlein.</p>
+      }
+      <div class="grid-form">
+        <label class="field">Value
+          <input type="text" [(ngModel)]="draft.value" [disabled]="master.isFixed(kind())" />
+        </label>
+        <label class="field">Label
+          <input type="text" [(ngModel)]="draft.label" />
+        </label>
+        <label class="field">Order
+          <input type="number" [(ngModel)]="draft.sortOrder" />
+        </label>
+        <label class="field checkbox">
+          <input type="checkbox" [(ngModel)]="draft.isActive" /> Active
+        </label>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" [disabled]="busy() || master.isFixed(kind()) && !editingId()" (click)="save()">Save</button>
+        @if (editingId()) { <button class="mini-btn" (click)="cancel()">Cancel</button> }
+        @else if (!master.isFixed(kind())) { <button class="mini-btn" (click)="startAdd()">New value</button> }
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>{{ kind() }} values ({{ filtered().length }})</h2>
+      @for (item of filtered(); track item.id) {
+        <div class="row">
+          <code>{{ item.value }} → {{ item.label }} · #{{ item.sortOrder }}@if (!item.isActive) { · inactive }</code>
+          <div class="actions">
+            <button class="mini-btn" (click)="edit(item)">Edit</button>
+            <button class="mini-btn danger" [disabled]="busy() || master.isFixed(kind())" (click)="remove(item.id)">Delete</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="hint">Is list ka abhi koi value nahi hai.</p>
+      }
+    </section>
+  }
+</div>

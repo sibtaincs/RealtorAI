@@ -31,8 +31,8 @@ public record PropertyInputDto(
     string Title,
     string Description,
     decimal Price,
-    PropertyType Type,
-    ListingType ListingType,
+    string Type,
+    string ListingType,
     string City,
     string Locality,
     string Address,
@@ -49,8 +49,8 @@ public record PropertyQueryDto(
     string? Search,
     string? City,
     string? Locality,
-    PropertyType? Type,
-    ListingType? ListingType,
+    string? Type,
+    string? ListingType,
     decimal? MinPrice,
     decimal? MaxPrice,
     int? MinBeds,
@@ -113,7 +113,7 @@ public record AiChatResponseDto(
 
 public record DescribeDto(
     string Title,
-    PropertyType Type,
+    string Type,
     string City,
     string Locality,
     int? Bedrooms,
@@ -123,7 +123,7 @@ public record DescribeDto(
     string[]? Features);
 
 public record PriceEstimateDto(
-    PropertyType Type,
+    string Type,
     string City,
     string Locality,
     int? AreaMarla,
@@ -206,7 +206,7 @@ public record GeneratedListingDto(
     string Mode);
 
 public record SellPriceInputDto(
-    PropertyType Type,
+    string Type,
     string City,
     string Locality,
     int? AreaMarla,
@@ -225,7 +225,7 @@ public record ListingQualityInputDto(
     string? Title,
     string? Description,
     decimal Price,
-    PropertyType Type,
+    string Type,
     string? City,
     string? Locality,
     string? Address,
@@ -265,8 +265,8 @@ public record DuplicateCheckInputDto(
     string? Title,
     string City,
     string Locality,
-    PropertyType Type,
-    ListingType ListingType,
+    string Type,
+    string ListingType,
     int? AreaMarla,
     decimal Price,
     string[]? ImageUrls);
@@ -375,3 +375,20 @@ public record ContentItemDto(
 public record ContentUpsertDto(
     string Kind,
     string PayloadJson);
+
+// ---------- Admin-managed master data ----------
+
+public record MasterDataDto(
+    int Id,
+    string Kind,
+    string Value,
+    string Label,
+    int SortOrder,
+    bool IsActive);
+
+public record MasterDataUpsertDto(
+    string Kind,
+    string Value,
+    string Label,
+    int SortOrder = 0,
+    bool IsActive = true);

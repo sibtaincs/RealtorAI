@@ -6,6 +6,7 @@ import { LeadService } from '../core/lead.service';
 import { FollowUpService } from '../core/follow-up.service';
 import { AuthService } from '../core/auth.service';
 import { FollowUp, LeadDto } from '../core/models';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-leads',
@@ -17,10 +18,10 @@ export class Leads implements OnInit {
   private leadService = inject(LeadService);
   private followUpService = inject(FollowUpService);
   auth = inject(AuthService);
+  master = inject(MasterDataService);
 
   leads = signal<LeadDto[]>([]);
   status = '';
-  statuses = ['New', 'Contacted', 'Interested', 'Closed', 'Lost'];
   loading = signal(true);
   error = signal('');
 

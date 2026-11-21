@@ -3,8 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type * as Leaflet from 'leaflet';
 import { PropertyService } from '../core/property.service';
-import { CITIES, PropertyDto } from '../core/models';
+import { PropertyDto } from '../core/models';
 import { DisplayService } from '../core/display.service';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-map',
@@ -19,13 +20,13 @@ export class MapPage implements AfterViewInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   display = inject(DisplayService);
+  master = inject(MasterDataService);
   private map?: Leaflet.Map;
   private markers?: Leaflet.LayerGroup;
 
   items = signal<PropertyDto[]>([]);
   loading = signal(false);
   error = signal('');
-  cities = CITIES;
   city = this.route.snapshot.queryParamMap.get('city') ?? '';
   listingType = '';
 

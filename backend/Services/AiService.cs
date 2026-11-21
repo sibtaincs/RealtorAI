@@ -99,7 +99,7 @@ public class AiService : IAiService
         var all = await _properties.GetForAiContextAsync(100);
 
         var comparables = all
-            .Where(p => p.Type.ToString().Equals(input.Type.ToString(), StringComparison.OrdinalIgnoreCase))
+            .Where(p => p.Type.Equals(input.Type, StringComparison.OrdinalIgnoreCase))
             .Where(p => p.ListingType == "Sale")
             .ToList();
 
@@ -124,7 +124,7 @@ public class AiService : IAiService
         if (perMarla.HasValue && input.AreaMarla is > 0)
         {
             estimate = perMarla.Value * input.AreaMarla.Value;
-            basis = $"Based on {pool.Count} similar {input.Type.ToString().ToLowerInvariant()} listings" +
+            basis = $"Based on {pool.Count} similar {input.Type.ToLowerInvariant()} listings" +
                     (sameLocality.Count >= 2 ? $" in {input.Locality}" : local.Count >= 2 ? $" in {input.City}" : " nationwide");
         }
         else if (pool.Count > 0)
@@ -134,11 +134,11 @@ public class AiService : IAiService
         }
         else
         {
-            estimate = input.Type switch
+            estimate = input.Type.ToLowerInvariant() switch
             {
-                PropertyType.Plot => 3_000_000m,
-                PropertyType.Apartment => 6_000_000m,
-                PropertyType.Shop => 8_000_000m,
+                "plot" => 3_000_000m,
+                "apartment" => 6_000_000m,
+                "shop" => 8_000_000m,
                 _ => 12_000_000m
             };
             if (input.AreaMarla is > 0) estimate *= input.AreaMarla.Value / 5m;
@@ -194,7 +194,7 @@ public class AiService : IAiService
     {
         var all = await _properties.GetForAiContextAsync(100);
         var comparables = all
-            .Where(p => p.Type.ToString().Equals(input.Type.ToString(), StringComparison.OrdinalIgnoreCase))
+            .Where(p => p.Type.Equals(input.Type, StringComparison.OrdinalIgnoreCase))
             .Where(p => p.ListingType == "Sale")
             .ToList();
 
@@ -224,10 +224,10 @@ public class AiService : IAiService
         }
         else
         {
-            basePrice = input.Type switch
+            basePrice = input.Type.ToLowerInvariant() switch
             {
-                PropertyType.Plot => 3_000_000m,
-                PropertyType.Apartment => 6_000_000m,
+                "plot" => 3_000_000m,
+                "apartment" => 6_000_000m,
                 _ => 12_000_000m
             };
             if (input.AreaMarla is > 0) basePrice *= input.AreaMarla.Value / 5m;
@@ -475,7 +475,7 @@ public class AiService : IAiService
             if (title.Length == 0) return null;
 
             var typeRaw = Str("type", fallbackType);
-            if (!Enum.TryParse<PropertyType>(typeRaw, true, out var type)) type = ParseType(title) ?? PropertyType.House;
+            var type = string.IsNullOrWhiteSpace(typeRaw) ? (ParseType(title) ?? fallbackType) : typeRaw.Trim();
 
             var listingRaw = Str("listingType", fallbackListing);
             var listingType = listingRaw.Equals("Rent", StringComparison.OrdinalIgnoreCase) ? "Rent" : "Sale";
@@ -492,7 +492,7 @@ public class AiService : IAiService
             return new GeneratedListingDto(
                 title,
                 Str("description", string.Empty),
-                type.ToString(),
+                type,
                 listingType,
                 Str("city", fallbackCity),
                 Str("locality", string.Empty),
@@ -521,7 +521,7 @@ public class AiService : IAiService
             ? (int?)decimal.ToInt32(decimal.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture)) : null;
         var price = ParseAmount(text);
 
-        var parsedType = ParseType(text)?.ToString() ?? type;
+        var parsedType = ParseType(text) ?? type;
         var parsedCity = KnownCities.FirstOrDefault(c => text.Contains(c.ToLowerInvariant())) ?? city;
         var parsedListing = text.Contains("rent") || text.Contains("kiraya") || text.Contains("lease")
             ? "Rent" : listingType;
@@ -549,7 +549,7 @@ public class AiService : IAiService
         if (price <= 0)
         {
             var estimate = await EstimatePriceAsync(new PriceEstimateDto(
-                Enum.TryParse<PropertyType>(parsedType, true, out var pt) ? pt : PropertyType.House,
+                parsedType,
                 parsedCity,
                 locality,
                 marla,
@@ -573,16 +573,16 @@ public class AiService : IAiService
             "local");
     }
 
-    private static PropertyType? ParseType(string text)
+    private static string? ParseType(string text)
     {
         var lower = text.ToLowerInvariant();
-        if (lower.Contains("apartment") || lower.Contains("flat")) return PropertyType.Apartment;
-        if (lower.Contains("plot") || lower.Contains("land") || lower.Contains("jaagir")) return PropertyType.Plot;
-        if (lower.Contains("shop") || lower.Contains("store") || lower.Contains("dukaan")) return PropertyType.Shop;
-        if (lower.Contains("office")) return PropertyType.Office;
-        if (lower.Contains("villa")) return PropertyType.Villa;
-        if (lower.Contains("farm") || lower.Contains("farmhouse")) return PropertyType.Farmhouse;
-        if (lower.Contains("house") || lower.Contains("home") || lower.Contains("ghar")) return PropertyType.House;
+        if (lower.Contains("apartment") || lower.Contains("flat")) return "Apartment";
+        if (lower.Contains("plot") || lower.Contains("land") || lower.Contains("jaagir")) return "Plot";
+        if (lower.Contains("shop") || lower.Contains("store") || lower.Contains("dukaan")) return "Shop";
+        if (lower.Contains("office")) return "Office";
+        if (lower.Contains("villa")) return "Villa";
+        if (lower.Contains("farm")) return "Farmhouse";
+        if (lower.Contains("house") || lower.Contains("home") || lower.Contains("ghar")) return "House";
         return null;
     }
 
@@ -681,7 +681,7 @@ public class AiService : IAiService
     {
         var parts = new List<string>
         {
-            $"{input.Title} — {input.Locality}, {input.City} mein ek {input.AreaMarla?.ToString() ?? " suitable"} marla {input.Type.ToString().ToLowerInvariant()}"
+            $"{input.Title} — {input.Locality}, {input.City} mein ek {input.AreaMarla?.ToString() ?? " suitable"} marla {input.Type.ToLowerInvariant()}"
         };
 
         if (input.Bedrooms.HasValue) parts.Add($"{input.Bedrooms} bedrooms");

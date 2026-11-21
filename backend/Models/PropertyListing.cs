@@ -10,8 +10,9 @@ public class PropertyListing
     // Price in PKR. For rentals this is the monthly rent.
     public decimal Price { get; set; }
 
-    public PropertyType Type { get; set; }
-    public ListingType ListingType { get; set; }
+    // Types are admin-managed master data, stored as their value string.
+    public string Type { get; set; } = "House";
+    public string ListingType { get; set; } = "Sale";
     public ListingStatus Status { get; set; } = ListingStatus.Active;
 
     public string City { get; set; } = string.Empty;

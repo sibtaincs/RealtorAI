@@ -8,9 +8,10 @@ import { UploadService } from '../core/upload.service';
 import { TrustService } from '../core/trust.service';
 import { UPLOADS } from '../core/api';
 import {
-  CITIES, DuplicateCheckResponse, GeneratedListing, ListingQualityResponse, PROPERTY_TYPES,
+  DuplicateCheckResponse, GeneratedListing, ListingQualityResponse,
   PropertyInput, SellPriceResponse, formatPkr
 } from '../core/models';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-property-form',
@@ -25,9 +26,7 @@ export class PropertyForm {
   private uploads = inject(UploadService);
   private trust = inject(TrustService);
   auth = inject(AuthService);
-
-  cities = CITIES;
-  types = PROPERTY_TYPES;
+  master = inject(MasterDataService);
 
   input: PropertyInput = {
     title: '',

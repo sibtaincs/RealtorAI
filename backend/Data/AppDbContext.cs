@@ -22,6 +22,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Report> Reports => Set<Report>();
     public DbSet<ContentItem> ContentItems => Set<ContentItem>();
+    public DbSet<MasterData> MasterData => Set<MasterData>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -36,6 +37,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
             entity.Property(p => p.Price).HasColumnType("decimal(18,2)");
             entity.Property(p => p.Title).HasMaxLength(200);
+            entity.Property(p => p.Type).HasMaxLength(50);
+            entity.Property(p => p.ListingType).HasMaxLength(50);
         });
 
         builder.Entity<Lead>(entity =>
@@ -127,6 +130,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         {
             entity.HasIndex(c => c.Kind);
             entity.Property(c => c.Kind).HasMaxLength(50);
+        });
+
+        builder.Entity<MasterData>(entity =>
+        {
+            entity.HasIndex(m => new { m.Kind, m.Value });
+            entity.Property(m => m.Kind).HasMaxLength(50);
+            entity.Property(m => m.Value).HasMaxLength(100);
+            entity.Property(m => m.Label).HasMaxLength(100);
         });
     }
 }

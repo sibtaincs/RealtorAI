@@ -104,10 +104,8 @@ public class SavedSearchService : ISavedSearchService
             int? GetInt(string key) =>
                 int.TryParse(Get(key), out var number) ? number : null;
 
-            var type = Enum.TryParse<PropertyType>(Get("type"), true, out var parsedType)
-                ? parsedType : (PropertyType?)null;
-            var listingType = Enum.TryParse<ListingType>(Get("listingType"), true, out var parsedListing)
-                ? parsedListing : (ListingType?)null;
+            var type = Get("type");
+            var listingType = Get("listingType");
 
             query = new PropertyQueryDto(
                 Get("search"), Get("city"), Get("locality"), type, listingType,

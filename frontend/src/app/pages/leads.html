@@ -16,7 +16,7 @@
           <label>Status filter</label>
           <select [(ngModel)]="status" (ngModelChange)="load()">
             <option value="">All leads</option>
-            @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+            @for (s of master.values('lead-status'); track s) { <option [value]="s">{{ s }}</option> }
           </select>
         </div>
         <button type="button" class="mini-btn" (click)="sortByScore.set(!sortByScore())">
@@ -65,7 +65,7 @@
                 <td class="date">{{ l.createdAt | date: 'dd MMM, HH:mm' }}</td>
                 <td>
                   <select [ngModel]="l.status" (ngModelChange)="changeStatus(l, $event)" [class]="'status ' + l.status.toLowerCase()">
-                    @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+                    @for (s of master.values('lead-status'); track s) { <option [value]="s">{{ s }}</option> }
                   </select>
                 </td>
                 <td class="follow-actions">

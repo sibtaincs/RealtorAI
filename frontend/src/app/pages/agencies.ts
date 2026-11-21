@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ContentService } from '../core/content.service';
 import { Agency } from '../core/directory.data';
-import { CITIES } from '../core/models';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-agencies',
@@ -12,10 +12,9 @@ import { CITIES } from '../core/models';
 })
 export class AgenciesPage implements OnInit {
   private content = inject(ContentService);
-  cities = CITIES;
+  master = inject(MasterDataService);
   agencies = signal<Agency[]>([]);
   city = signal('');
-  propertyTypes = ['Residential', 'Plots', 'Apartments', 'Commercial', 'Houses', 'Rentals', 'Farms'];
   propertyType = signal('');
 
   ngOnInit(): void {

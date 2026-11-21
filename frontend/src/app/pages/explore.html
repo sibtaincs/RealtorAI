@@ -10,7 +10,7 @@
       <label>City</label>
       <select [ngModel]="city()" (ngModelChange)="city.set($event)">
         <option value="">All cities</option>
-        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
       </select>
     </div>
   </div>
@@ -34,7 +34,7 @@
       <div class="field">
         <label>City</label>
         <select [ngModel]="recordCity()" (ngModelChange)="recordCity.set($event)">
-          @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+          @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
         </select>
       </div>
       <div class="field">
@@ -63,7 +63,7 @@
       <label>Category</label>
       <select [ngModel]="category()" (ngModelChange)="category.set($event)">
         <option value="">All categories</option>
-        @for (c of categories; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of master.values('article-category'); track c) { <option [value]="c">{{ c }}</option> }
       </select>
     </div>
   </div>

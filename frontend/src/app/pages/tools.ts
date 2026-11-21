@@ -6,6 +6,7 @@ import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
 import { AreaGuide } from '../core/market.data';
 import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateValue, monthlyInstallment } from '../core/tools';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-tools',
@@ -16,6 +17,7 @@ import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateV
 export class ToolsPage implements OnInit {
   display = inject(DisplayService);
   private content = inject(ContentService);
+  master = inject(MasterDataService);
   areaUnits = TOOL_AREA_UNITS;
 
   toolLinks = [
@@ -59,4 +61,11 @@ export class ToolsPage implements OnInit {
   get totalInterest(): number { return this.totalPayable - this.loanAmount; }
   get buildCost(): number { return constructionCost(this.buildAreaSqFt, this.buildRatePerSqFt); }
   get converted(): number { return convertArea(this.convertValue, this.convertFrom, this.convertTo); }
+  get areaUnitOptions(): { value: ToolAreaUnit; label: string }[] {
+    const loaded = this.master.options('area-unit')
+      .filter(o => (TOOL_AREA_UNITS as readonly string[]).includes(o.value));
+    return loaded.length
+      ? loaded.map(o => ({ value: o.value as ToolAreaUnit, label: o.label }))
+      : TOOL_AREA_UNITS.map(u => ({ value: u, label: u }));
+  }
 }

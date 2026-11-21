@@ -44,15 +44,14 @@
         <div class="field">
           <label>Property type</label>
           <select [(ngModel)]="input.type">
-            @for (t of types; track t) { <option [value]="t">{{ t }}</option> }
+            @for (t of master.values('property-type'); track t) { <option [value]="t">{{ t }}</option> }
           </select>
         </div>
 
         <div class="field">
           <label>Listing type</label>
           <select [(ngModel)]="input.listingType">
-            <option value="Sale">For Sale</option>
-            <option value="Rent">For Rent</option>
+            @for (o of master.options('listing-type'); track o.id) { <option [value]="o.value">{{ o.label }}</option> }
           </select>
         </div>
 
@@ -64,7 +63,7 @@
         <div class="field">
           <label>City</label>
           <select [(ngModel)]="input.city">
-            @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+            @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
           </select>
         </div>
 

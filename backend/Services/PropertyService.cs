@@ -30,8 +30,8 @@ public class PropertyService : IPropertyService
         p.Title,
         p.Description,
         p.Price,
-        p.Type.ToString(),
-        p.ListingType.ToString(),
+        p.Type,
+        p.ListingType,
         p.Status.ToString(),
         p.City,
         p.Locality,
@@ -68,11 +68,11 @@ public class PropertyService : IPropertyService
         if (!string.IsNullOrWhiteSpace(query.Locality))
             q = q.Where(p => p.Locality.Contains(query.Locality));
 
-        if (query.Type.HasValue)
-            q = q.Where(p => p.Type == query.Type.Value);
+        if (!string.IsNullOrWhiteSpace(query.Type))
+            q = q.Where(p => p.Type == query.Type);
 
-        if (query.ListingType.HasValue)
-            q = q.Where(p => p.ListingType == query.ListingType.Value);
+        if (!string.IsNullOrWhiteSpace(query.ListingType))
+            q = q.Where(p => p.ListingType == query.ListingType);
 
         if (query.MinPrice.HasValue)
             q = q.Where(p => p.Price >= query.MinPrice.Value);

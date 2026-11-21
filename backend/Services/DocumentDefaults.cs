@@ -1,5 +1,3 @@
-using RealEstateAI.Api.Models;
-
 namespace RealEstateAI.Api.Services;
 
 /// <summary>
@@ -8,7 +6,7 @@ namespace RealEstateAI.Api.Services;
 /// </summary>
 public static class DocumentDefaults
 {
-    public static IReadOnlyList<string> For(PropertyType type, ListingType listingType)
+    public static IReadOnlyList<string> For(string type, string listingType)
     {
         var items = new List<string>
         {
@@ -17,7 +15,7 @@ public static class DocumentDefaults
             "Recent photographs of property"
         };
 
-        if (listingType == ListingType.Rent)
+        if (listingType.Equals("Rent", StringComparison.OrdinalIgnoreCase))
         {
             items.AddRange(new[]
             {
@@ -48,10 +46,12 @@ public static class DocumentDefaults
             });
         }
 
-        if (type is PropertyType.House or PropertyType.Villa or PropertyType.Farmhouse)
+        var houseLike = new[] { "House", "Villa", "Farmhouse" };
+        var landLike = new[] { "Plot", "Farmhouse" };
+        if (houseLike.Contains(type, StringComparer.OrdinalIgnoreCase))
             items.Add("Building plan approval");
 
-        if (type is PropertyType.Plot or PropertyType.Farmhouse)
+        if (landLike.Contains(type, StringComparer.OrdinalIgnoreCase))
             items.Add("Land measurement / delineation report");
 
         items.Add("Encumbrance / lien check");

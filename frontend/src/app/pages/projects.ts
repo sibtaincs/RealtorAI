@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
 import { NewProject } from '../core/directory.data';
-import { CITIES } from '../core/models';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-projects',
@@ -14,9 +14,8 @@ import { CITIES } from '../core/models';
 export class ProjectsPage implements OnInit {
   display = inject(DisplayService);
   private content = inject(ContentService);
-  cities = CITIES;
+  master = inject(MasterDataService);
   projects = signal<NewProject[]>([]);
-  statuses = ['Launching', 'Under Construction', 'Nearing Completion'];
 
   city = signal('');
   status = signal('');

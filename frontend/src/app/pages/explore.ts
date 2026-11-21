@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
 import { CommunityArticle, LandRecord, Society } from '../core/explore.data';
-import { CITIES } from '../core/models';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-explore',
@@ -15,7 +15,7 @@ import { CITIES } from '../core/models';
 export class ExplorePage implements OnInit {
   display = inject(DisplayService);
   private content = inject(ContentService);
-  cities = CITIES;
+  master = inject(MasterDataService);
   societies = signal<Society[]>([]);
   articles = signal<CommunityArticle[]>([]);
   landRecords = signal<LandRecord[]>([]);
@@ -24,8 +24,6 @@ export class ExplorePage implements OnInit {
   category = signal('');
   recordCity = signal('Lahore');
   recordPlot = signal('');
-
-  categories = ['News', 'Guide', 'Community'];
 
   ngOnInit(): void {
     this.content.list<Society>('society').subscribe(items => this.societies.set(items));

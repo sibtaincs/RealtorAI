@@ -6,8 +6,9 @@ import { AiService } from '../core/ai.service';
 import { SavedSearchService } from '../core/saved-search.service';
 import { AuthService } from '../core/auth.service';
 import { PropertyCard } from '../shared/property-card';
-import { CITIES, PROPERTY_TYPES, PagedResult, PriceEstimate, PropertyDto, PropertyQuery } from '../core/models';
+import { PagedResult, PriceEstimate, PropertyDto, PropertyQuery } from '../core/models';
 import { DisplayService } from '../core/display.service';
+import { MasterDataService } from '../core/master-data.service';
 
 /** Minimal shape of the browser Web Speech API used for voice search. */
 interface FilterChip {
@@ -37,14 +38,7 @@ export class Home implements OnInit {
   private ai = inject(AiService);
   private savedSearches = inject(SavedSearchService);
   auth = inject(AuthService);
-
-  cities = CITIES;
-  propertyTypes = PROPERTY_TYPES;
-  sortLabels: Record<string, string> = {
-    'price-asc': 'Price low to high',
-    'price-desc': 'Price high to low',
-    'area-desc': 'Largest area'
-  };
+  master = inject(MasterDataService);
   display = inject(DisplayService);
 
   // filters
@@ -181,7 +175,10 @@ export class Home implements OnInit {
     if (this.minPrice !== null) add('minPrice', `Min: ${this.display.money(this.minPrice)}`);
     if (this.maxPrice !== null) add('maxPrice', `Max: ${this.display.money(this.maxPrice)}`);
     if (this.minMarla !== null) add('minMarla', `Min area: ${this.minMarla} marla`);
-    if (this.sort !== 'newest') add('sort', `Sort: ${this.sortLabels[this.sort] ?? this.sort}`);
+    if (this.sort !== 'newest') {
+      const label = this.master.options('sort-option').find(o => o.value === this.sort)?.label;
+      add('sort', `Sort: ${label ?? this.sort}`);
+    }
     return chips;
   }
 

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
 import { AreaGuide, AreaTrend, PriceIndexRow } from '../core/market.data';
-import { CITIES } from '../core/models';
+import { MasterDataService } from '../core/master-data.service';
 
 @Component({
   selector: 'app-market',
@@ -14,7 +14,7 @@ import { CITIES } from '../core/models';
 export class MarketPage implements OnInit {
   display = inject(DisplayService);
   private content = inject(ContentService);
-  cities = CITIES;
+  master = inject(MasterDataService);
   guides = signal<AreaGuide[]>([]);
   trends = signal<AreaTrend[]>([]);
   index = signal<PriceIndexRow[]>([]);

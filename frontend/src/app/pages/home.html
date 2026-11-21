@@ -40,13 +40,13 @@
         <div class="field">
           <label>Type</label>
           <select [(ngModel)]="estimateType">
-            @for (t of propertyTypes; track t) { <option [value]="t">{{ t }}</option> }
+            @for (t of master.values('property-type'); track t) { <option [value]="t">{{ t }}</option> }
           </select>
         </div>
         <div class="field">
           <label>City</label>
           <select [(ngModel)]="estimateCity">
-            @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+            @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
           </select>
         </div>
         <div class="field full">
@@ -94,7 +94,7 @@
       <label>City</label>
       <select [(ngModel)]="city" (ngModelChange)="apply()">
         <option value="">All cities</option>
-        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
       </select>
     </div>
     <div class="field">
@@ -105,25 +105,21 @@
       <label>Property type</label>
       <select [(ngModel)]="type" (ngModelChange)="apply()">
         <option value="">All types</option>
-        @for (t of propertyTypes; track t) { <option [value]="t">{{ t }}</option> }
+        @for (t of master.values('property-type'); track t) { <option [value]="t">{{ t }}</option> }
       </select>
     </div>
     <div class="field">
       <label>Listing</label>
       <select [(ngModel)]="listingType" (ngModelChange)="apply()">
         <option value="">Buy / Rent</option>
-        <option value="Sale">For Sale</option>
-        <option value="Rent">For Rent</option>
+        @for (o of master.options('listing-type'); track o.id) { <option [value]="o.value">{{ o.label }}</option> }
       </select>
     </div>
     <div class="field">
       <label>Min bedrooms</label>
       <select [(ngModel)]="minBeds" (ngModelChange)="apply()">
         <option [ngValue]="null">Any</option>
-        <option [ngValue]="1">1+</option>
-        <option [ngValue]="2">2+</option>
-        <option [ngValue]="3">3+</option>
-        <option [ngValue]="4">4+</option>
+        @for (o of master.options('bedroom'); track o.id) { <option [ngValue]="+o.value">{{ o.label }}</option> }
       </select>
     </div>
     <div class="field">
@@ -141,10 +137,7 @@
     <div class="field">
       <label>Sort by</label>
       <select [(ngModel)]="sort" (ngModelChange)="apply()">
-        <option value="newest">Newest first</option>
-        <option value="price-asc">Price: low to high</option>
-        <option value="price-desc">Price: high to low</option>
-        <option value="area-desc">Largest area</option>
+        @for (o of master.options('sort-option'); track o.id) { <option [value]="o.value">{{ o.label }}</option> }
       </select>
     </div>
     <button class="btn-light clear-btn" (click)="clear()">Clear all</button>

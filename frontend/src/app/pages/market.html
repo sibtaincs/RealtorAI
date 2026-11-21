@@ -9,7 +9,7 @@
       <label>City</label>
       <select [ngModel]="city()" (ngModelChange)="city.set($event)">
         <option value="">All cities</option>
-        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
       </select>
     </div>
   </div>

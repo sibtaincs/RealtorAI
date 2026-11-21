@@ -36,7 +36,7 @@ public class WhatsAppService : IWhatsAppService
     {
         var propertyText = property is null
             ? "our available properties"
-            : $"{property.Title} ({AiService.FormatPkr(property.Price, property.ListingType.ToString())}) in {property.Locality}, {property.City}";
+            : $"{property.Title} ({AiService.FormatPkr(property.Price, property.ListingType)}) in {property.Locality}, {property.City}";
 
         var message =
             $"Assalam-o-Alaikum {lead.Name}! 👋\n\n" +

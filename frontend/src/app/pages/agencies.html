@@ -9,14 +9,14 @@
       <label>City</label>
       <select [ngModel]="city()" (ngModelChange)="city.set($event)">
         <option value="">All cities</option>
-        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
       </select>
     </div>
     <div class="field">
       <label>Property type</label>
       <select [ngModel]="propertyType()" (ngModelChange)="propertyType.set($event)">
         <option value="">All property types</option>
-        @for (t of propertyTypes; track t) { <option [value]="t">{{ t }}</option> }
+        @for (t of master.values('agency-specialty'); track t) { <option [value]="t">{{ t }}</option> }
       </select>
     </div>
   </div>
