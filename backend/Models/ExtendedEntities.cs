@@ -50,3 +50,21 @@ public class FollowUp
     public bool Sent { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
+
+public class NotificationPreference
+{
+    public string UserId { get; set; } = string.Empty;
+    public bool InAppEnabled { get; set; } = true;
+    public bool EmailEnabled { get; set; }
+    public bool WhatsAppEnabled { get; set; }
+}
+
+public class NotificationDelivery
+{
+    public int Id { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public int SavedSearchId { get; set; }
+    public int PropertyListingId { get; set; }
+    public string Channel { get; set; } = string.Empty;
+    public DateTime SentAt { get; set; } = DateTime.UtcNow;
+}

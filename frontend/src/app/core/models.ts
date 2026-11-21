@@ -265,6 +265,12 @@ export interface ListingPerformance {
   daysListed: number;
 }
 
+export interface NotificationPreferences {
+  inAppEnabled: boolean;
+  emailEnabled: boolean;
+  whatsappEnabled: boolean;
+}
+
 export const PROPERTY_TYPES = ['House', 'Plot', 'Apartment', 'Shop', 'Office', 'Villa', 'Farmhouse'];
 export const CITIES = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Multan', 'Faisalabad', 'Gujranwala', 'Peshawar', 'Hyderabad', 'Quetta'];
 

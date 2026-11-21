@@ -27,3 +27,6 @@ services:
       # Comma-separated. Must include every deployed frontend origin.
       - key: Cors__AllowedOrigins
         value: http://localhost:4200,https://realestateai.netlify.app,https://realtorai.netlify.app,https://polite-paletas-4014d8.netlify.app
+      # Absolute link used in email/WhatsApp alert messages.
+      - key: Alerts__FrontendUrl
+        value: https://polite-paletas-4014d8.netlify.app

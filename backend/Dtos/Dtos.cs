@@ -304,3 +304,13 @@ public record ListingPerformanceDto(
     int TotalDocuments,
     bool IsTrusted,
     int DaysListed);
+
+public record NotificationPreferenceDto(
+    bool InAppEnabled,
+    bool EmailEnabled,
+    bool WhatsAppEnabled);
+
+public record UpdateNotificationPreferenceDto(
+    bool InAppEnabled,
+    bool EmailEnabled,
+    bool WhatsAppEnabled);

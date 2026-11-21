@@ -6,6 +6,17 @@
   a { text-decoration: none; }
 }
 
+.channels { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 16px 18px; margin-bottom: 18px;
+  h2 { margin: 0 0 4px; font-size: 1rem; }
+  p { margin: 0; color: #94a3b8; font-size: .78rem; }
+}
+
+.channel-toggles { display: flex; gap: 16px; flex-wrap: wrap;
+  label { display: flex; align-items: center; gap: 7px; font-size: .82rem; font-weight: 600; color: #475569; cursor: pointer; }
+  input { width: 16px; height: 16px; accent-color: var(--primary); }
+}
+
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
   @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
   @media (max-width: 600px) { grid-template-columns: 1fr; }

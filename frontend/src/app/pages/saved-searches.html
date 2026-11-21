@@ -17,6 +17,20 @@
     @if (notice()) { <p class="success">{{ notice() }}</p> }
     @if (error()) { <p class="error">{{ error() }}</p> }
 
+    @if (prefs(); as p) {
+      <section class="panel channels">
+        <div>
+          <h2>Alert channels</h2>
+          <p>Naye match kaise bhejein — yeh sabhi saved searches par lagoo hota hai.</p>
+        </div>
+        <div class="channel-toggles">
+          <label><input type="checkbox" [checked]="p.inAppEnabled" (change)="setChannel('inAppEnabled', $any($event.target).checked)" /> In-app</label>
+          <label><input type="checkbox" [checked]="p.emailEnabled" (change)="setChannel('emailEnabled', $any($event.target).checked)" /> Email</label>
+          <label><input type="checkbox" [checked]="p.whatsappEnabled" (change)="setChannel('whatsappEnabled', $any($event.target).checked)" /> WhatsApp</label>
+        </div>
+      </section>
+    }
+
     @if (loading()) {
       <div class="panel">Loading...</div>
     } @else if (items().length === 0) {

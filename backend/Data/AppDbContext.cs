@@ -16,6 +16,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<DocumentChecklistItem> DocumentChecklist => Set<DocumentChecklistItem>();
     public DbSet<FollowUp> FollowUps => Set<FollowUp>();
+    public DbSet<NotificationPreference> NotificationPreferences => Set<NotificationPreference>();
+    public DbSet<NotificationDelivery> NotificationDeliveries => Set<NotificationDelivery>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -69,6 +71,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                   .WithMany()
                   .HasForeignKey(f => f.LeadId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<NotificationPreference>().HasKey(p => p.UserId);
+
+        builder.Entity<NotificationDelivery>(entity =>
+        {
+            entity.HasIndex(d => new { d.SavedSearchId, d.PropertyListingId, d.Channel }).IsUnique();
         });
     }
 }

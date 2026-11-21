@@ -2,8 +2,9 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { SavedSearchService } from '../core/saved-search.service';
+import { PreferencesService } from '../core/preferences.service';
 import { AuthService } from '../core/auth.service';
-import { SavedSearch } from '../core/models';
+import { SavedSearch, NotificationPreferences } from '../core/models';
 
 @Component({
   selector: 'app-saved-searches',
@@ -13,10 +14,12 @@ import { SavedSearch } from '../core/models';
 })
 export class SavedSearches implements OnInit {
   private service = inject(SavedSearchService);
+  private prefsService = inject(PreferencesService);
   private router = inject(Router);
   auth = inject(AuthService);
 
   items = signal<SavedSearch[]>([]);
+  prefs = signal<NotificationPreferences | null>(null);
   loading = signal(true);
   error = signal('');
   notice = signal('');
@@ -27,6 +30,9 @@ export class SavedSearches implements OnInit {
   }
 
   load(): void {
+    this.prefsService.get().subscribe({
+      next: value => this.prefs.set(value)
+    });
     this.service.all().subscribe({
       next: items => {
         this.items.set(items);
@@ -48,6 +54,20 @@ export class SavedSearches implements OnInit {
     } catch {
       return 'All properties';
     }
+  }
+
+  setChannel(channel: keyof NotificationPreferences, value: boolean): void {
+    const current = this.prefs();
+    if (!current) return;
+    const next = { ...current, [channel]: value };
+    this.prefs.set(next);
+    this.prefsService.update(next).subscribe({
+      next: saved => this.prefs.set(saved),
+      error: () => {
+        this.prefs.set(current);
+        this.error.set('Alert preferences save nahi hue.');
+      }
+    });
   }
 
   toggle(item: SavedSearch): void {

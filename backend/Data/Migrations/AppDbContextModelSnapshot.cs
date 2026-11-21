@@ -376,6 +376,58 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("RealEstateAI.Api.Models.NotificationDelivery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Channel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PropertyListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SavedSearchId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SavedSearchId", "PropertyListingId", "Channel")
+                        .IsUnique();
+
+                    b.ToTable("NotificationDeliveries");
+                });
+
+            modelBuilder.Entity("RealEstateAI.Api.Models.NotificationPreference", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("EmailEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("InAppEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("WhatsAppEnabled")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("NotificationPreferences");
+                });
+
             modelBuilder.Entity("RealEstateAI.Api.Models.PropertyListing", b =>
                 {
                     b.Property<int>("Id")

@@ -20,11 +20,13 @@ public class SavedSearchService : ISavedSearchService
 {
     private readonly AppDbContext _db;
     private readonly IPropertyService _properties;
+    private readonly IAlertDeliveryService _delivery;
 
-    public SavedSearchService(AppDbContext db, IPropertyService properties)
+    public SavedSearchService(AppDbContext db, IPropertyService properties, IAlertDeliveryService delivery)
     {
         _db = db;
         _properties = properties;
+        _delivery = delivery;
     }
 
     public async Task<List<SavedSearchDto>> GetAsync(string userId)
@@ -125,17 +127,7 @@ public class SavedSearchService : ISavedSearchService
         var newItems = result.Items.Where(p => p.CreatedAt > since).ToList();
 
         if (newItems.Count > 0)
-        {
-            _db.Notifications.Add(new Notification
-            {
-                UserId = search.UserId,
-                Title = $"New matches for \"{search.Name}\"",
-                Message = $"{newItems.Count} new propert" + (newItems.Count == 1 ? "y" : "ies") +
-                          " match your saved search. Tap to view them.",
-                Link = "/?saved=" + search.Id,
-                IsRead = false
-            });
-        }
+            await _delivery.DeliverAsync(search, newItems);
 
         search.LastAlertAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();

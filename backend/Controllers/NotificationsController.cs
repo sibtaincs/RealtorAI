@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RealEstateAI.Api.Dtos;
 using RealEstateAI.Api.Services;
 
 namespace RealEstateAI.Api.Controllers;
@@ -10,10 +11,12 @@ namespace RealEstateAI.Api.Controllers;
 public class NotificationsController : ControllerBase
 {
     private readonly INotificationService _service;
+    private readonly INotificationPreferenceService _preferences;
 
-    public NotificationsController(INotificationService service)
+    public NotificationsController(INotificationService service, INotificationPreferenceService preferences)
     {
         _service = service;
+        _preferences = preferences;
     }
 
     [Authorize]
@@ -35,6 +38,16 @@ public class NotificationsController : ControllerBase
     [HttpPatch("read-all")]
     public async Task<IActionResult> MarkAllRead()
         => Ok(new { updated = await _service.MarkAllReadAsync(CurrentUserId()) });
+
+    [Authorize]
+    [HttpGet("preferences")]
+    public async Task<IActionResult> GetPreferences()
+        => Ok(await _preferences.GetAsync(CurrentUserId()));
+
+    [Authorize]
+    [HttpPut("preferences")]
+    public async Task<IActionResult> UpdatePreferences(UpdateNotificationPreferenceDto input)
+        => Ok(await _preferences.UpdateAsync(CurrentUserId(), input));
 
     private string CurrentUserId()
         => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
