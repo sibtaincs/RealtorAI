@@ -1,0 +1,62 @@
+<section class="wrap directory-page">
+  <div class="head">
+    <h1>Market Insights</h1>
+    <p>Area guides, search trends and a city price index for the Pakistani property market.</p>
+  </div>
+
+  <div class="filters panel">
+    <div class="field">
+      <label>City</label>
+      <select [ngModel]="city()" (ngModelChange)="city.set($event)">
+        <option value="">All cities</option>
+        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+  </div>
+
+  <h2>Area Guides</h2>
+  <div class="cards">
+    @for (g of filteredGuides(); track g.name) {
+      <div class="panel card">
+        <h3>{{ g.name }}</h3>
+        <p class="place">📍 {{ g.city }} · {{ display.money(g.pricePerSqFt) }}/sq ft</p>
+        <p class="meta">{{ g.summary }}</p>
+        <p class="meta">Safety {{ g.safety }} · Schools {{ g.schools }} · {{ g.commute }}</p>
+      </div>
+    } @empty { <p class="empty">No guides for this city.</p> }
+  </div>
+
+  <h2>Property Search Trends</h2>
+  <div class="panel table-wrap">
+    <table>
+      <thead><tr><th>City</th><th>Area</th><th>Price change</th><th>Search interest</th></tr></thead>
+      <tbody>
+        @for (t of filteredTrends(); track t.area) {
+          <tr>
+            <td>{{ t.city }}</td><td>{{ t.area }}</td>
+            <td [class.up]="t.priceChangePct >= 0" [class.down]="t.priceChangePct < 0">{{ t.priceChangePct }}%</td>
+            <td>{{ t.searchChangePct }}%</td>
+          </tr>
+        } @empty { <tr><td colspan="4" class="empty">No trends for this city.</td></tr> }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Price Index</h2>
+  <div class="panel table-wrap">
+    <table>
+      <thead><tr><th>City</th><th>Index</th><th>Year change</th><th>Median listing</th></tr></thead>
+      <tbody>
+        @for (i of filteredIndex(); track i.city) {
+          <tr>
+            <td>{{ i.city }}</td><td>{{ i.index }}</td>
+            <td [class.up]="i.yearChangePct >= 0" [class.down]="i.yearChangePct < 0">{{ i.yearChangePct }}%</td>
+            <td>{{ display.money(i.medianPrice) }}</td>
+          </tr>
+        } @empty { <tr><td colspan="4" class="empty">No index rows for this city.</td></tr> }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">Sample market data for guidance only — not live transaction data.</p>
+</section>

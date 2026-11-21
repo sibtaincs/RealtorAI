@@ -8,6 +8,7 @@ export const en: Record<TranslationKey, string> = {
   'nav.explore': 'Explore',
   'nav.projects': 'New Projects',
   'nav.agencies': 'Agencies',
+  'nav.market': 'Market Insights',
   'nav.dashboard': 'Dashboard',
   'nav.saved': 'Saved Searches',
   'nav.leads': 'Leads',

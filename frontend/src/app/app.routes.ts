@@ -11,6 +11,7 @@ export const routes: Routes = [
   { path: 'tools', loadComponent: () => import('./pages/tools').then(m => m.ToolsPage) },
   { path: 'projects', loadComponent: () => import('./pages/projects').then(m => m.ProjectsPage) },
   { path: 'agencies', loadComponent: () => import('./pages/agencies').then(m => m.AgenciesPage) },
+  { path: 'market', loadComponent: () => import('./pages/market').then(m => m.MarketPage) },
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
   { path: 'admin/reports', loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },

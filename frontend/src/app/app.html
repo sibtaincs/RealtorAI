@@ -12,6 +12,7 @@
         <div class="menu panel">
           <a routerLink="/projects" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.projects') }}</a>
           <a routerLink="/agencies" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.agencies') }}</a>
+          <a routerLink="/market" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.market') }}</a>
         </div>
       </details>
       @if (auth.isLoggedIn()) {
