@@ -115,7 +115,7 @@ export class ContentService {
     return this.http.put<ContentItem>(`${API}/content/${id}`, input);
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${API}/content/${id}`);
+  delete(kind: string, id: number): Observable<void> {
+    return this.http.delete<void>(`${API}/content/${encodeURIComponent(kind)}/${id}`);
   }
 }

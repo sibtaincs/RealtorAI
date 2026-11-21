@@ -22,6 +22,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Report> Reports => Set<Report>();
     public DbSet<ContentItem> ContentItems => Set<ContentItem>();
+    public DbSet<ProjectContent> ProjectContents => Set<ProjectContent>();
+    public DbSet<AgencyContent> AgencyContents => Set<AgencyContent>();
+    public DbSet<SocietyContent> SocietyContents => Set<SocietyContent>();
+    public DbSet<LandRecordContent> LandRecordContents => Set<LandRecordContent>();
+    public DbSet<ArticleContent> ArticleContents => Set<ArticleContent>();
+    public DbSet<AreaGuideContent> AreaGuideContents => Set<AreaGuideContent>();
+    public DbSet<AreaTrendContent> AreaTrendContents => Set<AreaTrendContent>();
+    public DbSet<PriceIndexContent> PriceIndexContents => Set<PriceIndexContent>();
     public DbSet<MasterData> MasterData => Set<MasterData>();
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -39,6 +47,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(p => p.Title).HasMaxLength(200);
             entity.Property(p => p.Type).HasMaxLength(50);
             entity.Property(p => p.ListingType).HasMaxLength(50);
+
+        builder.Entity<ProjectContent>(e => { e.Property(x => x.PriceFrom).HasColumnType("decimal(18,2)"); e.Property(x => x.PriceTo).HasColumnType("decimal(18,2)"); });
+        builder.Entity<SocietyContent>(e => { e.Property(x => x.PriceFrom).HasColumnType("decimal(18,2)"); });
+        builder.Entity<AreaGuideContent>(e => { e.Property(x => x.PricePerSqFt).HasColumnType("decimal(18,2)"); });
+        builder.Entity<PriceIndexContent>(e => { e.Property(x => x.MedianPrice).HasColumnType("decimal(18,2)"); });
         });
 
         builder.Entity<Lead>(entity =>

@@ -20,10 +20,10 @@ public class ContentController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] string? kind) => Ok(await _service.ListAsync(kind));
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id)
+    [HttpGet("{kind}/{id:int}")]
+    public async Task<IActionResult> Get(string kind, int id)
     {
-        var item = await _service.GetAsync(id);
+        var item = await _service.GetAsync(kind, id);
         return item is null ? NotFound() : Ok(item);
     }
 
@@ -40,14 +40,14 @@ public class ContentController : ControllerBase
     public async Task<IActionResult> Update(int id, ContentUpsertDto input)
     {
         if (!IsValid(input, out var error)) return BadRequest(error);
-        var updated = await _service.UpdateAsync(id, input);
+        var updated = await _service.UpdateAsync(input.Kind, id, input);
         return updated is null ? NotFound() : Ok(updated);
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id) =>
-        await _service.DeleteAsync(id) ? NoContent() : NotFound();
+    [HttpDelete("{kind}/{id:int}")]
+    public async Task<IActionResult> Delete(string kind, int id) =>
+        await _service.DeleteAsync(kind, id) ? NoContent() : NotFound();
 
     private static bool IsValid(ContentUpsertDto input, out string error)
     {

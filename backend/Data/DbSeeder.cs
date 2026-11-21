@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RealEstateAI.Api.Dtos;
 using RealEstateAI.Api.Models;
 using RealEstateAI.Api.Services;
 
@@ -152,6 +153,13 @@ public static class DbSeeder
         if (!await db.ContentItems.AnyAsync())
         {
             db.ContentItems.AddRange(BuildContentItems());
+            await db.SaveChangesAsync();
+        }
+
+        if (!await db.ProjectContents.AnyAsync() &&
+            await db.ContentItems.AnyAsync())
+        {
+            await MigrateContentItemsToTypedAsync(db);
             await db.SaveChangesAsync();
         }
 
@@ -395,4 +403,107 @@ public static class DbSeeder
             ImageUrlsJson = JsonSerializer.Serialize(images),
             IsFeatured = featured
         };
+
+    private static async Task MigrateContentItemsToTypedAsync(AppDbContext db)
+    {
+        var jsonOpts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var legacy = await db.ContentItems.AsNoTracking().ToListAsync();
+        foreach (var item in legacy)
+        {
+            switch (item.Kind.ToLowerInvariant())
+            {
+                case "project":
+                {
+                    var dto = JsonSerializer.Deserialize<ProjectContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.ProjectContents.Add(new ProjectContent
+                    {
+                        Name = dto.Name, Developer = dto.Developer, City = dto.City,
+                        Locality = dto.Locality, Type = dto.Type, PriceFrom = dto.PriceFrom,
+                        PriceTo = dto.PriceTo, Status = dto.Status, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "agency":
+                {
+                    var dto = JsonSerializer.Deserialize<AgencyContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.AgencyContents.Add(new AgencyContent
+                    {
+                        Name = dto.Name, City = dto.City, Agents = dto.Agents,
+                        Listings = dto.Listings, Rating = dto.Rating, Verified = dto.Verified,
+                        Specialty = dto.Specialty, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "society":
+                {
+                    var dto = JsonSerializer.Deserialize<SocietyContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.SocietyContents.Add(new SocietyContent
+                    {
+                        Name = dto.Name, City = dto.City, PlotSizes = dto.PlotSizes,
+                        PriceFrom = dto.PriceFrom, Status = dto.Status, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "land-record":
+                {
+                    var dto = JsonSerializer.Deserialize<LandRecordContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.LandRecordContents.Add(new LandRecordContent
+                    {
+                        Plot = dto.Plot, City = dto.City, Owner = dto.Owner,
+                        Area = dto.Area, Status = dto.Status, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "article":
+                {
+                    var dto = JsonSerializer.Deserialize<ArticleContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.ArticleContents.Add(new ArticleContent
+                    {
+                        Title = dto.Title, Category = dto.Category, Summary = dto.Summary,
+                        Date = dto.Date, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "area-guide":
+                {
+                    var dto = JsonSerializer.Deserialize<AreaGuideContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.AreaGuideContents.Add(new AreaGuideContent
+                    {
+                        City = dto.City, Name = dto.Name, Summary = dto.Summary,
+                        PricePerSqFt = dto.PricePerSqFt, Safety = dto.Safety,
+                        Commute = dto.Commute, Schools = dto.Schools, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "area-trend":
+                {
+                    var dto = JsonSerializer.Deserialize<AreaTrendContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.AreaTrendContents.Add(new AreaTrendContent
+                    {
+                        City = dto.City, Area = dto.Area, PriceChangePct = dto.PriceChangePct,
+                        SearchChangePct = dto.SearchChangePct, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+                case "price-index":
+                {
+                    var dto = JsonSerializer.Deserialize<PriceIndexContentDto>(item.PayloadJson, jsonOpts);
+                    if (dto is null) break;
+                    db.PriceIndexContents.Add(new PriceIndexContent
+                    {
+                        City = dto.City, Index = dto.Index, YearChangePct = dto.YearChangePct,
+                        MedianPrice = dto.MedianPrice, UpdatedAt = DateTime.UtcNow
+                    });
+                    break;
+                }
+            }
+        }
+    }
 }

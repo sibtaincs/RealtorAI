@@ -150,7 +150,7 @@ export class AdminContent implements OnInit {
 
   remove(id: number): void {
     this.busy.set(true);
-    this.content.delete(id).subscribe({
+    this.content.delete(this.kind(), id).subscribe({
       next: () => {
         this.busy.set(false);
         this.items.update(items => items.filter(item => item.id !== id));
