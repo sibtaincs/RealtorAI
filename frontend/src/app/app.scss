@@ -10,7 +10,7 @@
 }
 
 .nav {
-  min-height: 68px; display: flex; align-items: center; gap: 28px;
+  min-height: 68px; display: flex; align-items: center; gap: 16px;
 }
 
 .brand {
@@ -24,10 +24,10 @@
   padding: 6px 10px; font-size: 1.1rem; cursor: pointer; margin-left: auto;
 }
 .links {
-  display: flex; flex-wrap: wrap; gap: 6px; flex: 1;
+  display: flex; flex-wrap: nowrap; gap: 4px; flex: 1;
 
   a {
-    padding: 8px 12px; border-radius: 8px; text-decoration: none;
+    padding: 6px 10px; border-radius: 8px; text-decoration: none;
     color: #475569; font-size: .9rem; font-weight: 600;
 
     &:hover { background: #f1f5f9; }
