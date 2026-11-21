@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { PropertyService } from '../core/property.service';
 import { PagedResult, PropertyDto, PropertyQuery } from '../core/models';
@@ -9,7 +10,7 @@ import { PropertyCard } from '../shared/property-card';
 
 @Component({
   selector: 'app-my-listings',
-  imports: [FormsModule, PropertyCard],
+  imports: [FormsModule, RouterLink, PropertyCard],
   templateUrl: './my-listings.html',
   styleUrl: './directory.scss'
 })
@@ -60,6 +61,14 @@ export class MyListings implements OnInit {
   clear(): void { this.search = ''; this.city = ''; this.type = ''; this.listingType = ''; this.status = ''; this.apply(); }
   previous(): void { if (this.page > 1) { this.page--; this.load(); } }
   next(): void { const r = this.result(); if (r && this.page * this.pageSize < r.total) { this.page++; this.load(); } }
+
+  deleteListing(id: number): void {
+    if (!confirm('Is listing ko delete karein?')) return;
+    this.properties.delete(id).subscribe({
+      next: () => this.load(),
+      error: () => this.error.set('Delete fail ho gaya.')
+    });
+  }
 
   items = computed(() => this.result()?.items ?? []);
   total = computed(() => this.result()?.total ?? 0);

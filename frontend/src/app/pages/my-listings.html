@@ -44,7 +44,13 @@
 
   <div class="cards">
     @for (p of items(); track p.id) {
-      <app-property-card [property]="p" />
+      <div class="listing-wrap">
+        <app-property-card [property]="p" />
+        <div class="listing-actions">
+          <a class="mini-btn" [routerLink]="'/post'" [queryParams]="{ id: p.id }">Edit</a>
+          <button class="mini-btn danger" (click)="deleteListing(p.id)">Delete</button>
+        </div>
+      </div>
     } @empty {
       @if (!loading()) { <p class="empty">Koi listing nahi mili.</p> }
     }

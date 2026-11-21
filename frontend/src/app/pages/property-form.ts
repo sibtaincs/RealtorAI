@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PropertyService } from '../core/property.service';
 import { AiService } from '../core/ai.service';
 import { AuthService } from '../core/auth.service';
@@ -19,13 +19,63 @@ import { MasterDataService } from '../core/master-data.service';
   templateUrl: './property-form.html',
   styleUrl: './property-form.scss'
 })
-export class PropertyForm {
+export class PropertyForm implements OnInit {
   private properties = inject(PropertyService);
   private ai = inject(AiService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private uploads = inject(UploadService);
   private trust = inject(TrustService);
   auth = inject(AuthService);
+
+  editingId = signal<number | null>(null);
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.queryParamMap.get('id');
+    if (id) {
+      const num = Number(id);
+      this.editingId.set(num);
+      this.properties.get(num).subscribe({
+        next: p => {
+          this.input = {
+            ...this.input,
+            title: p.title,
+            description: p.description,
+            price: p.price,
+            type: p.type,
+            listingType: p.listingType,
+            city: p.city,
+            locality: p.locality,
+            address: p.address,
+            latitude: p.latitude,
+            longitude: p.longitude,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+            areaMarla: p.areaMarla,
+            areaSqFt: p.areaSqFt,
+            imageUrls: p.imageUrls,
+            isFeatured: p.isFeatured,
+            plotNumber: p.plotNumber ?? '',
+            isReadyForPossession: p.isReadyForPossession ?? false,
+            installmentAvailable: p.installmentAvailable ?? false,
+            flooring: p.flooring ?? '',
+            electricityBackup: p.electricityBackup ?? '',
+            view: p.view ?? '',
+            builtInYear: p.builtInYear ?? null,
+            parkingSpaces: p.parkingSpaces ?? null,
+            floors: p.floors ?? null,
+            amenitiesJson: p.amenitiesJson ?? '',
+            contactEmail: p.contactEmail ?? '',
+            contactMobile: p.contactMobile ?? '',
+            contactLandline: p.contactLandline ?? '',
+            contactWhatsapp: p.contactWhatsapp ?? ''
+          };
+          this.imageUrlsText = p.imageUrls.join(', ');
+          this.uploadedPaths.set(p.imageUrls);
+        }
+      });
+    }
+  }
   master = inject(MasterDataService);
 
   input: PropertyInput = {
@@ -285,7 +335,10 @@ export class PropertyForm {
     this.saving.set(true);
     this.error.set('');
 
-    this.properties.create(this.input).subscribe({
+    const request = this.editingId()
+      ? this.properties.update(this.editingId()!, this.input)
+      : this.properties.create(this.input);
+    request.subscribe({
       next: p => {
         this.saving.set(false);
         this.router.navigate(['/property', p.id]);
