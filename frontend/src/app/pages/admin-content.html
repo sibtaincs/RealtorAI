@@ -2,13 +2,13 @@
   @if (!auth.isAdmin()) {
     <div class="panel gate">
       <h1>Admin access only</h1>
-      <p>Site content manage karne ke liye admin account se login karein.</p>
+      <p>Content manage karne ke liye admin account se login karein.</p>
       <a routerLink="/login" class="btn-primary">Go to Login</a>
     </div>
   } @else {
     <div class="head">
-      <h1>Site Content</h1>
-      <p>Projects, agencies, area guides and tools content — all stored in the database.</p>
+      <h1>Content</h1>
+      <p>Projects, agencies, societies and market data — stored in the database.</p>
     </div>
 
     @if (error()) { <p class="error">{{ error() }}</p> }
@@ -21,8 +21,39 @@
     </div>
 
     <section class="panel editor">
-      <h2>{{ editingId() ? 'Edit' : 'Add' }} {{ kind() }} item</h2>
-      <textarea [(ngModel)]="draft" rows="10" spellcheck="false" aria-label="Content JSON"></textarea>
+      <div class="editor-head">
+        <h2>{{ editingId() ? 'Edit' : 'Add' }} {{ kind() }}</h2>
+        <button class="mini-btn" type="button" (click)="rawMode.set(!rawMode())">
+          {{ rawMode() ? 'Form mode' : 'Raw JSON mode' }}
+        </button>
+      </div>
+
+      @if (rawMode()) {
+        <textarea [ngModel]="rawDraft()" (ngModelChange)="rawDraft.set($event)" rows="10"></textarea>
+      } @else {
+        <div class="grid-form">
+          @for (field of fields(); track field.name) {
+            <label class="field" [class.full]="field.type === 'textarea'">
+              {{ field.label }}
+              @if (field.type === 'textarea') {
+                <textarea [ngModel]="draft()[field.name]" (ngModelChange)="setField(field.name, $event)"></textarea>
+              } @else if (field.type === 'boolean') {
+                <input type="checkbox" [checked]="draft()[field.name]" (change)="setField(field.name, $any($event.target).checked)" />
+              } @else if (field.type === 'select' || field.type === 'city') {
+                <select [ngModel]="draft()[field.name]" (ngModelChange)="setField(field.name, $event)">
+                  @if (!field.required) { <option value="">—</option> }
+                  @for (opt of selectOptions(field); track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              } @else {
+                <input [type]="field.type === 'number' ? 'number' : 'text'" [ngModel]="draft()[field.name]" (ngModelChange)="setField(field.name, $event)" />
+              }
+            </label>
+          }
+        </div>
+      }
+
       <div class="actions">
         <button class="btn-primary" [disabled]="busy()" (click)="save()">Save</button>
         @if (editingId()) { <button class="mini-btn" (click)="cancel()">Cancel</button> }
@@ -40,7 +71,7 @@
           </div>
         </div>
       } @empty {
-        <p class="hint">Is section ka abhi koi content nahi hai.</p>
+        <p class="hint">Is kind ka abhi koi item nahi hai.</p>
       }
     </section>
   }

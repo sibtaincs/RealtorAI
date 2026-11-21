@@ -52,26 +52,17 @@ public class ContentController : ControllerBase
     private static bool IsValid(ContentUpsertDto input, out string error)
     {
         error = string.Empty;
-        if (!ContentKinds.IsValid(input.Kind))
-        {
-            error = "Unknown content kind.";
-            return false;
-        }
         if (string.IsNullOrWhiteSpace(input.PayloadJson))
         {
             error = "Content JSON is required.";
             return false;
         }
-        try
+        var (isValid, validationError) = ContentPayloadValidator.Validate(input.Kind, input.PayloadJson);
+        if (!isValid)
         {
-            using var document = JsonDocument.Parse(input.PayloadJson);
-            if (document.RootElement.ValueKind == JsonValueKind.Object) return true;
+            error = string.IsNullOrWhiteSpace(validationError) ? "Invalid content payload." : validationError;
+            return false;
         }
-        catch (JsonException)
-        {
-            // handled below
-        }
-        error = "Content JSON must be a valid object.";
-        return false;
+        return true;
     }
 }
