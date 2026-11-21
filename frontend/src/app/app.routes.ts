@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
+import { authGuard, adminGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', loadComponent: () => import('./pages/home').then(m => m.Home) },
   { path: 'property/:id', loadComponent: () => import('./pages/property-detail').then(m => m.PropertyDetail) },
   { path: 'login', loadComponent: () => import('./pages/login').then(m => m.Login) },
-  { path: 'post', loadComponent: () => import('./pages/property-form').then(m => m.PropertyForm) },
-  { path: 'leads', loadComponent: () => import('./pages/leads').then(m => m.Leads) },
-  { path: 'dashboard', loadComponent: () => import('./pages/dashboard').then(m => m.Dashboard) },
+  { path: 'post', canActivate: [authGuard], loadComponent: () => import('./pages/property-form').then(m => m.PropertyForm) },
+  { path: 'leads', canActivate: [authGuard], loadComponent: () => import('./pages/leads').then(m => m.Leads) },
+  { path: 'dashboard', canActivate: [authGuard], loadComponent: () => import('./pages/dashboard').then(m => m.Dashboard) },
   { path: 'map', loadComponent: () => import('./pages/map').then(m => m.MapPage) },
   { path: 'tools', loadComponent: () => import('./pages/tools').then(m => m.ToolsPage) },
   { path: 'projects', loadComponent: () => import('./pages/projects').then(m => m.ProjectsPage) },
@@ -15,11 +16,11 @@ export const routes: Routes = [
   { path: 'explore', loadComponent: () => import('./pages/explore').then(m => m.ExplorePage) },
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
   { path: 'shortlist', loadComponent: () => import('./pages/shortlist').then(m => m.ShortlistPage) },
-  { path: 'my-listings', loadComponent: () => import('./pages/my-listings').then(m => m.MyListings) },
+  { path: 'my-listings', canActivate: [authGuard], loadComponent: () => import('./pages/my-listings').then(m => m.MyListings) },
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
-  { path: 'admin/reports', loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },
-  { path: 'admin/content', loadComponent: () => import('./pages/admin-content').then(m => m.AdminContent) },
-  { path: 'admin/master-data', loadComponent: () => import('./pages/admin-master-data').then(m => m.AdminMasterData) },
-  { path: 'admin/dealers', loadComponent: () => import('./pages/admin-dealers').then(m => m.AdminDealers) },
+  { path: 'admin/reports', canActivate: [adminGuard], loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },
+  { path: 'admin/content', canActivate: [adminGuard], loadComponent: () => import('./pages/admin-content').then(m => m.AdminContent) },
+  { path: 'admin/master-data', canActivate: [adminGuard], loadComponent: () => import('./pages/admin-master-data').then(m => m.AdminMasterData) },
+  { path: 'admin/dealers', canActivate: [adminGuard], loadComponent: () => import('./pages/admin-dealers').then(m => m.AdminDealers) },
   { path: '**', redirectTo: '' }
 ];
