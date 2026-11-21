@@ -5,6 +5,11 @@
       <p>Property post karne ke liye pehle login ya register karein.</p>
       <a routerLink="/login" class="btn-primary">Go to Login</a>
     </div>
+  } @else if (!auth.isApproved()) {
+    <div class="panel gate">
+      <h1>Approval pending</h1>
+      <p>Aapka dealer account admin approval ke liye pending hai. Approve hone ke baad property post kar sakenge.</p>
+    </div>
   } @else {
     <div class="form-head">
       <h1>Post a New Property</h1>

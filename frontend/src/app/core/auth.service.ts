@@ -12,6 +12,7 @@ export class AuthService {
   user = signal<AuthResponse | null>(this.stored);
   isLoggedIn = computed(() => !!this.user());
   isAdmin = computed(() => this.user()?.roles.includes('Admin') ?? false);
+  isApproved = computed(() => this.isAdmin() || this.user()?.approvalStatus === 'Approved');
 
   login(email: string, password: string) {
     return this.http.post<AuthResponse>(`${API}/auth/login`, { email, password })

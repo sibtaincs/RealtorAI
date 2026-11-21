@@ -102,7 +102,16 @@ public record AuthResponseDto(
     string Token,
     string Email,
     string FullName,
-    IReadOnlyList<string> Roles);
+    IReadOnlyList<string> Roles,
+    string ApprovalStatus);
+
+public record DealerApprovalDto(
+    string Id,
+    string FullName,
+    string Email,
+    string? AgencyName,
+    string ApprovalStatus,
+    DateTime CreatedAt);
 
 public record AiChatDto(string Message);
 

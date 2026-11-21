@@ -237,6 +237,9 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.Property<string>("AgencyName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ApprovalStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");

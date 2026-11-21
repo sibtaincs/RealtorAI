@@ -101,6 +101,7 @@ export interface AuthResponse {
   email: string;
   fullName: string;
   roles: string[];
+  approvalStatus: string;
 }
 
 export interface AiChatResponse {

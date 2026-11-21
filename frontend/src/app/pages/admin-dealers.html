@@ -1,0 +1,40 @@
+<div class="wrap page">
+  @if (!auth.isAdmin()) {
+    <div class="panel gate">
+      <h1>Admin access only</h1>
+      <p>Dealer approvals manage karne ke liye admin account se login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <h1>Dealer Approvals</h1>
+      <p>Self-registered dealers ko approve/reject karein before they can post properties.</p>
+    </div>
+
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    @if (message()) { <p class="ok">{{ message() }}</p> }
+
+    <div class="kinds panel">
+      @for (s of ['Pending','Approved','Rejected']; track s) {
+        <button class="chip" [class.active]="status() === s" (click)="setStatus(s)">{{ s }}</button>
+      }
+    </div>
+
+    <section class="panel">
+      <h2>{{ status() }} dealers ({{ items().length }})</h2>
+      @for (d of items(); track d.id) {
+        <div class="row">
+          <code>{{ d.fullName }} · {{ d.email }} · {{ d.agencyName || 'No agency' }} · {{ d.createdAt }}</code>
+          <div class="actions">
+            @if (status() === 'Pending') {
+              <button class="mini-btn" [disabled]="busy()" (click)="approve(d.id)">Approve</button>
+              <button class="mini-btn danger" [disabled]="busy()" (click)="reject(d.id)">Reject</button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <p class="hint">Is status ke dealers nahi hain.</p>
+      }
+    </section>
+  }
+</div>

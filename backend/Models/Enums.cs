@@ -47,3 +47,10 @@ public enum ReportStatus
     Resolved,
     Dismissed
 }
+
+public enum DealerApprovalStatus
+{
+    Pending,
+    Approved,
+    Rejected
+}
