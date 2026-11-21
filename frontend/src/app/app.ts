@@ -30,6 +30,7 @@ export class App implements OnInit {
 
   @ViewChild('tools') private toolsMenu?: ElementRef<HTMLDetailsElement>;
   @ViewChild('explore') private exploreMenu?: ElementRef<HTMLDetailsElement>;
+  @ViewChild('admin') private adminMenu?: ElementRef<HTMLDetailsElement>;
   @ViewChild('settings') private settingsMenu?: ElementRef<HTMLDetailsElement>;
 
   notifOpen = signal(false);
@@ -76,14 +77,15 @@ export class App implements OnInit {
     if (this.auth.isLoggedIn()) this.notifications.refreshCount();
   }
 
-  closeMenus(except?: 'tools' | 'explore' | 'settings' | 'notif'): void {
+  closeMenus(except?: 'tools' | 'explore' | 'admin' | 'settings' | 'notif'): void {
     if (except !== 'tools' && this.toolsMenu) this.toolsMenu.nativeElement.open = false;
     if (except !== 'explore' && this.exploreMenu) this.exploreMenu.nativeElement.open = false;
+    if (except !== 'admin' && this.adminMenu) this.adminMenu.nativeElement.open = false;
     if (except !== 'settings' && this.settingsMenu) this.settingsMenu.nativeElement.open = false;
     if (except !== 'notif') this.notifOpen.set(false);
   }
 
-  onMenuToggle(menu: 'tools' | 'explore' | 'settings', open: boolean): void {
+  onMenuToggle(menu: 'tools' | 'explore' | 'admin' | 'settings', open: boolean): void {
     if (open) this.closeMenus(menu);
   }
 

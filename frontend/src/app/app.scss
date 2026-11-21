@@ -24,7 +24,7 @@
   padding: 6px 10px; font-size: 1.1rem; cursor: pointer; margin-left: auto;
 }
 .links {
-  display: flex; gap: 6px; flex: 1;
+  display: flex; flex-wrap: wrap; gap: 6px; flex: 1;
 
   a {
     padding: 8px 12px; border-radius: 8px; text-decoration: none;
@@ -40,7 +40,7 @@
     &::-webkit-details-marker { display: none; }
     &:hover { background: #f1f5f9; }
   }
-  .menu { position: absolute; top: 100%; left: 0; z-index: 110; display: flex; flex-direction: column; gap: 2px; min-width: 175px; max-height: 340px; overflow-y: auto; padding: 8px;
+  .menu { position: absolute; top: 100%; left: 0; z-index: 110; display: flex; flex-direction: column; gap: 2px; min-width: 150px; max-width: 240px; max-height: 340px; overflow-y: auto; padding: 8px;
     a { padding: 8px 10px; border-radius: 8px; text-decoration: none; color: #475569; font-size: .88rem; font-weight: 600;
       &:hover { background: #f1f5f9; }
       &.active { color: #0f766e; background: #ecfdf5; }
@@ -50,7 +50,7 @@
 
 .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .nav-menu.settings > summary { font-size: 1rem; padding: 6px 10px; }
-.settings-menu { min-width: 200px; gap: 12px;
+.settings-menu { min-width: 180px; max-width: 240px; gap: 12px;
   label { font-size: .78rem; font-weight: 700; color: #475569; }
 }
 
@@ -122,8 +122,9 @@ main { min-height: calc(100vh - 260px); }
 @media (max-width: 640px) {
   .hamburger { display: inline-flex; align-items: center; }
   .nav { flex-wrap: wrap; gap: 10px; padding-top: 10px; padding-bottom: 10px; }
-  .links { display: none; order: 3; width: 100%; flex-direction: column; gap: 4px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .links { display: none; order: 3; width: 100%; flex-direction: column; gap: 4px; padding: 10px; margin-top: 4px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(15,23,42,.08); }
   .links.open { display: flex; }
+  .nav-menu .menu { max-width: calc(100vw - 24px); }
   .actions { width: 100%; justify-content: flex-end; }
   .user { display: none; }
   .notif-panel { right: -8px; }

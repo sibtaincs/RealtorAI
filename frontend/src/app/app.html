@@ -37,10 +37,15 @@
         <a routerLink="/saved" routerLinkActive="active">{{ t('nav.saved') }}</a>
       }
       @if (auth.isAdmin()) {
-        <a routerLink="/leads" routerLinkActive="active">{{ t('nav.leads') }}</a>
-        <a routerLink="/admin/reports" routerLinkActive="active">{{ t('nav.reports') }}</a>
-        <a routerLink="/admin/content" routerLinkActive="active">Content</a>
-        <a routerLink="/admin/master-data" routerLinkActive="active">Master Data</a>
+        <details class="nav-menu" #admin (toggle)="onMenuToggle('admin', admin.open)">
+          <summary>Admin ▾</summary>
+          <div class="menu panel">
+            <a routerLink="/leads" routerLinkActive="active" (click)="admin.open = false">{{ t('nav.leads') }}</a>
+            <a routerLink="/admin/reports" routerLinkActive="active" (click)="admin.open = false">{{ t('nav.reports') }}</a>
+            <a routerLink="/admin/content" routerLinkActive="active" (click)="admin.open = false">Content</a>
+            <a routerLink="/admin/master-data" routerLinkActive="active" (click)="admin.open = false">Master Data</a>
+          </div>
+        </details>
       }
     </nav>
 
