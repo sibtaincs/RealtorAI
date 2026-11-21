@@ -10,7 +10,7 @@
       <div class="main-col">
         <div class="gallery">
           @if (p.imageUrls.length > 0) {
-            <img class="hero-image" [src]="imageUrl(p.imageUrls[activeImage()])" [alt]="p.title" />
+            <img class="hero-image" [src]="imageUrl(p.imageUrls[activeImage()])" [alt]="p.title" loading="lazy" />
             @if (p.imageUrls.length > 1) {
               <div class="thumbs">
                 @for (img of p.imageUrls; track img; let i = $index) {
@@ -19,6 +19,7 @@
                     [class.active]="i === activeImage()"
                     (click)="activeImage.set(i)"
                     alt="thumbnail"
+                    loading="lazy"
                   />
                 }
               </div>

@@ -6,7 +6,7 @@
   } @else if (profile(); as agent) {
     <div class="panel profile">
       @if (agent.photoUrl) {
-        <img class="photo" [src]="assetUrl(agent.photoUrl)" [alt]="agent.fullName" />
+        <img class="photo" [src]="assetUrl(agent.photoUrl)" [alt]="agent.fullName" loading="lazy" />
       } @else {
         <div class="photo fallback">🏠</div>
       }
