@@ -35,7 +35,7 @@ export class Login {
     const errors: { fullName?: string; email?: string; password?: string } = {};
     const email = this.email.trim();
     if (!email) errors.email = 'Email required hai.';
-    else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) errors.email = 'Valid email enter karein.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Valid email enter karein.';
     if (!this.password) errors.password = 'Password required hai.';
     else if (this.password.length < 6) errors.password = 'Password kam az kam 6 characters ka hona chahiye.';
     if (this.mode() === 'register' && !this.fullName.trim()) errors.fullName = 'Full name required hai.';
