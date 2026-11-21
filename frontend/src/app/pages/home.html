@@ -98,6 +98,10 @@
       </select>
     </div>
     <div class="field">
+      <label>Locality / society</label>
+      <input type="text" [(ngModel)]="locality" (keydown.enter)="apply()" (change)="apply()" placeholder="e.g. DHA Phase 6" />
+    </div>
+    <div class="field">
       <label>Property type</label>
       <select [(ngModel)]="type" (ngModelChange)="apply()">
         <option value="">All types</option>
@@ -122,8 +126,40 @@
         <option [ngValue]="4">4+</option>
       </select>
     </div>
-    <button class="btn-light clear-btn" (click)="clear()">Clear</button>
+    <div class="field">
+      <label>Min price (PKR)</label>
+      <input type="number" min="0" [(ngModel)]="minPrice" (change)="apply()" placeholder="Any" />
+    </div>
+    <div class="field">
+      <label>Max price (PKR)</label>
+      <input type="number" min="0" [(ngModel)]="maxPrice" (change)="apply()" placeholder="Any" />
+    </div>
+    <div class="field">
+      <label>Min area (marla)</label>
+      <input type="number" min="0" [(ngModel)]="minMarla" (change)="apply()" placeholder="Any" />
+    </div>
+    <div class="field">
+      <label>Sort by</label>
+      <select [(ngModel)]="sort" (ngModelChange)="apply()">
+        <option value="newest">Newest first</option>
+        <option value="price-asc">Price: low to high</option>
+        <option value="price-desc">Price: high to low</option>
+        <option value="area-desc">Largest area</option>
+      </select>
+    </div>
+    <button class="btn-light clear-btn" (click)="clear()">Clear all</button>
   </div>
+
+  @if (filterError()) { <p class="filter-error">{{ filterError() }}</p> }
+
+  @if (activeFilters().length > 0) {
+    <div class="filter-chips">
+      @for (chip of activeFilters(); track chip.key) {
+        <button type="button" (click)="removeFilter(chip.key)">{{ chip.label }} ✕</button>
+      }
+      <button type="button" class="clear-all" (click)="clear()">Clear all</button>
+    </div>
+  }
 
   <div class="save-row">
     <input type="text" [(ngModel)]="saveName" placeholder="Search ka naam (e.g. Lahore 3-bed house)" />

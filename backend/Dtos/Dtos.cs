@@ -64,7 +64,8 @@ public record PropertyQueryDto(
     double? CenterLat = null,
     double? CenterLng = null,
     double? RadiusKm = null,
-    string? AgentId = null);
+    string? AgentId = null,
+    string? Sort = null);
 
 public record PagedResultDto<T>(IReadOnlyList<T> Items, int Total, int Page, int PageSize);
 

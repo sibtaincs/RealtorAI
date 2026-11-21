@@ -10,6 +10,11 @@ import { CITIES, PROPERTY_TYPES, PagedResult, PriceEstimate, PropertyDto, Proper
 import { DisplayService } from '../core/display.service';
 
 /** Minimal shape of the browser Web Speech API used for voice search. */
+interface FilterChip {
+  key: string;
+  label: string;
+}
+
 interface SpeechRecognizer {
   lang: string;
   interimResults: boolean;
@@ -35,20 +40,31 @@ export class Home implements OnInit {
 
   cities = CITIES;
   propertyTypes = PROPERTY_TYPES;
+  sortLabels: Record<string, string> = {
+    'price-asc': 'Price low to high',
+    'price-desc': 'Price high to low',
+    'area-desc': 'Largest area'
+  };
   display = inject(DisplayService);
 
   // filters
   search = '';
   city = '';
+  locality = '';
   type = '';
   listingType = '';
   minBeds: number | null = null;
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  minMarla: number | null = null;
+  sort = 'newest';
   page = 1;
   pageSize = 9;
 
   result = signal<PagedResult<PropertyDto>>({ items: [], total: 0, page: 1, pageSize: 9 });
   loading = signal(true);
   error = signal('');
+  filterError = signal('');
 
   // AI price estimate
   estimateType = 'House';
@@ -81,9 +97,14 @@ export class Home implements OnInit {
               const q = JSON.parse(found.queryJson);
               this.search = q.search ?? '';
               this.city = q.city ?? '';
+              this.locality = q.locality ?? '';
               this.type = q.type ?? '';
               this.listingType = q.listingType ?? '';
               this.minBeds = q.minBeds ?? null;
+              this.minPrice = q.minPrice ?? null;
+              this.maxPrice = q.maxPrice ?? null;
+              this.minMarla = q.minMarla ?? null;
+              this.sort = q.sort ?? 'newest';
             } catch { /* ignore malformed saved query */ }
           }
           this.load();
@@ -101,9 +122,14 @@ export class Home implements OnInit {
     this.properties.search({
       search: this.search,
       city: this.city,
+      locality: this.locality,
       type: this.type,
       listingType: this.listingType,
       minBeds: this.minBeds ?? undefined,
+      minPrice: this.minPrice ?? undefined,
+      maxPrice: this.maxPrice ?? undefined,
+      minMarla: this.minMarla ?? undefined,
+      sort: this.sort === 'newest' ? undefined : this.sort,
       page: this.page,
       pageSize: this.pageSize
     }).subscribe({
@@ -119,6 +145,11 @@ export class Home implements OnInit {
   }
 
   apply(): void {
+    this.filterError.set('');
+    if (this.minPrice !== null && this.maxPrice !== null && this.minPrice > this.maxPrice) {
+      this.filterError.set('Min price, max price se bada nahi ho sakta.');
+      return;
+    }
     this.page = 1;
     this.load();
   }
@@ -126,9 +157,47 @@ export class Home implements OnInit {
   clear(): void {
     this.search = '';
     this.city = '';
+    this.locality = '';
     this.type = '';
     this.listingType = '';
     this.minBeds = null;
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.minMarla = null;
+    this.sort = 'newest';
+    this.apply();
+  }
+
+  activeFilters(): FilterChip[] {
+    const chips: FilterChip[] = [];
+    const add = (key: string, label: string) => chips.push({ key, label });
+
+    if (this.search.trim()) add('search', `Search: ${this.search.trim()}`);
+    if (this.city) add('city', `City: ${this.city}`);
+    if (this.locality.trim()) add('locality', `Area: ${this.locality.trim()}`);
+    if (this.type) add('type', `Type: ${this.type}`);
+    if (this.listingType) add('listingType', `Listing: ${this.listingType}`);
+    if (this.minBeds !== null) add('minBeds', `${this.minBeds}+ beds`);
+    if (this.minPrice !== null) add('minPrice', `Min: ${this.display.money(this.minPrice)}`);
+    if (this.maxPrice !== null) add('maxPrice', `Max: ${this.display.money(this.maxPrice)}`);
+    if (this.minMarla !== null) add('minMarla', `Min area: ${this.minMarla} marla`);
+    if (this.sort !== 'newest') add('sort', `Sort: ${this.sortLabels[this.sort] ?? this.sort}`);
+    return chips;
+  }
+
+  removeFilter(key: string): void {
+    switch (key) {
+      case 'search': this.search = ''; break;
+      case 'city': this.city = ''; break;
+      case 'locality': this.locality = ''; break;
+      case 'type': this.type = ''; break;
+      case 'listingType': this.listingType = ''; break;
+      case 'minBeds': this.minBeds = null; break;
+      case 'minPrice': this.minPrice = null; break;
+      case 'maxPrice': this.maxPrice = null; break;
+      case 'minMarla': this.minMarla = null; break;
+      case 'sort': this.sort = 'newest'; break;
+    }
     this.apply();
   }
 
@@ -158,9 +227,14 @@ export class Home implements OnInit {
     const query: PropertyQuery = {
       search: this.search,
       city: this.city,
+      locality: this.locality,
       type: this.type,
       listingType: this.listingType,
-      minBeds: this.minBeds ?? undefined
+      minBeds: this.minBeds ?? undefined,
+      minPrice: this.minPrice ?? undefined,
+      maxPrice: this.maxPrice ?? undefined,
+      minMarla: this.minMarla ?? undefined,
+      sort: this.sort === 'newest' ? undefined : this.sort
     };
     const name = this.saveName.trim() || [this.city, this.type, this.search].filter(Boolean).join(' ') || 'My property search';
 

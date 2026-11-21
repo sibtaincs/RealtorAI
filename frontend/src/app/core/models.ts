@@ -51,6 +51,7 @@ export interface PropertyQuery {
   centerLng?: number;
   radiusKm?: number;
   agentId?: string;
+  sort?: string;
 }
 
 export interface PropertyInput {

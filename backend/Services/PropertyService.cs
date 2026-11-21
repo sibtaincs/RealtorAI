@@ -117,9 +117,17 @@ public class PropertyService : IPropertyService
         var page = Math.Max(query.Page, 1);
         var pageSize = Math.Clamp(query.PageSize, 1, 48);
 
-        var items = await q
-            .OrderByDescending(p => p.IsFeatured)
-            .ThenByDescending(p => p.CreatedAt)
+        var ordered = query.Sort switch
+        {
+            "price-asc" => q.OrderBy(p => p.Price).ThenBy(p => p.Id),
+            "price-desc" => q.OrderByDescending(p => p.Price).ThenBy(p => p.Id),
+            "area-desc" => q.OrderByDescending(p => p.AreaMarla ?? 0).ThenBy(p => p.Id),
+            _ => q.OrderByDescending(p => p.IsFeatured)
+                .ThenByDescending(p => p.CreatedAt)
+                .ThenBy(p => p.Id)
+        };
+
+        var items = await ordered
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

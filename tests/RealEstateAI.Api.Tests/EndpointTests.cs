@@ -75,6 +75,39 @@ public sealed class EndpointTests(ApiFixture fixture)
     }
 
     [Fact]
+    public async Task Properties_sort_by_price()
+    {
+        var response = await _client.GetAsync("/api/properties?sort=price-asc&pageSize=50");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var prices = body.RootElement.GetProperty("items").EnumerateArray()
+            .Select(p => p.GetProperty("price").GetDecimal())
+            .ToList();
+
+        Assert.NotEmpty(prices);
+        Assert.Equal(prices.OrderBy(p => p), prices);
+    }
+
+    [Fact]
+    public async Task Properties_filter_by_price_and_area()
+    {
+        var response = await _client.GetAsync(
+            "/api/properties?minPrice=50000&maxPrice=100000000&minMarla=5&pageSize=50");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var items = body.RootElement.GetProperty("items").EnumerateArray().ToList();
+
+        Assert.NotEmpty(items);
+        Assert.All(items, item =>
+        {
+            Assert.InRange(item.GetProperty("price").GetDecimal(), 50000m, 100000000m);
+            Assert.True(item.GetProperty("areaMarla").GetDecimal() >= 5m);
+        });
+    }
+
+    [Fact]
     public async Task Unknown_property_returns_404()
     {
         var response = await _client.GetAsync("/api/properties/999999");
