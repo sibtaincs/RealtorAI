@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "formatter": true,
+  "mcp": {
+    "servers": {
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      },
+      "github": {
+        "type": "remote",
+        "url": "https://api.githubcopilot.com/mcp/",
+        "oauth": false,
+        "headers": {
+          "Authorization": "Bearer {file:C:/Users/sibta/.config/opencode/github-token.txt}"
+        }
+      }
+    }
+  }
+}
