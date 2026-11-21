@@ -31,8 +31,24 @@
   }
 }
 
+.nav-menu { position: relative;
+  > summary { list-style: none; cursor: pointer; padding: 8px 12px; border-radius: 8px; color: #475569; font-size: .9rem; font-weight: 600;
+    &::-webkit-details-marker { display: none; }
+    &:hover { background: #f1f5f9; }
+  }
+  .menu { position: absolute; top: 100%; left: 0; z-index: 110; display: flex; flex-direction: column; gap: 2px; min-width: 175px; padding: 8px;
+    a { padding: 8px 10px; border-radius: 8px; text-decoration: none; color: #475569; font-size: .88rem; font-weight: 600;
+      &:hover { background: #f1f5f9; }
+      &.active { color: #0f766e; background: #ecfdf5; }
+    }
+  }
+}
+
 .actions { display: flex; align-items: center; gap: 12px; }
-.unit-select { padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; color: #475569; font: inherit; font-size: .78rem; }
+.nav-menu.settings > summary { font-size: 1rem; padding: 6px 10px; }
+.settings-menu { min-width: 200px; gap: 12px;
+  label { font-size: .78rem; font-weight: 700; color: #475569; }
+}
 
 .user { font-size: .85rem; color: #475569; }
 

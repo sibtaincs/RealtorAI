@@ -1,0 +1,33 @@
+<section class="wrap directory-page">
+  <div class="head">
+    <h1>Agencies</h1>
+    <p>Browse real-estate agencies and their local expertise.</p>
+  </div>
+
+  <div class="filters panel">
+    <div class="field">
+      <label>City</label>
+      <select [ngModel]="city()" (ngModelChange)="city.set($event)">
+        <option value="">All cities</option>
+        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+  </div>
+
+  <div class="cards">
+    @for (a of filtered(); track a.name) {
+      <div class="panel card">
+        <h3>{{ a.name }}</h3>
+        <p class="place">📍 {{ a.city }} · {{ a.specialty }}</p>
+        <p class="meta">{{ a.agents }} agents · {{ a.listings }} listings · ⭐ {{ a.rating }}</p>
+        <div class="badges">
+          @if (a.verified) { <span class="tag verified">✅ Verified agency</span> }
+        </div>
+      </div>
+    } @empty {
+      <p class="empty">No agencies match this filter.</p>
+    }
+  </div>
+
+  <p class="note meta">Sample agency data for browsing — not live agent records.</p>
+</section>

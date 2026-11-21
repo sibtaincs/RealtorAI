@@ -1,0 +1,39 @@
+<section class="wrap directory-page">
+  <div class="head">
+    <h1>New Projects</h1>
+    <p>Recently launched and under-construction developments across Pakistan.</p>
+  </div>
+
+  <div class="filters panel">
+    <div class="field">
+      <label>City</label>
+      <select [ngModel]="city()" (ngModelChange)="city.set($event)">
+        <option value="">All cities</option>
+        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select [ngModel]="status()" (ngModelChange)="status.set($event)">
+        <option value="">Any status</option>
+        @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+      </select>
+    </div>
+  </div>
+
+  <div class="cards">
+    @for (p of filtered(); track p.name) {
+      <div class="panel card">
+        <h3>{{ p.name }}</h3>
+        <p class="place">📍 {{ p.locality }}, {{ p.city }}</p>
+        <p class="price">{{ display.money(p.priceFrom) }} – {{ display.money(p.priceTo) }}</p>
+        <p class="meta">{{ p.developer }} · {{ p.type }}</p>
+        <div class="badges"><span class="tag">{{ p.status }}</span></div>
+      </div>
+    } @empty {
+      <p class="empty">No projects match these filters.</p>
+    }
+  </div>
+
+  <p class="note meta">Sample project data for browsing — not live listings.</p>
+</section>

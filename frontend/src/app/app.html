@@ -7,6 +7,13 @@
       <a routerLink="/post" routerLinkActive="active">{{ t('nav.post') }}</a>
       <a routerLink="/map" routerLinkActive="active">{{ t('nav.map') }}</a>
       <a routerLink="/tools" routerLinkActive="active">{{ t('nav.tools') }}</a>
+      <details class="nav-menu" #explore>
+        <summary>{{ t('nav.explore') }} ▾</summary>
+        <div class="menu panel">
+          <a routerLink="/projects" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.projects') }}</a>
+          <a routerLink="/agencies" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.agencies') }}</a>
+        </div>
+      </details>
       @if (auth.isLoggedIn()) {
         <a routerLink="/dashboard" routerLinkActive="active">{{ t('nav.dashboard') }}</a>
         <a routerLink="/saved" routerLinkActive="active">{{ t('nav.saved') }}</a>
@@ -18,12 +25,21 @@
     </nav>
 
     <div class="actions">
-      <select class="unit-select" [value]="display.currency()" (change)="display.setCurrency($any($event.target).value)" aria-label="Currency">
-        @for (c of currencies; track c) { <option [value]="c">{{ c }}</option> }
-      </select>
-      <select class="unit-select" [value]="display.areaUnit()" (change)="display.setAreaUnit($any($event.target).value)" aria-label="Area unit">
-        @for (u of areaUnits; track u) { <option [value]="u">{{ u }}</option> }
-      </select>
+      <details class="nav-menu settings" #settings>
+        <summary aria-label="Display settings">⚙</summary>
+        <div class="menu panel settings-menu">
+          <label class="field">Currency
+            <select [value]="display.currency()" (change)="display.setCurrency($any($event.target).value)">
+              @for (c of currencies; track c) { <option [value]="c">{{ c }}</option> }
+            </select>
+          </label>
+          <label class="field">Area unit
+            <select [value]="display.areaUnit()" (change)="display.setAreaUnit($any($event.target).value)">
+              @for (u of areaUnits; track u) { <option [value]="u">{{ u }}</option> }
+            </select>
+          </label>
+        </div>
+      </details>
       @if (installEvent()) {
         <button class="btn-outline install" (click)="install()">{{ t('pwa.install') }}</button>
       }
