@@ -796,6 +796,9 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.Property<string>("AgentId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AmenitiesJson")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("AreaMarla")
                         .HasColumnType("int");
 
@@ -808,8 +811,23 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.Property<int?>("Bedrooms")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BuiltInYear")
+                        .HasColumnType("int");
+
                     b.Property<string>("City")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactLandline")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactMobile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactWhatsapp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -819,10 +837,25 @@ namespace RealEstateAI.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ElectricityBackup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Flooring")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Floors")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageUrlsJson")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("InstallmentAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsFeatured")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReadyForPossession")
                         .HasColumnType("bit");
 
                     b.Property<double>("Latitude")
@@ -840,6 +873,12 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<int?>("ParkingSpaces")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PlotNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -855,6 +894,9 @@ namespace RealEstateAI.Api.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("View")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

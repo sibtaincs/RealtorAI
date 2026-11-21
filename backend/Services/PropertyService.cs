@@ -48,7 +48,21 @@ public class PropertyService : IPropertyService
         verified,
         total,
         total > 0 && verified >= Math.Max(3, (int)Math.Ceiling(total * 0.6)),
-        p.AgentId);
+        p.AgentId,
+        p.PlotNumber,
+        p.IsReadyForPossession,
+        p.InstallmentAvailable,
+        p.Flooring,
+        p.ElectricityBackup,
+        p.View,
+        p.BuiltInYear,
+        p.ParkingSpaces,
+        p.Floors,
+        p.AmenitiesJson,
+        p.ContactEmail,
+        p.ContactMobile,
+        p.ContactLandline,
+        p.ContactWhatsapp);
 
     public async Task<PagedResultDto<PropertyDto>> GetAsync(PropertyQueryDto query)
     {
@@ -186,7 +200,21 @@ public class PropertyService : IPropertyService
             AreaSqFt = input.AreaSqFt,
             ImageUrlsJson = JsonSerializer.Serialize(input.ImageUrls ?? Array.Empty<string>()),
             IsFeatured = input.IsFeatured,
-            AgentId = agentId
+            AgentId = agentId,
+            PlotNumber = input.PlotNumber,
+            IsReadyForPossession = input.IsReadyForPossession,
+            InstallmentAvailable = input.InstallmentAvailable,
+            Flooring = input.Flooring,
+            ElectricityBackup = input.ElectricityBackup,
+            View = input.View,
+            BuiltInYear = input.BuiltInYear,
+            ParkingSpaces = input.ParkingSpaces,
+            Floors = input.Floors,
+            AmenitiesJson = input.AmenitiesJson,
+            ContactEmail = input.ContactEmail,
+            ContactMobile = input.ContactMobile,
+            ContactLandline = input.ContactLandline,
+            ContactWhatsapp = input.ContactWhatsapp
         };
 
         _db.Properties.Add(entity);
@@ -228,6 +256,20 @@ public class PropertyService : IPropertyService
         entity.AreaSqFt = input.AreaSqFt;
         entity.ImageUrlsJson = JsonSerializer.Serialize(input.ImageUrls ?? Array.Empty<string>());
         entity.IsFeatured = input.IsFeatured;
+        entity.PlotNumber = input.PlotNumber;
+        entity.IsReadyForPossession = input.IsReadyForPossession;
+        entity.InstallmentAvailable = input.InstallmentAvailable;
+        entity.Flooring = input.Flooring;
+        entity.ElectricityBackup = input.ElectricityBackup;
+        entity.View = input.View;
+        entity.BuiltInYear = input.BuiltInYear;
+        entity.ParkingSpaces = input.ParkingSpaces;
+        entity.Floors = input.Floors;
+        entity.AmenitiesJson = input.AmenitiesJson;
+        entity.ContactEmail = input.ContactEmail;
+        entity.ContactMobile = input.ContactMobile;
+        entity.ContactLandline = input.ContactLandline;
+        entity.ContactWhatsapp = input.ContactWhatsapp;
 
         await _db.SaveChangesAsync();
         return ToDto(entity);

@@ -25,7 +25,21 @@ public record PropertyDto(
     int VerifiedDocuments = 0,
     int TotalDocuments = 0,
     bool IsTrusted = false,
-    string? AgentId = null);
+    string? AgentId = null,
+    string? PlotNumber = null,
+    bool IsReadyForPossession = false,
+    bool InstallmentAvailable = false,
+    string? Flooring = null,
+    string? ElectricityBackup = null,
+    string? View = null,
+    int? BuiltInYear = null,
+    int? ParkingSpaces = null,
+    int? Floors = null,
+    string? AmenitiesJson = null,
+    string? ContactEmail = null,
+    string? ContactMobile = null,
+    string? ContactLandline = null,
+    string? ContactWhatsapp = null);
 
 public record PropertyInputDto(
     string Title,
@@ -43,7 +57,21 @@ public record PropertyInputDto(
     int? AreaMarla,
     int? AreaSqFt,
     string[]? ImageUrls,
-    bool IsFeatured);
+    bool IsFeatured,
+    string? PlotNumber = null,
+    bool IsReadyForPossession = false,
+    bool InstallmentAvailable = false,
+    string? Flooring = null,
+    string? ElectricityBackup = null,
+    string? View = null,
+    int? BuiltInYear = null,
+    int? ParkingSpaces = null,
+    int? Floors = null,
+    string? AmenitiesJson = null,
+    string? ContactEmail = null,
+    string? ContactMobile = null,
+    string? ContactLandline = null,
+    string? ContactWhatsapp = null);
 
 public record PropertyQueryDto(
     string? Search,

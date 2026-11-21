@@ -44,7 +44,21 @@ export class PropertyForm {
     areaMarla: 5,
     areaSqFt: null,
     imageUrls: [],
-    isFeatured: false
+    isFeatured: false,
+    plotNumber: '',
+    isReadyForPossession: false,
+    installmentAvailable: false,
+    flooring: '',
+    electricityBackup: '',
+    view: '',
+    builtInYear: null,
+    parkingSpaces: null,
+    floors: null,
+    amenitiesJson: '',
+    contactEmail: '',
+    contactMobile: '',
+    contactLandline: '',
+    contactWhatsapp: ''
   };
 
   imageUrlsText = '';

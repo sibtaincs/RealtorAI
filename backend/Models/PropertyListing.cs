@@ -26,6 +26,21 @@ public class PropertyListing
     public int? AreaMarla { get; set; }
     public int? AreaSqFt { get; set; }
 
+    public string? PlotNumber { get; set; }
+    public bool IsReadyForPossession { get; set; }
+    public bool InstallmentAvailable { get; set; }
+    public string? Flooring { get; set; }
+    public string? ElectricityBackup { get; set; }
+    public string? View { get; set; }
+    public int? BuiltInYear { get; set; }
+    public int? ParkingSpaces { get; set; }
+    public int? Floors { get; set; }
+    public string? AmenitiesJson { get; set; }
+    public string? ContactEmail { get; set; }
+    public string? ContactMobile { get; set; }
+    public string? ContactLandline { get; set; }
+    public string? ContactWhatsapp { get; set; }
+
     // JSON array of image URLs to keep the schema simple for MVP.
     public string? ImageUrlsJson { get; set; }
 

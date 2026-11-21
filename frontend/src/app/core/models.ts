@@ -22,6 +22,20 @@ export interface PropertyDto {
   totalDocuments: number;
   isTrusted: boolean;
   agentId?: string | null;
+  plotNumber?: string | null;
+  isReadyForPossession?: boolean;
+  installmentAvailable?: boolean;
+  flooring?: string | null;
+  electricityBackup?: string | null;
+  view?: string | null;
+  builtInYear?: number | null;
+  parkingSpaces?: number | null;
+  floors?: number | null;
+  amenitiesJson?: string | null;
+  contactEmail?: string | null;
+  contactMobile?: string | null;
+  contactLandline?: string | null;
+  contactWhatsapp?: string | null;
 }
 
 export interface PagedResult<T> {
@@ -71,6 +85,20 @@ export interface PropertyInput {
   areaSqFt: number | null;
   imageUrls: string[];
   isFeatured: boolean;
+  plotNumber?: string | null;
+  isReadyForPossession?: boolean;
+  installmentAvailable?: boolean;
+  flooring?: string | null;
+  electricityBackup?: string | null;
+  view?: string | null;
+  builtInYear?: number | null;
+  parkingSpaces?: number | null;
+  floors?: number | null;
+  amenitiesJson?: string | null;
+  contactEmail?: string | null;
+  contactMobile?: string | null;
+  contactLandline?: string | null;
+  contactWhatsapp?: string | null;
 }
 
 export interface LeadDto {

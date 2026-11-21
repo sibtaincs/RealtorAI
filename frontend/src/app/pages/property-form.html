@@ -146,6 +146,69 @@
             Featured listing (home page pe top par dikhega)
           </label>
         </div>
+
+        <div class="field full">
+          <label>Plot number</label>
+          <input type="text" [(ngModel)]="input.plotNumber" placeholder="e.g. 236-D" />
+        </div>
+        <div class="field">
+          <label>Ready for possession</label>
+          <select [(ngModel)]="input.isReadyForPossession">
+            <option [ngValue]="false">No</option>
+            <option [ngValue]="true">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Installment available</label>
+          <select [(ngModel)]="input.installmentAvailable">
+            <option [ngValue]="false">No</option>
+            <option [ngValue]="true">Yes</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Flooring</label>
+          <input type="text" [(ngModel)]="input.flooring" placeholder="e.g. Tiles, Marble" />
+        </div>
+        <div class="field">
+          <label>Electricity backup</label>
+          <input type="text" [(ngModel)]="input.electricityBackup" placeholder="e.g. UPS, Solar" />
+        </div>
+        <div class="field">
+          <label>View</label>
+          <input type="text" [(ngModel)]="input.view" placeholder="e.g. Park facing" />
+        </div>
+        <div class="field">
+          <label>Built in year</label>
+          <input type="number" [(ngModel)]="input.builtInYear" />
+        </div>
+        <div class="field">
+          <label>Parking spaces</label>
+          <input type="number" [(ngModel)]="input.parkingSpaces" />
+        </div>
+        <div class="field">
+          <label>Floors</label>
+          <input type="number" [(ngModel)]="input.floors" />
+        </div>
+        <div class="field full">
+          <label>Amenities (comma separated)</label>
+          <textarea [(ngModel)]="input.amenitiesJson" placeholder="e.g. parking, garden, security"></textarea>
+        </div>
+        <div class="field">
+          <label>Contact email</label>
+          <input type="email" [(ngModel)]="input.contactEmail" />
+        </div>
+        <div class="field">
+          <label>Contact mobile</label>
+          <input type="text" [(ngModel)]="input.contactMobile" />
+        </div>
+        <div class="field">
+          <label>Contact landline</label>
+          <input type="text" [(ngModel)]="input.contactLandline" />
+        </div>
+        <div class="field">
+          <label>Contact WhatsApp</label>
+          <input type="text" [(ngModel)]="input.contactWhatsapp" />
+        </div>
       </div>
 
       <!-- Sell-in-X-days price advisor -->
