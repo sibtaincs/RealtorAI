@@ -40,9 +40,33 @@ export class ToolsPage implements OnInit {
   loanRate = 12;
   loanYears = 20;
 
-  buildAreaSqFt = 2250;
-  buildRatePerSqFt = 3500;
+  buildCity = 'Lahore';
+  buildMarla = 5;
+  buildFloors = 2;
+  buildQuality: 'standard' | 'premium' = 'standard';
+  buildMode: 'grey' | 'complete' = 'complete';
 
+  buildPresets = [3, 4, 5, 6, 7, 8, 10, 20];
+
+  private cityFactor: Record<string, number> = {
+    Karachi: 1.08, Lahore: 1, Islamabad: 1.12, Rawalpindi: 1.05,
+    Multan: 0.95, Faisalabad: 0.97, Peshawar: 1.0, Hyderabad: 1.0
+  };
+
+  private baseRate(mode: 'grey' | 'complete', quality: 'standard' | 'premium'): number {
+    const table: Record<string, Record<string, number>> = {
+      grey: { standard: 1800, premium: 2200 },
+      complete: { standard: 2800, premium: 3500 }
+    };
+    return table[mode][quality];
+  }
+
+  get buildAreaSqFt(): number { return this.buildMarla * 225 * this.buildFloors; }
+  get buildRatePerSqFt(): number { return Math.round(this.baseRate(this.buildMode, this.buildQuality) * (this.cityFactor[this.buildCity] ?? 1)); }
+  get buildCost(): number { return constructionCost(this.buildAreaSqFt, this.buildRatePerSqFt); }
+  get buildGreyRate(): number { return Math.round(this.baseRate('grey', this.buildQuality) * (this.cityFactor[this.buildCity] ?? 1)); }
+  get buildGreyCost(): number { return constructionCost(this.buildAreaSqFt, this.buildGreyRate); }
+  get buildFinishingCost(): number { return Math.max(0, this.buildCost - this.buildGreyCost); }
   convertValue = 1;
   convertFrom: ToolAreaUnit = 'Marla';
   convertTo: ToolAreaUnit = 'Sq Ft';
@@ -59,7 +83,6 @@ export class ToolsPage implements OnInit {
   get emi(): number { return monthlyInstallment(this.loanAmount, this.loanRate, this.loanYears); }
   get totalPayable(): number { return this.emi * this.loanYears * 12; }
   get totalInterest(): number { return this.totalPayable - this.loanAmount; }
-  get buildCost(): number { return constructionCost(this.buildAreaSqFt, this.buildRatePerSqFt); }
   get converted(): number { return convertArea(this.convertValue, this.convertFrom, this.convertTo); }
   get areaUnitOptions(): { value: ToolAreaUnit; label: string }[] {
     const loaded = this.master.options('area-unit')

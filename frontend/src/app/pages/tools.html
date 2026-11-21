@@ -32,14 +32,49 @@
 
     <div class="panel tool" id="construction">
       <h2>🏗 Construction Cost Calculator</h2>
-      <p class="sub">Rough build cost for a plot.</p>
-      <div class="field"><label>Area (sq ft)</label><input type="number" min="0" [(ngModel)]="buildAreaSqFt" /></div>
-      <div class="field"><label>Rate (PKR per sq ft)</label><input type="number" min="0" [(ngModel)]="buildRatePerSqFt" /></div>
+      <p class="sub">Indicative build cost for a house (not a quote).</p>
+      <div class="field">
+        <label>City</label>
+        <select [(ngModel)]="buildCity">
+          @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
+        </select>
+      </div>
+      <div class="field">
+        <label>Area (marla)</label>
+        <select [(ngModel)]="buildMarla">
+          @for (m of buildPresets; track m) { <option [ngValue]="m">{{ m === 20 ? '1 Kanal (20 marla)' : m + ' Marla' }}</option> }
+        </select>
+      </div>
+      <div class="field">
+        <label>Floors</label>
+        <select [(ngModel)]="buildFloors">
+          <option [ngValue]="1">Single story</option>
+          <option [ngValue]="2">Double story</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Quality</label>
+        <select [(ngModel)]="buildQuality">
+          <option value="standard">Standard</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Scope</label>
+        <select [(ngModel)]="buildMode">
+          <option value="grey">Grey structure only</option>
+          <option value="complete">Complete house</option>
+        </select>
+      </div>
       <div class="result">
         <small>Estimated build cost</small>
         <strong>{{ display.money(buildCost) }}</strong>
-        <span>Area ≈ {{ display.area(null, buildAreaSqFt) }}</span>
+        <span>Area ≈ {{ display.area(null, buildAreaSqFt) }} · Rate ≈ {{ display.money(buildRatePerSqFt) }}/sq ft</span>
+        @if (buildMode === 'complete') {
+          <span>Grey structure ≈ {{ display.money(buildGreyCost) }} · Finishing ≈ {{ display.money(buildFinishingCost) }}</span>
+        }
       </div>
+      <p class="hint">Popular sizes: 3, 5, 10 marla and 1 kanal. Rates are indicative and vary by contractor, materials and city.</p>
     </div>
 
     <div class="panel tool" id="area">
