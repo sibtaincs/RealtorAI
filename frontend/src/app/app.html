@@ -3,23 +3,27 @@
     <a routerLink="/" class="brand">🏠 RealEstate<span>AI</span></a>
 
     <nav class="links">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Properties</a>
-      <a routerLink="/post" routerLinkActive="active">Post Property</a>
-      <a routerLink="/map" routerLinkActive="active">Map</a>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ t('nav.properties') }}</a>
+      <a routerLink="/post" routerLinkActive="active">{{ t('nav.post') }}</a>
+      <a routerLink="/map" routerLinkActive="active">{{ t('nav.map') }}</a>
       @if (auth.isLoggedIn()) {
-        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-        <a routerLink="/saved" routerLinkActive="active">Saved Searches</a>
+        <a routerLink="/dashboard" routerLinkActive="active">{{ t('nav.dashboard') }}</a>
+        <a routerLink="/saved" routerLinkActive="active">{{ t('nav.saved') }}</a>
       }
       @if (auth.isAdmin()) {
-        <a routerLink="/leads" routerLinkActive="active">Leads</a>
-        <a routerLink="/admin/reports" routerLinkActive="active">Reports</a>
+        <a routerLink="/leads" routerLinkActive="active">{{ t('nav.leads') }}</a>
+        <a routerLink="/admin/reports" routerLinkActive="active">{{ t('nav.reports') }}</a>
       }
     </nav>
 
     <div class="actions">
+      @if (installEvent()) {
+        <button class="btn-outline install" (click)="install()">{{ t('pwa.install') }}</button>
+      }
+      <button class="btn-ghost lang" (click)="i18n.toggle()" [attr.aria-label]="t('lang.switch')">{{ t('lang.switch') }}</button>
       @if (auth.isLoggedIn()) {
         <div class="notif-wrap">
-          <button class="bell" (click)="toggleNotifications()" aria-label="Notifications">
+          <button class="bell" (click)="toggleNotifications()" [attr.aria-label]="t('notif.title')">
             🔔
             @if (notifications.unread() > 0) {
               <span class="badge">{{ notifications.unread() }}</span>
@@ -28,9 +32,9 @@
           @if (notifOpen()) {
             <div class="notif-panel panel">
               <div class="notif-head">
-                <strong>Notifications</strong>
+                <strong>{{ t('notif.title') }}</strong>
                 @if (notifications.unread() > 0) {
-                  <button (click)="markAllRead()">Mark all read</button>
+                  <button (click)="markAllRead()">{{ t('notif.markAll') }}</button>
                 }
               </div>
               @for (n of notifications.items(); track n.id) {
@@ -39,15 +43,15 @@
                   <span>{{ n.message }}</span>
                 </button>
               } @empty {
-                <p class="notif-empty">Abhi koi notification nahi.</p>
+                <p class="notif-empty">{{ t('notif.empty') }}</p>
               }
             </div>
           }
         </div>
         <span class="user">Hi, {{ auth.user()?.fullName }}</span>
-        <button class="btn-ghost" (click)="logout()">Logout</button>
+        <button class="btn-ghost" (click)="logout()">{{ t('auth.logout') }}</button>
       } @else {
-        <a routerLink="/login" class="btn-outline">Login</a>
+        <a routerLink="/login" class="btn-outline">{{ t('auth.login') }}</a>
       }
     </div>
   </div>
@@ -61,12 +65,12 @@
   <div class="wrap">
     <div>
       <strong>🏠 RealEstateAI</strong>
-      <p>Smart property decisions for the Pakistani market.</p>
+      <p>{{ t('footer.tagline') }}</p>
     </div>
     <div class="foot-links">
-      <a routerLink="/">Properties</a>
-      <a routerLink="/post">Post Property</a>
-      <a routerLink="/login">Agent Login</a>
+      <a routerLink="/">{{ t('footer.properties') }}</a>
+      <a routerLink="/post">{{ t('footer.post') }}</a>
+      <a routerLink="/login">{{ t('footer.agentLogin') }}</a>
     </div>
     <p class="copy">© 2026 RealEstateAI. Built with Angular + ASP.NET Core.</p>
   </div>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://polite-paletas-4014d8.netlify.app/sitemap.xml

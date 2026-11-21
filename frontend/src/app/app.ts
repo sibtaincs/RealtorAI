@@ -3,7 +3,14 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from './core/auth.service';
 import { NotificationService } from './core/notification.service';
 import { NotificationItem } from './core/models';
+import { I18nService } from './core/i18n.service';
+import { TranslationKey } from './core/i18n.ur';
 import { ChatWidget } from './shared/chat-widget';
+
+interface InstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 @Component({
   selector: 'app-root',
@@ -14,9 +21,12 @@ import { ChatWidget } from './shared/chat-widget';
 export class App implements OnInit {
   auth = inject(AuthService);
   notifications = inject(NotificationService);
+  i18n = inject(I18nService);
   private router = inject(Router);
 
   notifOpen = signal(false);
+  installEvent = signal<InstallPromptEvent | null>(null);
+  t = (key: TranslationKey) => this.i18n.t(key);
 
   constructor() {
     // Keep the bell count in sync when the user logs in/out without a full reload.
@@ -24,6 +34,21 @@ export class App implements OnInit {
       if (this.auth.isLoggedIn()) this.notifications.refreshCount();
       else this.notifications.unread.set(0);
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        this.installEvent.set(event as InstallPromptEvent);
+      });
+    }
+  }
+
+  async install(): Promise<void> {
+    const event = this.installEvent();
+    if (!event) return;
+    await event.prompt();
+    await event.userChoice;
+    this.installEvent.set(null);
   }
 
   ngOnInit(): void {
