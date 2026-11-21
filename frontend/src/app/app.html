@@ -13,6 +13,7 @@
           <a routerLink="/projects" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.projects') }}</a>
           <a routerLink="/agencies" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.agencies') }}</a>
           <a routerLink="/market" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.market') }}</a>
+          <a routerLink="/explore" routerLinkActive="active" (click)="explore.open = false">{{ t('nav.explorePage') }}</a>
         </div>
       </details>
       @if (auth.isLoggedIn()) {

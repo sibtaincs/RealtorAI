@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import type * as Leaflet from 'leaflet';
 import { PropertyService } from '../core/property.service';
 import { CITIES, PropertyDto } from '../core/models';
@@ -17,6 +17,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
 
   private props = inject(PropertyService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   display = inject(DisplayService);
   private map?: Leaflet.Map;
   private markers?: Leaflet.LayerGroup;
@@ -25,7 +26,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
   loading = signal(false);
   error = signal('');
   cities = CITIES;
-  city = '';
+  city = this.route.snapshot.queryParamMap.get('city') ?? '';
   listingType = '';
 
   async ngAfterViewInit(): Promise<void> {

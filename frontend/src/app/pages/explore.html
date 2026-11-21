@@ -1,0 +1,81 @@
+<section class="wrap directory-page">
+  <div class="head">
+    <h1>Explore Pakistan</h1>
+    <p>Society maps, plot finder, land records and property stories.</p>
+  </div>
+
+  <h2>Society Maps &amp; Plot Finder</h2>
+  <div class="filters panel">
+    <div class="field">
+      <label>City</label>
+      <select [ngModel]="city()" (ngModelChange)="city.set($event)">
+        <option value="">All cities</option>
+        @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+  </div>
+  <div class="cards">
+    @for (s of filteredSocieties(); track s.name) {
+      <div class="panel card">
+        <h3>{{ s.name }}</h3>
+        <p class="place">📍 {{ s.city }} · {{ s.plotSizes }}</p>
+        <p class="price">From {{ display.money(s.priceFrom) }}</p>
+        <div class="badges">
+          <span class="tag">{{ s.status }}</span>
+          <a class="tag link" [routerLink]="'/map'" [queryParams]="{ city: s.city }">Open plots on map →</a>
+        </div>
+      </div>
+    } @empty { <p class="empty">No societies for this city.</p> }
+  </div>
+
+  <h2>Land Record Lookup</h2>
+  <div class="panel lookup">
+    <div class="filters inline">
+      <div class="field">
+        <label>City</label>
+        <select [ngModel]="recordCity()" (ngModelChange)="recordCity.set($event)">
+          @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
+        </select>
+      </div>
+      <div class="field">
+        <label>Plot number</label>
+        <input type="text" [ngModel]="recordPlot()" (ngModelChange)="recordPlot.set($event)" placeholder="e.g. A-123" />
+      </div>
+    </div>
+    @if (recordPlot().trim()) {
+      @if (record(); as r) {
+        <div class="record">
+          <strong>{{ r.plot }} · {{ r.city }}</strong>
+          <span>Owner: {{ r.owner }} · Area: {{ r.area }}</span>
+          <span>Status: {{ r.status }}</span>
+        </div>
+      } @else {
+        <p class="empty">No sample record found for that city and plot.</p>
+      }
+    } @else {
+      <p class="empty">Enter a plot number to look up a sample record.</p>
+    }
+  </div>
+
+  <h2>News &amp; Community</h2>
+  <div class="filters panel">
+    <div class="field">
+      <label>Category</label>
+      <select [ngModel]="category()" (ngModelChange)="category.set($event)">
+        <option value="">All categories</option>
+        @for (c of categories; track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+  </div>
+  <div class="cards">
+    @for (a of filteredArticles(); track a.title) {
+      <div class="panel card">
+        <h3>{{ a.title }}</h3>
+        <p class="meta">{{ a.date }} · {{ a.category }}</p>
+        <p class="place">{{ a.summary }}</p>
+      </div>
+    } @empty { <p class="empty">No articles in this category.</p> }
+  </div>
+
+  <p class="note">Sample data for demonstration — society boundaries and land records are not authoritative.</p>
+</section>
