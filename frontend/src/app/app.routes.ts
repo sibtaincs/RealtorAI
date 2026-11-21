@@ -15,6 +15,7 @@ export const routes: Routes = [
   { path: 'explore', loadComponent: () => import('./pages/explore').then(m => m.ExplorePage) },
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
   { path: 'shortlist', loadComponent: () => import('./pages/shortlist').then(m => m.ShortlistPage) },
+  { path: 'my-listings', loadComponent: () => import('./pages/my-listings').then(m => m.MyListings) },
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
   { path: 'admin/reports', loadComponent: () => import('./pages/admin-reports').then(m => m.AdminReports) },
   { path: 'admin/content', loadComponent: () => import('./pages/admin-content').then(m => m.AdminContent) },

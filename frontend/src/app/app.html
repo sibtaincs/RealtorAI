@@ -34,6 +34,7 @@
       <a routerLink="/shortlist" routerLinkActive="active">{{ t('nav.shortlist') }}</a>
       @if (auth.isLoggedIn()) {
         <a routerLink="/dashboard" routerLinkActive="active">{{ t('nav.dashboard') }}</a>
+        <a routerLink="/my-listings" routerLinkActive="active">My Listings</a>
         <a routerLink="/saved" routerLinkActive="active">{{ t('nav.saved') }}</a>
       }
       @if (auth.isAdmin()) {

@@ -1,0 +1,58 @@
+<section class="wrap directory-page">
+  <div class="head">
+    <h1>My Listings</h1>
+    <p>Apni posted properties manage karein — edit, delete, filter.</p>
+  </div>
+
+  <div class="filters panel">
+    <div class="field">
+      <label>Search</label>
+      <input type="text" [(ngModel)]="search" (change)="apply()" placeholder="Title, locality..." />
+    </div>
+    <div class="field">
+      <label>City</label>
+      <select [(ngModel)]="city" (change)="apply()">
+        <option value="">All cities</option>
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+    <div class="field">
+      <label>Type</label>
+      <select [(ngModel)]="type" (change)="apply()">
+        <option value="">All types</option>
+        @for (t of master.values('property-type'); track t) { <option [value]="t">{{ t }}</option> }
+      </select>
+    </div>
+    <div class="field">
+      <label>Listing</label>
+      <select [(ngModel)]="listingType" (change)="apply()">
+        <option value="">All</option>
+        @for (o of master.options('listing-type'); track o.id) { <option [value]="o.value">{{ o.label }}</option> }
+      </select>
+    </div>
+    <div class="field">
+      <label>Status</label>
+      <select [(ngModel)]="status" (change)="apply()">
+        <option value="">All</option>
+        @for (s of master.values('listing-status'); track s) { <option [value]="s">{{ s }}</option> }
+      </select>
+    </div>
+    <button class="btn-primary clear-btn" (click)="clear()">Clear</button>
+  </div>
+
+  @if (error()) { <p class="error">{{ error() }}</p> }
+
+  <div class="cards">
+    @for (p of items(); track p.id) {
+      <app-property-card [property]="p" />
+    } @empty {
+      @if (!loading()) { <p class="empty">Koi listing nahi mili.</p> }
+    }
+  </div>
+
+  <div class="pagination">
+    <button [disabled]="page === 1" (click)="previous()">Prev</button>
+    <span>Page {{ page }} · {{ total() }} total</span>
+    <button [disabled]="page * pageSize >= total()" (click)="next()">Next</button>
+  </div>
+</section>

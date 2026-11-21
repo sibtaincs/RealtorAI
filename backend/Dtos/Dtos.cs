@@ -79,6 +79,7 @@ public record PropertyQueryDto(
     string? Locality,
     string? Type,
     string? ListingType,
+    string? Status,
     decimal? MinPrice,
     decimal? MaxPrice,
     int? MinBeds,
@@ -127,6 +128,7 @@ public record RegisterDto(
 public record LoginDto(string Email, string Password);
 
 public record AuthResponseDto(
+    string Id,
     string Token,
     string Email,
     string FullName,

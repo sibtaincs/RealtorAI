@@ -64,6 +64,6 @@ public class AuthController : ControllerBase
     private async Task<AuthResponseDto> BuildAuthResponse(ApplicationUser user)
     {
         var roles = await _users.GetRolesAsync(user);
-        return new AuthResponseDto(_tokens.CreateToken(user, roles), user.Email!, user.FullName, roles.ToArray(), user.ApprovalStatus.ToString());
+        return new AuthResponseDto(user.Id, _tokens.CreateToken(user, roles), user.Email!, user.FullName, roles.ToArray(), user.ApprovalStatus.ToString());
     }
 }

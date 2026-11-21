@@ -51,6 +51,7 @@ export interface PropertyQuery {
   locality?: string;
   type?: string;
   listingType?: string;
+  status?: string;
   minPrice?: number;
   maxPrice?: number;
   minBeds?: number;
@@ -125,6 +126,7 @@ export interface CreateLead {
 }
 
 export interface AuthResponse {
+  id: string;
   token: string;
   email: string;
   fullName: string;

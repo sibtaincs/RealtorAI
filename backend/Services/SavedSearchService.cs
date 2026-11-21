@@ -108,17 +108,17 @@ public class SavedSearchService : ISavedSearchService
             var listingType = Get("listingType");
 
             query = new PropertyQueryDto(
-                Get("search"), Get("city"), Get("locality"), type, listingType,
+                Get("search"), Get("city"), Get("locality"), type, listingType, null,
                 GetDecimal("minPrice"), GetDecimal("maxPrice"),
                 GetInt("minBeds"), GetInt("minMarla"), 1, 50);
         }
         catch
         {
-            query = new PropertyQueryDto(null, null, null, null, null, null, null, null, null, 1, 50);
+            query = new PropertyQueryDto(null, null, null, null, null, null, null, null, null, null, 1, 50);
         }
 
         var result = await _properties.GetAsync(new PropertyQueryDto(
-            query.Search, query.City, query.Locality, query.Type, query.ListingType,
+            query.Search, query.City, query.Locality, query.Type, query.ListingType, null,
             query.MinPrice, query.MaxPrice, query.MinBeds, query.MinMarla, 1, 50));
 
         var since = search.LastAlertAt ?? DateTime.UtcNow.AddDays(-7);
@@ -143,3 +143,4 @@ public class SavedSearchService : ISavedSearchService
     private static SavedSearchDto ToDto(SavedSearch s) => new(
         s.Id, s.Name, s.QueryJson, s.AlertEnabled, s.CreatedAt, s.LastAlertAt);
 }
+

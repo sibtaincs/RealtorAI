@@ -88,6 +88,9 @@ public class PropertyService : IPropertyService
         if (!string.IsNullOrWhiteSpace(query.ListingType))
             q = q.Where(p => p.ListingType == query.ListingType);
 
+        if (!string.IsNullOrWhiteSpace(query.Status))
+            q = q.Where(p => p.Status.ToString() == query.Status);
+
         if (query.MinPrice.HasValue)
             q = q.Where(p => p.Price >= query.MinPrice.Value);
 
