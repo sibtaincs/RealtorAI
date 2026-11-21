@@ -93,6 +93,7 @@ export class AdminContent implements OnInit {
 
   selectOptions(field: ContentField): string[] {
     if (field.type === 'city') return this.cityOptions();
+    if (field.masterKind) return this.master.values(field.masterKind);
     return field.options ?? [];
   }
 

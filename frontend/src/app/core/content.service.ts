@@ -28,6 +28,7 @@ export interface ContentField {
   type: ContentFieldType;
   required?: boolean;
   options?: string[];
+  masterKind?: string;
 }
 
 export const CONTENT_FIELDS: Record<string, ContentField[]> = {
@@ -39,7 +40,7 @@ export const CONTENT_FIELDS: Record<string, ContentField[]> = {
     { name: 'type', label: 'Type', type: 'text', required: true },
     { name: 'priceFrom', label: 'Price from', type: 'number', required: true },
     { name: 'priceTo', label: 'Price to', type: 'number', required: true },
-    { name: 'status', label: 'Status', type: 'select', required: true, options: ['Launching', 'Under Construction', 'Nearing Completion', 'Completed'] }
+    { name: 'status', label: 'Status', type: 'select', required: true, masterKind: 'project-status' }
   ],
   agency: [
     { name: 'name', label: 'Agency name', type: 'text', required: true },
@@ -48,7 +49,7 @@ export const CONTENT_FIELDS: Record<string, ContentField[]> = {
     { name: 'listings', label: 'Listings', type: 'number', required: true },
     { name: 'rating', label: 'Rating', type: 'number', required: true },
     { name: 'verified', label: 'Verified', type: 'boolean' },
-    { name: 'specialty', label: 'Specialty', type: 'select', required: true, options: ['Residential', 'Plots', 'Apartments', 'Commercial', 'Houses', 'Rentals', 'Farms'] }
+    { name: 'specialty', label: 'Specialty', type: 'select', required: true, masterKind: 'agency-specialty' }
   ],
   society: [
     { name: 'name', label: 'Society name', type: 'text', required: true },
@@ -62,11 +63,11 @@ export const CONTENT_FIELDS: Record<string, ContentField[]> = {
     { name: 'city', label: 'City', type: 'city', required: true },
     { name: 'owner', label: 'Owner', type: 'text', required: true },
     { name: 'area', label: 'Area', type: 'text', required: true },
-    { name: 'status', label: 'Status', type: 'select', required: true, options: ['Verified', 'Pending'] }
+    { name: 'status', label: 'Status', type: 'select', required: true, masterKind: 'land-record-status' }
   ],
   article: [
     { name: 'title', label: 'Title', type: 'text', required: true },
-    { name: 'category', label: 'Category', type: 'select', required: true, options: ['News', 'Guide', 'Community'] },
+    { name: 'category', label: 'Category', type: 'select', required: true, masterKind: 'article-category' },
     { name: 'summary', label: 'Summary', type: 'textarea', required: true },
     { name: 'date', label: 'Date', type: 'text', required: true }
   ],
