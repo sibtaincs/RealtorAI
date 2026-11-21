@@ -13,6 +13,11 @@ export class AgenciesPage {
   cities = CITIES;
   agencies = AGENCIES;
   city = signal('');
+  propertyTypes = ['Residential', 'Plots', 'Apartments', 'Commercial', 'Houses', 'Rentals', 'Farms'];
+  propertyType = signal('');
 
-  filtered = computed(() => this.agencies.filter(a => !this.city() || a.city === this.city()));
+  filtered = computed(() => this.agencies.filter(a =>
+    (!this.city() || a.city === this.city()) &&
+    (!this.propertyType() || a.specialty.toLowerCase().includes(this.propertyType().toLowerCase()))
+  ));
 }

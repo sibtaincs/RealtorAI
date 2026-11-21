@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <h2>Area Guides</h2>
+  <h2 id="area-guides">Area Guides</h2>
   <div class="cards">
     @for (g of filteredGuides(); track g.name) {
       <div class="panel card">
@@ -26,7 +26,7 @@
     } @empty { <p class="empty">No guides for this city.</p> }
   </div>
 
-  <h2>Property Search Trends</h2>
+  <h2 id="trends">Property Search Trends</h2>
   <div class="panel table-wrap">
     <table>
       <thead><tr><th>City</th><th>Area</th><th>Price change</th><th>Search interest</th></tr></thead>
@@ -42,7 +42,7 @@
     </table>
   </div>
 
-  <h2>Price Index</h2>
+  <h2 id="price-index">Price Index</h2>
   <div class="panel table-wrap">
     <table>
       <thead><tr><th>City</th><th>Index</th><th>Year change</th><th>Median listing</th></tr></thead>

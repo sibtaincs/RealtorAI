@@ -6,7 +6,20 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ t('nav.properties') }}</a>
       <a routerLink="/post" routerLinkActive="active">{{ t('nav.post') }}</a>
       <a routerLink="/map" routerLinkActive="active">{{ t('nav.map') }}</a>
-      <a routerLink="/tools" routerLinkActive="active">{{ t('nav.tools') }}</a>
+      <details class="nav-menu" #tools>
+        <summary>{{ t('nav.tools') }} ▾</summary>
+        <div class="menu panel">
+          <a routerLink="/explore" fragment="plot-finder" (click)="tools.open = false">{{ t('tools.plotFinder') }}</a>
+          <a routerLink="/tools" fragment="valuation" (click)="tools.open = false">{{ t('tools.zValue') }}</a>
+          <a routerLink="/tools" fragment="emi" (click)="tools.open = false">{{ t('tools.homeLoan') }}</a>
+          <a routerLink="/tools" fragment="construction" (click)="tools.open = false">{{ t('tools.construction') }}</a>
+          <a routerLink="/tools" fragment="area" (click)="tools.open = false">{{ t('tools.areaConverter') }}</a>
+          <a routerLink="/market" fragment="area-guides" (click)="tools.open = false">{{ t('tools.areaGuide') }}</a>
+          <a routerLink="/explore" fragment="land-records" (click)="tools.open = false">{{ t('tools.landRecord') }}</a>
+          <a routerLink="/market" fragment="trends" (click)="tools.open = false">{{ t('tools.trends') }}</a>
+          <a routerLink="/market" fragment="price-index" (click)="tools.open = false">{{ t('tools.priceIndex') }}</a>
+        </div>
+      </details>
       <details class="nav-menu" #explore>
         <summary>{{ t('nav.explore') }} ▾</summary>
         <div class="menu panel">

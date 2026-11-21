@@ -21,3 +21,7 @@ export function monthlyInstallment(principal: number, annualRatePct: number, yea
 export function constructionCost(areaSqFt: number, ratePerSqFt: number): number {
   return Math.max(0, areaSqFt) * Math.max(0, ratePerSqFt);
 }
+
+export function estimateValue(areaSqFt: number, pricePerSqFt: number): number {
+  return Math.max(0, areaSqFt) * Math.max(0, pricePerSqFt);
+}

@@ -1,11 +1,22 @@
 <section class="wrap tools-page">
   <div class="head">
     <h1>Property Tools</h1>
-    <p>Quick calculators for home loans, construction cost and area units.</p>
+    <p>All calculators, guides and lookups in one place.</p>
   </div>
 
+  <div class="hub">
+    @for (link of toolLinks; track link.label) {
+      <a class="panel hub-card" [routerLink]="link.route" [fragment]="link.fragment">
+        <span class="hub-icon">{{ link.icon }}</span>
+        <strong>{{ link.label }}</strong>
+        <span class="hub-go">Open →</span>
+      </a>
+    }
+  </div>
+
+  <h2 class="section-title">Calculators</h2>
   <div class="tool-grid">
-    <div class="panel tool">
+    <div class="panel tool" id="emi">
       <h2>🏦 Home Loan Calculator</h2>
       <p class="sub">Estimate your monthly instalment.</p>
       <div class="field"><label>Loan amount (PKR)</label><input type="number" min="0" [(ngModel)]="loanAmount" /></div>
@@ -19,7 +30,7 @@
       </div>
     </div>
 
-    <div class="panel tool">
+    <div class="panel tool" id="construction">
       <h2>🏗 Construction Cost Calculator</h2>
       <p class="sub">Rough build cost for a plot.</p>
       <div class="field"><label>Area (sq ft)</label><input type="number" min="0" [(ngModel)]="buildAreaSqFt" /></div>
@@ -31,7 +42,7 @@
       </div>
     </div>
 
-    <div class="panel tool">
+    <div class="panel tool" id="area">
       <h2>📐 Area Unit Converter</h2>
       <p class="sub">Marla, Kanal, square feet, yards and metres.</p>
       <div class="field"><label>Value</label><input type="number" [(ngModel)]="convertValue" /></div>
@@ -52,7 +63,24 @@
         <strong>{{ converted | number:'1.0-4' }} {{ convertTo }}</strong>
       </div>
     </div>
+
+    <div class="panel tool" id="valuation">
+      <h2>🏷 Z-Value</h2>
+      <p class="sub">Sample estimate based on area guide rates.</p>
+      <div class="field">
+        <label>Area</label>
+        <select [(ngModel)]="valuationArea">
+          @for (a of valuationAreas; track a.name) { <option [value]="a.name">{{ a.name }} · {{ a.city }}</option> }
+        </select>
+      </div>
+      <div class="field"><label>Property area (sq ft)</label><input type="number" min="0" [(ngModel)]="valuationSqFt" /></div>
+      <div class="result">
+        <small>Estimated value</small>
+        <strong>{{ display.money(estimatedValue) }}</strong>
+        <span>Sample rate {{ display.money(valuationRate) }}/sq ft — not an appraisal.</span>
+      </div>
+    </div>
   </div>
 
-  <p class="note">Currency conversions use indicative rates for display only — not live market rates.</p>
+  <p class="note">Valuation and market figures use seeded sample data for guidance only — not live rates or an appraisal.</p>
 </section>

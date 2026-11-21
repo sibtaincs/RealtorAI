@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DisplayService } from './display.service';
-import { constructionCost, convertArea, monthlyInstallment } from './tools';
+import { constructionCost, convertArea, estimateValue, monthlyInstallment } from './tools';
 
 describe('tool calculations', () => {
   it('amortises a home loan', () => {
@@ -25,6 +25,11 @@ describe('tool calculations', () => {
   it('computes construction cost without negatives', () => {
     expect(constructionCost(1000, 3000)).toBe(3_000_000);
     expect(constructionCost(-5, 3000)).toBe(0);
+  });
+
+  it('estimates value without negatives', () => {
+    expect(estimateValue(1000, 18000)).toBe(18_000_000);
+    expect(estimateValue(-1, 18000)).toBe(0);
   });
 });
 

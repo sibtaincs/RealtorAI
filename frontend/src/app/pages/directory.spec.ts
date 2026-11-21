@@ -26,4 +26,16 @@ describe('directory filters', () => {
     expect(page.filtered().length).toBe(2);
     expect(page.filtered().every(a => a.city === 'Karachi')).toBe(true);
   });
+
+  it('filters agencies by property type', () => {
+    const page = TestBed.createComponent(AgenciesPage).componentInstance;
+    page.propertyType.set('Commercial');
+    expect(page.filtered().length).toBe(2);
+    expect(page.filtered().every(a => a.specialty.toLowerCase().includes('commercial'))).toBe(true);
+
+    page.propertyType.set('Plots');
+    page.city.set('Islamabad');
+    expect(page.filtered().length).toBe(1);
+    expect(page.filtered()[0].name).toBe('Capital Homes');
+  });
 });

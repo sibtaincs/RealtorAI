@@ -10,10 +10,22 @@
   @media (max-width: 600px) { grid-template-columns: 1fr; }
 }
 
+.hub { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px;
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+.hub-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; text-decoration: none;
+  color: #0f172a; font-size: .88rem;
+  .hub-icon { font-size: 1.15rem; }
+  .hub-go { margin-left: auto; color: var(--primary); font-size: .75rem; font-weight: 700; }
+  &:hover { border-color: var(--primary); }
+}
+.section-title { margin: 0 0 14px; font-size: 1.15rem; }
 .tool { display: flex; flex-direction: column; gap: 12px;
   h2 { margin: 0; font-size: 1.05rem; }
   .sub { margin: -8px 0 2px; color: #94a3b8; font-size: .8rem; }
 }
+.tool[id] { scroll-margin-top: 84px; }
 
 .result { display: flex; flex-direction: column; gap: 3px; margin-top: auto;
   padding: 14px 16px; border-radius: 12px; background: #ecfdf5; color: #065f46;

@@ -28,6 +28,7 @@
 .note { color: #94a3b8; font-size: .78rem; margin-top: 18px; }
 
 h2 { margin: 28px 0 14px; font-size: 1.15rem; }
+h2[id], .tag.link[id] { scroll-margin-top: 84px; }
 .table-wrap { overflow-x: auto; margin-bottom: 8px;
   table { width: 100%; border-collapse: collapse; font-size: .85rem; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
