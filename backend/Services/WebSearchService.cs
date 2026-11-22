@@ -87,9 +87,9 @@ public class WebSearchService : IWebSearchService
         // Fallback 2: DuckDuckGo HTML results (no key).
         try
         {
-            var url = $"https://html.duckduckgo.com/html/?q={Uri.EscapeDataString(query)}";
-            using var req = new HttpRequestMessage(HttpMethod.Get, url);
+            using var req = new HttpRequestMessage(HttpMethod.Post, "https://html.duckduckgo.com/html/");
             req.Headers.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+            req.Content = new FormUrlEncodedContent(new Dictionary<string, string> { ["q"] = query });
             using var res = await _http.SendAsync(req);
             if (!res.IsSuccessStatusCode) return Array.Empty<WebSearchResultDto>();
             var html = await res.Content.ReadAsStringAsync();

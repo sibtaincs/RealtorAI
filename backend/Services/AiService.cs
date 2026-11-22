@@ -619,8 +619,15 @@ public class AiService : IAiService
         {
             "apartment", "house", "plot", "shop", "office", "villa", "farmhouse"
         }.FirstOrDefault(t => text.Contains(t));
+
+        var locality = all.Select(p => p.Locality)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(l => text.Contains(l.ToLowerInvariant()));
+
+        var marlaMatch = Regex.Match(text, @"(\d+)\s*marla");
+        int? marla = marlaMatch.Success && int.TryParse(marlaMatch.Groups[1].Value, out var marlaValue) ? marlaValue : null;
         var wantsRent = Regex.IsMatch(text, @"\b(rent|rental|rental|kiraya|lease)\b");
-        var wantsSale = Regex.IsMatch(text, @"\b(buy|purchase|sale|khareed|purchase)\b");
+        var wantsSale = Regex.IsMatch(text, @"\b(buy|purchase|sale|khareed|price|cost)\b");
         var bedMatch = Regex.Match(text, @"(\d+)\s*(?:bed|bedroom|br)\b");
         int? beds = bedMatch.Success && int.TryParse(bedMatch.Groups[1].Value, out var b) ? b : null;
 
@@ -653,6 +660,12 @@ public class AiService : IAiService
 
         if (!string.IsNullOrEmpty(type))
             matches = matches.Where(p => p.Type.Contains(type, StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrEmpty(locality))
+            matches = matches.Where(p => p.Locality.Equals(locality, StringComparison.OrdinalIgnoreCase));
+
+        if (marla.HasValue)
+            matches = matches.Where(p => p.AreaMarla == marla.Value);
 
         var listingType = wantsRent ? "Rent" : wantsSale ? "Sale" : null;
         if (listingType is not null)
