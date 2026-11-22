@@ -66,7 +66,7 @@ public class AiService : IAiService
         {
             var system =
                 "You are 'RealEstate AI', a helpful real estate agent for the Pakistani property market. " +
-                "Answer in friendly Roman Urdu mixed with English. Use the property listings provided below for portal data. " +
+                "Answer in clear English. Use the property listings provided below for portal data. " +
                 "For outside-portal or market context, use the web results provided; cite them briefly. " +
                 "Never invent properties, prices or facts. Show prices in lakh/crore PKR. " +
                 "Be concise (max 140 words). Suggest the user book a visit or send an inquiry when relevant.\n\n" +
@@ -672,15 +672,15 @@ public class AiService : IAiService
 
         var description = top.Count switch
         {
-            0 => "Mujhe is wakt aapki requirement se match koi property nahi mili. " +
-                 "Aap city, budget (e.g. '80 lakh') aur type (house/plot/apartment) batayein, " +
-                 "ya rent ke liye 'rent' likh dein — main dobara search kar dunga.",
-            _ => $"Maine aapki baat samajh li. {top.Count} achi properties mili hain:\n" +
+            0 => "No matching properties found right now. " +
+                 "Please share city, budget (e.g. '80 lakh') and type (house/plot/apartment), " +
+                 "or type 'rent' for rentals — I will search again.",
+            _ => $"Understood. I found {top.Count} matching properties:\n" +
                  string.Join("\n", top.Select(p =>
                      $"• #{p.Id} — {p.Title} ({p.Locality}, {p.City}), {FormatPkr(p.Price, p.ListingType)}" +
                      (p.Bedrooms.HasValue ? $", {p.Bedrooms} beds" : "") +
                      (p.AreaMarla.HasValue ? $", {p.AreaMarla} marla" : ""))) +
-                 "\n\nKisi ko dekhna hai? To neeche diye gaye controls se inquiry bhej dein ya 'schedule visit' kehlein."
+                 "\n\nLet me know if you want details or to schedule a visit."
         };
 
         return new AiChatResponseDto(description, "local", top.Select(p => p.Id).ToArray());

@@ -30,7 +30,7 @@ export class ChatWidget {
 
   messages = signal<ChatMessage[]>([{
     from: 'ai',
-    text: 'Assalam-o-Alaikum! Main aapka RealEstate AI agent hoon. Batayein aap kis city, budget aur type mein property chahte hain?'
+    text: "Hello! I'm your RealEstate AI assistant. Tell me your preferred city, budget, and property type."
   }]);
 
   suggestions = [
@@ -69,7 +69,7 @@ export class ChatWidget {
       error: () => {
         this.webResults.set([]);
         this.messages.update(m => [...m, {
-          from: 'ai', text: 'Sorry, abhi reply nahi mila. Thodi der baad dobara koshish karein.'
+          from: 'ai', text: 'Sorry, I could not reply right now. Please try again in a moment.'
         }]);
       },
       complete: () => this.busy.set(false)

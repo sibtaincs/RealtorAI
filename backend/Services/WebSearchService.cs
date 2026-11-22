@@ -53,32 +53,71 @@ public class WebSearchService : IWebSearchService
             catch { }
         }
 
-        // Fallback: DuckDuckGo instant answer (no key).
+        // Fallback 1: DuckDuckGo instant answer (no key).
         try
         {
             var url = $"https://api.duckduckgo.com/?q={Uri.EscapeDataString(query)}&format=json&no_html=1&skip_disambig=1";
             using var res = await _http.GetAsync(url);
-            if (!res.IsSuccessStatusCode) return Array.Empty<WebSearchResultDto>();
-            using var doc = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
-            var list = new List<WebSearchResultDto>();
-            if (doc.RootElement.TryGetProperty("AbstractText", out var abs) && !string.IsNullOrWhiteSpace(abs.GetString()))
+            if (res.IsSuccessStatusCode)
             {
-                var sourceUrl = doc.RootElement.TryGetProperty("AbstractURL", out var au) ? au.GetString() ?? string.Empty : string.Empty;
-                var heading = doc.RootElement.TryGetProperty("Heading", out var h) ? h.GetString() ?? query : query;
-                list.Add(new WebSearchResultDto(heading, abs.GetString()!, sourceUrl));
-            }
-            if (doc.RootElement.TryGetProperty("RelatedTopics", out var topics))
-            {
-                foreach (var t in topics.EnumerateArray().Take(count - list.Count))
+                using var doc = JsonDocument.Parse(await res.Content.ReadAsStringAsync());
+                var list = new List<WebSearchResultDto>();
+                if (doc.RootElement.TryGetProperty("AbstractText", out var abs) && !string.IsNullOrWhiteSpace(abs.GetString()))
                 {
-                    if (t.TryGetProperty("Text", out var text) && !string.IsNullOrWhiteSpace(text.GetString()))
+                    var sourceUrl = doc.RootElement.TryGetProperty("AbstractURL", out var au) ? au.GetString() ?? string.Empty : string.Empty;
+                    var heading = doc.RootElement.TryGetProperty("Heading", out var h) ? h.GetString() ?? query : query;
+                    list.Add(new WebSearchResultDto(heading, abs.GetString()!, sourceUrl));
+                }
+                if (doc.RootElement.TryGetProperty("RelatedTopics", out var topics))
+                {
+                    foreach (var t in topics.EnumerateArray().Take(count - list.Count))
                     {
-                        var u = t.TryGetProperty("FirstURL", out var fu) ? fu.GetString() ?? string.Empty : string.Empty;
-                        list.Add(new WebSearchResultDto(text.GetString()!, text.GetString()!, u));
+                        if (t.TryGetProperty("Text", out var text) && !string.IsNullOrWhiteSpace(text.GetString()))
+                        {
+                            var u = t.TryGetProperty("FirstURL", out var fu) ? fu.GetString() ?? string.Empty : string.Empty;
+                            list.Add(new WebSearchResultDto(text.GetString()!, text.GetString()!, u));
+                        }
                     }
                 }
+                if (list.Count > 0) return list.Take(count).ToList();
             }
-            return list.Take(count).ToList();
+        }
+        catch { }
+
+        // Fallback 2: DuckDuckGo HTML results (no key).
+        try
+        {
+            var url = $"https://html.duckduckgo.com/html/?q={Uri.EscapeDataString(query)}";
+            using var req = new HttpRequestMessage(HttpMethod.Get, url);
+            req.Headers.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+            using var res = await _http.SendAsync(req);
+            if (!res.IsSuccessStatusCode) return Array.Empty<WebSearchResultDto>();
+            var html = await res.Content.ReadAsStringAsync();
+            var list = new List<WebSearchResultDto>();
+            var matches = System.Text.RegularExpressions.Regex.Matches(
+                html,
+                @"<a[^>]*class=""result__a""[^>]*href=""([^""]+)""[^>]*>(.*?)</a>.*?<a[^>]*class=""result__snippet""[^>]*>(.*?)</a>",
+                System.Text.RegularExpressions.RegexOptions.Singleline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            foreach (System.Text.RegularExpressions.Match m in matches)
+            {
+                if (list.Count >= count) break;
+                var rawUrl = System.Net.WebUtility.HtmlDecode(m.Groups[1].Value);
+                var title = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(m.Groups[2].Value, "<.*?>", string.Empty));
+                var snippet = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(m.Groups[3].Value, "<.*?>", string.Empty));
+                var finalUrl = rawUrl;
+                if (rawUrl.Contains("uddg=", StringComparison.Ordinal))
+                {
+                    var idx = rawUrl.IndexOf("uddg=", StringComparison.Ordinal) + 5;
+                    var end = rawUrl.IndexOf('&', idx);
+                    finalUrl = end > idx ? rawUrl.Substring(idx, end - idx) : rawUrl.Substring(idx);
+                    finalUrl = Uri.UnescapeDataString(finalUrl);
+                }
+                if (!string.IsNullOrWhiteSpace(title))
+                {
+                    list.Add(new WebSearchResultDto(title.Trim(), snippet.Trim(), finalUrl));
+                }
+            }
+            return list;
         }
         catch
         {
