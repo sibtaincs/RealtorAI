@@ -309,6 +309,8 @@
       @if (error()) { <p class="error">{{ error() }}</p> }
 
       <div class="actions">
+        <button class="mini-btn" type="button" [disabled]="checkingQuality()" (click)="checkQuality()">Check Quality</button>
+        @if (quality()) { <span class="quality-score">Quality score: {{ quality()?.score }}/100</span> }
         <button class="btn-primary" (click)="save()" [disabled]="saving()">
           {{ saving() ? 'Saving...' : 'Publish Property' }}
         </button>
