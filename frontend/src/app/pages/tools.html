@@ -14,6 +14,38 @@
     }
   </div>
 
+  <h2 class="section-title">AI Price Advisor</h2>
+  <div class="panel tool">
+    <h2>🏷️ AI Price Advisor</h2>
+    <p class="sub">Estimate price from comparable listings.</p>
+    <div class="field">
+      <label>City</label>
+      <select [(ngModel)]="priceCity">
+        @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
+      </select>
+    </div>
+    <div class="field"><label>Locality</label><input type="text" [(ngModel)]="priceLocality" placeholder="e.g. DHA Phase 6" /></div>
+    <div class="field">
+      <label>Type</label>
+      <select [(ngModel)]="priceType">
+        @for (t of master.values('property-type'); track t) { <option [value]="t">{{ t }}</option> }
+      </select>
+    </div>
+    <div class="field"><label>Area (marla)</label><input type="number" min="1" [(ngModel)]="priceMarla" /></div>
+    <div class="field"><label>Bedrooms</label><input type="number" min="0" [(ngModel)]="priceBeds" /></div>
+    <div class="actions">
+      <button class="btn-primary" [disabled]="priceBusy" (click)="estimatePrice()">Estimate</button>
+    </div>
+    @if (priceEstimate) {
+      <div class="result">
+        <small>Estimated price</small>
+        <strong>{{ display.money(priceEstimate.estimatedPrice) }}</strong>
+        <span>Range: {{ display.money(priceEstimate.low) }} - {{ display.money(priceEstimate.high) }}</span>
+        <span>Basis: {{ priceEstimate.basis }}</span>
+      </div>
+    }
+  </div>
+
   <h2 class="section-title">Calculators</h2>
   <div class="tool-grid">
     <div class="panel tool" id="emi">

@@ -6,7 +6,9 @@ import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
 import { AreaGuide } from '../core/market.data';
 import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateValue, monthlyInstallment } from '../core/tools';
+import { PriceEstimate } from '../core/models';
 import { MasterDataService } from '../core/master-data.service';
+import { AiService } from '../core/ai.service';
 
 @Component({
   selector: 'app-tools',
@@ -18,6 +20,7 @@ export class ToolsPage implements OnInit {
   display = inject(DisplayService);
   private content = inject(ContentService);
   master = inject(MasterDataService);
+  private ai = inject(AiService);
   areaUnits = TOOL_AREA_UNITS;
 
   toolLinks = [
@@ -47,6 +50,29 @@ export class ToolsPage implements OnInit {
   buildMode: 'grey' | 'complete' = 'complete';
 
   buildPresets = [3, 4, 5, 6, 7, 8, 10, 20];
+
+  priceCity = 'Lahore';
+  priceLocality = '';
+  priceType = 'House';
+  priceMarla = 5;
+  priceBeds = 3;
+  priceEstimate: PriceEstimate | null = null;
+  priceBusy = false;
+
+  estimatePrice(): void {
+    this.priceBusy = true;
+    this.priceEstimate = null;
+    this.ai.estimate({
+      city: this.priceCity,
+      locality: this.priceLocality || this.priceCity,
+      type: this.priceType,
+      areaMarla: this.priceMarla,
+      bedrooms: this.priceBeds
+    }).subscribe({
+      next: res => { this.priceEstimate = res; this.priceBusy = false; },
+      error: () => { this.priceBusy = false; }
+    });
+  }
 
   private cityFactor: Record<string, number> = {
     Karachi: 1.08, Lahore: 1, Islamabad: 1.12, Rawalpindi: 1.05,
