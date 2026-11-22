@@ -34,15 +34,17 @@ public class AiService : IAiService
 
     private readonly IPropertyService _properties;
     private readonly HttpClient _http;
+    private readonly IWebSearchService _webSearch;
     private readonly IWebHostEnvironment _env;
     private readonly string? _apiKey;
     private readonly string _endpoint;
     private readonly string _model;
 
-    public AiService(IPropertyService properties, HttpClient http, IWebHostEnvironment env, IConfiguration config)
+    public AiService(IPropertyService properties, HttpClient http, IWebHostEnvironment env, IConfiguration config, IWebSearchService webSearch)
     {
         _properties = properties;
         _http = http;
+        _webSearch = webSearch;
         _env = env;
         _apiKey = config["Ai:ApiKey"];
         _endpoint = config["Ai:Endpoint"] ?? "https://api.openai.com/v1/chat/completions";
@@ -54,24 +56,45 @@ public class AiService : IAiService
         var listings = await _properties.GetForAiContextAsync(24);
         var context = BuildContext(listings);
 
+        var webResults = Array.Empty<WebSearchResultDto>();
+        if (NeedsWebSearch(message))
+        {
+            webResults = (await _webSearch.SearchAsync($"Pakistan real estate property {message}", 5)).ToArray();
+        }
+
         if (!string.IsNullOrWhiteSpace(_apiKey))
         {
             var system =
                 "You are 'RealEstate AI', a helpful real estate agent for the Pakistani property market. " +
-                "Answer in friendly Roman Urdu mixed with English. Use ONLY the property listings provided below. " +
+                "Answer in friendly Roman Urdu mixed with English. Use the property listings provided below for portal data. " +
+                "For outside-portal or market context, use the web results provided; cite them briefly. " +
                 "Never invent properties, prices or facts. Show prices in lakh/crore PKR. " +
-                "Be concise (max 120 words). Suggest the user book a visit or send an inquiry when relevant.\n\n" +
-                "AVAILABLE LISTINGS:\n" + context;
+                "Be concise (max 140 words). Suggest the user book a visit or send an inquiry when relevant.\n\n" +
+                "AVAILABLE LISTINGS:\n" + context +
+                (webResults.Length > 0 ? "\n\nWEB RESULTS:\n" + string.Join("\n", webResults.Select(w => $"- {w.Title}: {w.Snippet} ({w.Url})")) : string.Empty);
 
             var reply = await CallModelAsync(system, message);
             if (!string.IsNullOrWhiteSpace(reply))
             {
                 var ids = FindMatchingIds(message, listings).Take(3).ToArray();
-                return new AiChatResponseDto(reply, "ai", ids);
+                return new AiChatResponseDto(reply, "ai", ids, webResults);
             }
         }
 
-        return LocalChat(message, listings);
+        var local = LocalChat(message, listings);
+        if (webResults.Length > 0)
+        {
+            local = local with { Reply = local.Reply + "\n\nWeb sources:\n" + string.Join("\n", webResults.Take(3).Select(w => $"- {w.Title}: {w.Url}")) };
+        }
+        return local with { WebResults = webResults };
+    }
+
+    private static bool NeedsWebSearch(string message)
+    {
+        var m = message.ToLowerInvariant();
+        return m.Contains("web") || m.Contains("online") || m.Contains("news") ||
+               m.Contains("market") || m.Contains("trend") || m.Contains("index") ||
+               m.Contains("guide") || m.Contains("outside") || m.Contains("detail");
     }
 
     public async Task<string> GenerateDescriptionAsync(DescribeDto input)

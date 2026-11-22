@@ -26,6 +26,7 @@ export class ChatWidget {
   busy = signal(false);
   inputText = '';
   recommendations = signal<PropertyDto[]>([]);
+  webResults = signal<{ title: string; snippet: string; url: string }[]>([]);
 
   messages = signal<ChatMessage[]>([{
     from: 'ai',
@@ -49,11 +50,13 @@ export class ChatWidget {
 
     this.messages.update(m => [...m, { from: 'user', text }]);
     this.inputText = '';
+    this.webResults.set([]);
     this.busy.set(true);
 
     this.ai.chat(text).subscribe({
       next: res => {
         this.messages.update(m => [...m, { from: 'ai', text: res.reply }]);
+        this.webResults.set(res.webResults || []);
         const ids = (res.recommendedPropertyIds || []).slice(0, 3);
         if (ids.length === 0) {
           this.recommendations.set([]);
@@ -63,9 +66,12 @@ export class ChatWidget {
           next: results => this.recommendations.set(results.filter((p): p is PropertyDto => !!p))
         });
       },
-      error: () => this.messages.update(m => [...m, {
-        from: 'ai', text: 'Sorry, abhi reply nahi mila. Thodi der baad dobara koshish karein.'
-      }]),
+      error: () => {
+        this.webResults.set([]);
+        this.messages.update(m => [...m, {
+          from: 'ai', text: 'Sorry, abhi reply nahi mila. Thodi der baad dobara koshish karein.'
+        }]);
+      },
       complete: () => this.busy.set(false)
     });
   }

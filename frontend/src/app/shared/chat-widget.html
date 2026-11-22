@@ -33,6 +33,15 @@
       </div>
     }
 
+    @if (webResults().length > 0) {
+      <div class="web-results">
+        <small>Web sources</small>
+        @for (r of webResults(); track r.url) {
+          <a [href]="r.url" target="_blank" rel="noopener noreferrer">{{ r.title }}</a>
+        }
+      </div>
+    }
+
     @if (messages().length === 1) {
       <div class="suggestions">
         @for (s of suggestions; track s) {

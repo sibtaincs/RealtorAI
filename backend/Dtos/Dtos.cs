@@ -148,7 +148,10 @@ public record AiChatDto(string Message);
 public record AiChatResponseDto(
     string Reply,
     string Mode,
-    int[] RecommendedPropertyIds);
+    int[] RecommendedPropertyIds,
+    WebSearchResultDto[]? WebResults = null);
+
+public record WebSearchResultDto(string Title, string Snippet, string Url);
 
 public record DescribeDto(
     string Title,

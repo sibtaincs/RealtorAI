@@ -100,6 +100,7 @@ builder.Services.AddScoped<IModerationService, ModerationService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
+builder.Services.AddScoped<IWebSearchService, WebSearchService>();
 builder.Services.AddHostedService<AlertWorker>();
 
 builder.Services.AddControllers()

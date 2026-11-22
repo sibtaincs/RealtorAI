@@ -138,6 +138,7 @@ export interface AiChatResponse {
   reply: string;
   mode: string;
   recommendedPropertyIds: number[];
+  webResults?: { title: string; snippet: string; url: string }[];
 }
 
 export interface PriceEstimate {
