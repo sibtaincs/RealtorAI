@@ -99,6 +99,7 @@ builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IModerationService, ModerationService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMasterDataService, MasterDataService>();
+builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddHostedService<AlertWorker>();
 
 builder.Services.AddControllers()

@@ -30,6 +30,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AreaGuideContent> AreaGuideContents => Set<AreaGuideContent>();
     public DbSet<AreaTrendContent> AreaTrendContents => Set<AreaTrendContent>();
     public DbSet<PriceIndexContent> PriceIndexContents => Set<PriceIndexContent>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<MasterData> MasterData => Set<MasterData>();
 
     protected override void OnModelCreating(ModelBuilder builder)
