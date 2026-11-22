@@ -816,7 +816,7 @@ namespace RealEstateAI.Api.Data.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ContactEmail")
                         .HasColumnType("nvarchar(max)");
@@ -901,6 +901,12 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AgentId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("Price");
+
+                    b.HasIndex("City", "Type", "ListingType");
 
                     b.ToTable("Properties");
                 });

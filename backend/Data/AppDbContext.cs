@@ -48,11 +48,16 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(p => p.Type).HasMaxLength(50);
             entity.Property(p => p.ListingType).HasMaxLength(50);
 
+            entity.HasIndex(p => new { p.City, p.Type, p.ListingType });
+            entity.HasIndex(p => p.Price);
+            entity.HasIndex(p => p.CreatedAt);
+            entity.HasIndex(p => p.AgentId);
+        });
+
         builder.Entity<ProjectContent>(e => { e.Property(x => x.PriceFrom).HasColumnType("decimal(18,2)"); e.Property(x => x.PriceTo).HasColumnType("decimal(18,2)"); });
         builder.Entity<SocietyContent>(e => { e.Property(x => x.PriceFrom).HasColumnType("decimal(18,2)"); });
         builder.Entity<AreaGuideContent>(e => { e.Property(x => x.PricePerSqFt).HasColumnType("decimal(18,2)"); });
         builder.Entity<PriceIndexContent>(e => { e.Property(x => x.MedianPrice).HasColumnType("decimal(18,2)"); });
-        });
 
         builder.Entity<Lead>(entity =>
         {
