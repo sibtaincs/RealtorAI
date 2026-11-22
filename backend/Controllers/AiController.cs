@@ -42,4 +42,8 @@ public class AiController : ControllerBase
     [HttpPost("whatsapp-reply")]
     public async Task<IActionResult> WhatsAppReply(WhatsAppReplyInputDto input)
         => Ok(await _ai.WhatsAppReplyAsync(input));
+
+    [HttpPost("score-lead")]
+    public async Task<IActionResult> ScoreLead(LeadScoreRequestDto input)
+        => Ok(await _ai.ScoreLeadAsync(input));
 }

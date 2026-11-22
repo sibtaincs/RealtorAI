@@ -143,6 +143,8 @@ public record DealerApprovalDto(
     string ApprovalStatus,
     DateTime CreatedAt);
 
+public record LeadScoreRequestDto(string Message, string? Name = null, string? Phone = null);
+public record LeadScoreResponseDto(int Score, string Label);
 public record AiChatDto(string Message);
 
 public record AiChatResponseDto(

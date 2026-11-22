@@ -12,6 +12,7 @@ namespace RealEstateAI.Api.Services;
 public interface IAiService
 {
     Task<AiChatResponseDto> ChatAsync(string message);
+    Task<LeadScoreResponseDto> ScoreLeadAsync(LeadScoreRequestDto input);
     Task<string> GenerateDescriptionAsync(DescribeDto input);
     Task<PriceEstimateResponseDto> EstimatePriceAsync(PriceEstimateDto input);
     Task<GeneratedListingDto> GenerateListingAsync(GenerateListingInputDto input);
@@ -95,6 +96,20 @@ public class AiService : IAiService
         return m.Contains("web") || m.Contains("online") || m.Contains("news") ||
                m.Contains("market") || m.Contains("trend") || m.Contains("index") ||
                m.Contains("guide") || m.Contains("outside") || m.Contains("detail");
+    }
+
+    public Task<LeadScoreResponseDto> ScoreLeadAsync(LeadScoreRequestDto input)
+    {
+        var text = (input.Message ?? string.Empty).ToLowerInvariant();
+        var score = 30;
+        if (text.Contains("urgent") || text.Contains("asap") || text.Contains("today")) score += 25;
+        if (text.Contains("budget") || text.Contains("price") || text.Contains("lakh") || text.Contains("crore")) score += 15;
+        if (text.Contains("visit") || text.Contains("schedule") || text.Contains("see")) score += 15;
+        if (!string.IsNullOrWhiteSpace(input.Phone)) score += 10;
+        if (text.Length > 80) score += 5;
+        score = Math.Clamp(score, 0, 100);
+        var label = score >= 70 ? "Hot" : score >= 40 ? "Warm" : "Cold";
+        return Task.FromResult(new LeadScoreResponseDto(score, label));
     }
 
     public async Task<string> GenerateDescriptionAsync(DescribeDto input)
