@@ -25,3 +25,18 @@ export function constructionCost(areaSqFt: number, ratePerSqFt: number): number 
 export function estimateValue(areaSqFt: number, pricePerSqFt: number): number {
   return Math.max(0, areaSqFt) * Math.max(0, pricePerSqFt);
 }
+
+export function rentalYieldPct(monthlyRent: number, propertyValue: number): number {
+  if (propertyValue <= 0) return 0;
+  return (Math.max(0, monthlyRent) * 12) / propertyValue * 100;
+}
+
+export function stampDutyPkr(propertyValue: number): number {
+  // Indicative valuation-based duty; province and valuation method vary.
+  return Math.round(Math.max(0, propertyValue) * 0.07);
+}
+
+export function registrationCostPkr(propertyValue: number): number {
+  // Indicative registration + transfer fee; province and valuation method vary.
+  return Math.round(Math.max(0, propertyValue) * 0.02);
+}

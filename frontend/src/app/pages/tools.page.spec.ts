@@ -13,9 +13,9 @@ describe('tools hub', () => {
     });
   });
 
-  it('links all nine options to their sections', () => {
+  it('links all ten options to their sections', () => {
     const page = TestBed.createComponent(ToolsPage).componentInstance;
-    expect(page.toolLinks.length).toBe(9);
+    expect(page.toolLinks.length).toBe(10);
     expect(page.toolLinks.map(l => l.fragment)).toContain('valuation');
     expect(page.toolLinks.map(l => l.fragment)).toContain('land-records');
   });

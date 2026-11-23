@@ -109,6 +109,21 @@
       <p class="hint">Popular sizes: 3, 5, 10 marla and 1 kanal. Rates are indicative and vary by contractor, materials and city.</p>
     </div>
 
+    <div class="panel tool" id="yield">
+      <h2>💰 Rental Yield & Transaction Costs</h2>
+      <p class="sub">Rental yield % and government charges on a property purchase.</p>
+      <div class="field"><label>Property value (PKR)</label><input type="number" min="0" [(ngModel)]="yieldValue" /></div>
+      <div class="field"><label>Monthly rent (PKR)</label><input type="number" min="0" [(ngModel)]="yieldRent" /></div>
+      <div class="result">
+        <small>Annual rental yield</small>
+        <strong>{{ rentalYield.toFixed(2) }}%</strong>
+        <span>Annual rent {{ display.money(yieldRent * 12) }}</span>
+        <span>Stamp duty {{ display.money(stampDuty) }}</span>
+        <span>Registration & transfer {{ display.money(registration) }}</span>
+      </div>
+      <p class="hint">Yield = annual rent / property value x 100. Stamp duty and registration are indicative only; actual amounts vary by province and valuation method.</p>
+    </div>
+
     <div class="panel tool" id="area">
       <h2>📐 Area Unit Converter</h2>
       <p class="sub">Marla, Kanal, square feet, yards and metres.</p>

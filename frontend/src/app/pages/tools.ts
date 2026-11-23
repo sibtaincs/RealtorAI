@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
 import { AreaGuide } from '../core/market.data';
-import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateValue, monthlyInstallment } from '../core/tools';
+import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateValue, monthlyInstallment, rentalYieldPct, registrationCostPkr, stampDutyPkr } from '../core/tools';
 import { PriceEstimate } from '../core/models';
 import { MasterDataService } from '../core/master-data.service';
 import { AiService } from '../core/ai.service';
@@ -28,6 +28,7 @@ export class ToolsPage implements OnInit {
     { icon: '🏷️', label: 'Z-Value', route: '/tools', fragment: 'valuation' },
     { icon: '🏦', label: 'Home Loan Calculator', route: '/tools', fragment: 'emi' },
     { icon: '🏗️', label: 'Construction Cost Calculator', route: '/tools', fragment: 'construction' },
+    { icon: '💰', label: 'Rental Yield & Costs', route: '/tools', fragment: 'yield' },
     { icon: '📐', label: 'Area Unit Converter', route: '/tools', fragment: 'area' },
     { icon: '📍', label: 'Area Guide', route: '/market', fragment: 'area-guides' },
     { icon: '📄', label: 'Land Record', route: '/explore', fragment: 'land-records' },
@@ -42,6 +43,9 @@ export class ToolsPage implements OnInit {
   loanAmount = 5000000;
   loanRate = 12;
   loanYears = 20;
+
+  yieldValue = 5000000;
+  yieldRent = 250000;
 
   buildCity = 'Lahore';
   buildMarla = 5;
@@ -109,6 +113,9 @@ export class ToolsPage implements OnInit {
   get emi(): number { return monthlyInstallment(this.loanAmount, this.loanRate, this.loanYears); }
   get totalPayable(): number { return this.emi * this.loanYears * 12; }
   get totalInterest(): number { return this.totalPayable - this.loanAmount; }
+  get rentalYield(): number { return rentalYieldPct(this.yieldRent, this.yieldValue); }
+  get stampDuty(): number { return stampDutyPkr(this.yieldValue); }
+  get registration(): number { return registrationCostPkr(this.yieldValue); }
   get converted(): number { return convertArea(this.convertValue, this.convertFrom, this.convertTo); }
   get areaUnitOptions(): { value: ToolAreaUnit; label: string }[] {
     const loaded = this.master.options('area-unit')

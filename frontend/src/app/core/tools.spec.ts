@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DisplayService } from './display.service';
-import { constructionCost, convertArea, estimateValue, monthlyInstallment } from './tools';
+import { constructionCost, convertArea, estimateValue, monthlyInstallment, rentalYieldPct, registrationCostPkr, stampDutyPkr } from './tools';
 
 describe('tool calculations', () => {
   it('amortises a home loan', () => {
@@ -30,6 +30,19 @@ describe('tool calculations', () => {
   it('estimates value without negatives', () => {
     expect(estimateValue(1000, 18000)).toBe(18_000_000);
     expect(estimateValue(-1, 18000)).toBe(0);
+  });
+
+  it('computes rental yield as annual rent over value', () => {
+    expect(rentalYieldPct(25000, 5_000_000)).toBe(6);
+    expect(rentalYieldPct(0, 5_000_000)).toBe(0);
+    expect(rentalYieldPct(25000, 0)).toBe(0);
+  });
+
+  it('computes indicative stamp duty and registration cost', () => {
+    expect(stampDutyPkr(10_000_000)).toBe(700_000);
+    expect(registrationCostPkr(10_000_000)).toBe(200_000);
+    expect(stampDutyPkr(-1)).toBe(0);
+    expect(registrationCostPkr(-1)).toBe(0);
   });
 });
 
