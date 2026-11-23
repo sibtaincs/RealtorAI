@@ -30,6 +30,9 @@
               <button class="mini-btn" [disabled]="busy()" (click)="approve(d.id)">Approve</button>
               <button class="mini-btn danger" [disabled]="busy()" (click)="reject(d.id)">Reject</button>
             }
+            @if (!d.isKycVerified) {
+              <button class="mini-btn" [disabled]="busy()" (click)="verifyKyc(d.id)">Verify KYC</button>
+            }
           </div>
         </div>
       } @empty {

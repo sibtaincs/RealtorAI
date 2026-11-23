@@ -28,7 +28,7 @@ public class AdminDealersController : ControllerBase
         var users = _users.Users
             .Where(u => u.ApprovalStatus == parsed)
             .OrderBy(u => u.CreatedAt)
-            .Select(u => new DealerApprovalDto(u.Id, u.FullName, u.Email!, u.AgencyName, u.ApprovalStatus.ToString(), u.CreatedAt))
+            .Select(u => new DealerApprovalDto(u.Id, u.FullName, u.Email!, u.AgencyName, u.ApprovalStatus.ToString(), u.CreatedAt, u.IsKycVerified))
             .ToList();
 
         return Ok(users);
@@ -50,6 +50,17 @@ public class AdminDealersController : ControllerBase
         var user = await _users.FindByIdAsync(id);
         if (user is null) return NotFound();
         user.ApprovalStatus = DealerApprovalStatus.Rejected;
+        await _users.UpdateAsync(user);
+        return NoContent();
+    }
+
+    [HttpPost("{id}/kyc")]
+    public async Task<IActionResult> VerifyKyc(string id)
+    {
+        var user = await _users.FindByIdAsync(id);
+        if (user is null) return NotFound();
+        user.IsKycVerified = true;
+        user.ApprovalStatus = DealerApprovalStatus.Approved;
         await _users.UpdateAsync(user);
         return NoContent();
     }

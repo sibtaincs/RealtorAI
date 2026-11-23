@@ -10,6 +10,7 @@ export interface DealerApproval {
   agencyName?: string | null;
   approvalStatus: string;
   createdAt: string;
+  isKycVerified: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -26,5 +27,9 @@ export class DealerService {
 
   reject(id: string): Observable<void> {
     return this.http.post<void>(`${API}/admin/dealers/${id}/reject`, {});
+  }
+
+  verifyKyc(id: string): Observable<void> {
+    return this.http.post<void>(`${API}/admin/dealers/${id}/kyc`, {});
   }
 }

@@ -51,4 +51,12 @@ export class AdminDealers implements OnInit {
       error: () => { this.busy.set(false); this.error.set('Reject fail ho gaya.'); }
     });
   }
+
+  verifyKyc(id: string): void {
+    this.busy.set(true);
+    this.dealers.verifyKyc(id).subscribe({
+      next: () => { this.busy.set(false); this.message.set('KYC verified, dealer approved.'); this.load(); },
+      error: () => { this.busy.set(false); this.error.set('KYC verify fail ho gaya.'); }
+    });
+  }
 }

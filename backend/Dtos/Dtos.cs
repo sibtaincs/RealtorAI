@@ -141,7 +141,8 @@ public record DealerApprovalDto(
     string Email,
     string? AgencyName,
     string ApprovalStatus,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    bool IsKycVerified = false);
 
 public record LeadScoreRequestDto(string Message, string? Name = null, string? Phone = null);
 public record LeadScoreResponseDto(int Score, string Label);
