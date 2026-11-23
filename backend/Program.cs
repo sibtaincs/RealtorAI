@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -107,6 +108,12 @@ builder.Services.AddHostedService<AlertWorker>();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("auth-login", context => RateLimitPartition.GetFixedWindowLimiter(
+        "auth-login", _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1) }));
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
@@ -146,6 +153,7 @@ app.UseStaticFiles();
 app.UseCors("AngularClient");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 // Friendly root response so the service URL never shows a bare "Not Found".
 app.MapGet("/", () => Results.Ok(new

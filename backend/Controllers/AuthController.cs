@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using RealEstateAI.Api.Dtos;
 using RealEstateAI.Api.Models;
 using RealEstateAI.Api.Services;
@@ -42,6 +43,7 @@ public class AuthController : ControllerBase
         return Ok(await BuildAuthResponse(user));
     }
 
+    [EnableRateLimiting("auth-login")]
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto input)
     {
