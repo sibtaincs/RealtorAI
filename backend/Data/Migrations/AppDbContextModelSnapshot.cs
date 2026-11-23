@@ -1151,6 +1151,50 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.ToTable("SocietyContents");
                 });
 
+            modelBuilder.Entity("RealEstateAI.Api.Models.Visit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AgentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LeadId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PropertyListingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeadId");
+
+                    b.HasIndex("PropertyListingId");
+
+                    b.HasIndex("AgentId", "PropertyListingId");
+
+                    b.ToTable("Visits");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1321,6 +1365,32 @@ namespace RealEstateAI.Api.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RealEstateAI.Api.Models.Visit", b =>
+                {
+                    b.HasOne("RealEstateAI.Api.Models.ApplicationUser", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("RealEstateAI.Api.Models.Lead", "Lead")
+                        .WithMany()
+                        .HasForeignKey("LeadId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("RealEstateAI.Api.Models.PropertyListing", "PropertyListing")
+                        .WithMany()
+                        .HasForeignKey("PropertyListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+
+                    b.Navigation("Lead");
+
+                    b.Navigation("PropertyListing");
                 });
 
             modelBuilder.Entity("RealEstateAI.Api.Models.PropertyListing", b =>

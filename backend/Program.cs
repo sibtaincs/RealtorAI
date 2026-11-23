@@ -103,6 +103,7 @@ builder.Services.AddScoped<IMasterDataService, MasterDataService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IWebSearchService, WebSearchService>();
 builder.Services.AddScoped<ILeaseService, LeaseService>();
+builder.Services.AddScoped<IVisitService, VisitService>();
 builder.Services.AddHostedService<AlertWorker>();
 
 builder.Services.AddControllers()

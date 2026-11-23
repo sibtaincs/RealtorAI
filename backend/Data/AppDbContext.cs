@@ -33,6 +33,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<MasterData> MasterData => Set<MasterData>();
     public DbSet<Lease> Leases => Set<Lease>();
+    public DbSet<Visit> Visits => Set<Visit>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -173,6 +174,24 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             entity.Property(l => l.MonthlyRent).HasColumnType("decimal(18,2)");
             entity.Property(l => l.TenantName).HasMaxLength(150);
             entity.HasIndex(l => new { l.AgentId, l.PropertyListingId });
+        });
+
+        builder.Entity<Visit>(entity =>
+        {
+            entity.HasOne(v => v.PropertyListing)
+                  .WithMany()
+                  .HasForeignKey(v => v.PropertyListingId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(v => v.Lead)
+                  .WithMany()
+                  .HasForeignKey(v => v.LeadId)
+                  .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(v => v.Agent)
+                  .WithMany()
+                  .HasForeignKey(v => v.AgentId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(v => v.ScheduledAt).HasColumnType("datetime2");
+            entity.HasIndex(v => new { v.AgentId, v.PropertyListingId });
         });
     }
 }

@@ -319,6 +319,26 @@ public record LeaseInputDto(
     decimal MonthlyRent,
     string? Notes = null);
 
+public record VisitDto(
+    int Id,
+    int PropertyListingId,
+    string AgentId,
+    int? LeadId,
+    string Status,
+    DateTime ScheduledAt,
+    string? Notes,
+    DateTime CreatedAt,
+    DateTime UpdatedAt);
+
+public record VisitInputDto(
+    int PropertyListingId,
+    int? LeadId,
+    DateTime ScheduledAt,
+    string Status,
+    string? Notes = null);
+
+public record SetVisitStatusDto(string Value);
+
 // ---------- Phase 2: OCR verification, trust badges, duplicate/fraud detection ----------
 
 public record OcrScanDto(string Text);

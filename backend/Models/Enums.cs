@@ -61,3 +61,11 @@ public enum LeaseStatus
     Terminated,
     Expired
 }
+
+public enum VisitStatus
+{
+    Scheduled,
+    Completed,
+    Cancelled,
+    NoShow
+}
