@@ -22,6 +22,7 @@ export const en: Record<TranslationKey, string> = {
   'nav.dashboard': 'Dashboard',
   'nav.saved': 'Saved Searches',
   'nav.shortlist': 'Saved Homes',
+  'nav.leases': 'My Leases',
   'nav.leads': 'Leads',
   'nav.reports': 'Reports',
   'auth.login': 'Login',

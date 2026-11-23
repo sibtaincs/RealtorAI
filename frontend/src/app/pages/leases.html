@@ -1,0 +1,64 @@
+<div class="wrap saved-page">
+  @if (!auth.isLoggedIn()) {
+    <div class="panel gate">
+      <h1>Login required</h1>
+      <p>Leases manage karein ke liye login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <div>
+        <h1>My Leases</h1>
+        <p>Active aur purane leases dekhein, naye lease add karein.</p>
+      </div>
+      <button class="btn-primary" type="button" (click)="toggleCreate()">{{ createOpen() ? 'Close' : '+ New lease' }}</button>
+    </div>
+
+    @if (notice()) { <p class="success">{{ notice() }}</p> }
+    @if (error()) { <p class="error">{{ error() }}</p> }
+
+    @if (createOpen() && auth.isLoggedIn()) {
+      <section class="panel tool">
+        <h2>➕ New Lease</h2>
+        <div class="field"><label>Property listing ID</label><input type="number" min="1" [(ngModel)]="propertyListingId" /></div>
+        <div class="field"><label>Tenant name</label><input type="text" [(ngModel)]="tenantName" /></div>
+        <div class="field"><label>Tenant email</label><input type="email" [(ngModel)]="tenantEmail" /></div>
+        <div class="field"><label>Start date</label><input type="date" [(ngModel)]="startDate" /></div>
+        <div class="field"><label>End date</label><input type="date" [(ngModel)]="endDate" /></div>
+        <div class="field"><label>Monthly rent (PKR)</label><input type="number" min="0" [(ngModel)]="monthlyRent" /></div>
+        <div class="field"><label>Notes</label><input type="text" [(ngModel)]="notes" /></div>
+        <div class="actions">
+          <button class="btn-primary" type="button" (click)="create()">Create lease</button>
+        </div>
+      </section>
+    }
+
+    @if (loading()) {
+      <div class="panel">Loading...</div>
+    } @else if (items().length === 0) {
+      <div class="panel empty">
+        <h3>Abhi koi lease nahi</h3>
+        <p>Naye listing par tenant assign karein.</p>
+      </div>
+    } @else {
+      <div class="cards">
+        @for (item of items(); track item.id) {
+          <div class="panel card">
+            <div class="card-top">
+              <h3>{{ item.tenantName }}</h3>
+              <span class="badge">{{ item.status }}</span>
+            </div>
+            <p class="query">Property #{{ item.propertyListingId }} · {{ item.monthlyRent | number: '1.0-0' }} PKR/month</p>
+            <p class="meta">Tenant: {{ item.tenantEmail || '—' }} · {{ item.startDate | date: 'dd MMM yyyy' }} → {{ item.endDate | date: 'dd MMM yyyy' }}</p>
+            <div class="card-actions">
+              @if (item.status === 'Active') {
+                <button class="btn-light" type="button" (click)="terminate(item)">Terminate</button>
+              }
+              <button class="btn-light" type="button" (click)="remove(item)">Delete</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

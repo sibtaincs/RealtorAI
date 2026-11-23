@@ -173,6 +173,30 @@ export interface SavedSearch {
   lastAlertAt: string | null;
 }
 
+export interface Lease {
+  id: number;
+  propertyListingId: number;
+  agentId: string;
+  tenantName: string;
+  tenantEmail: string | null;
+  startDate: string;
+  endDate: string;
+  monthlyRent: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LeaseInput {
+  propertyListingId: number;
+  tenantName: string;
+  tenantEmail: string | null;
+  startDate: string;
+  endDate: string;
+  monthlyRent: number;
+  notes?: string | null;
+}
+
 export interface NotificationItem {
   id: number;
   title: string;

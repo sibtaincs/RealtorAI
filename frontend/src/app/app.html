@@ -36,6 +36,7 @@
         <a routerLink="/dashboard" routerLinkActive="active">{{ t('nav.dashboard') }}</a>
         <a routerLink="/my-listings" routerLinkActive="active">My Listings</a>
         <a routerLink="/saved" routerLinkActive="active">{{ t('nav.saved') }}</a>
+        <a routerLink="/leases" routerLinkActive="active">{{ t('nav.leases') }}</a>
       }
       @if (auth.isAdmin()) {
         <details class="nav-menu" #admin (toggle)="onMenuToggle('admin', admin.open)">
