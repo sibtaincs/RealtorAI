@@ -1,0 +1,70 @@
+<div class="wrap saved-page">
+  @if (!auth.isLoggedIn()) {
+    <div class="panel gate">
+      <h1>Login required</h1>
+      <p>Site visits manage karein ke liye login karein.</p>
+      <a routerLink="/login" class="btn-primary">Go to Login</a>
+    </div>
+  } @else {
+    <div class="head">
+      <div>
+        <h1>Site Visits</h1>
+        <p>Property visits schedule, complete aur cancel karein.</p>
+      </div>
+      <button class="btn-primary" type="button" (click)="toggleCreate()">{{ createOpen() ? 'Close' : '+ New visit' }}</button>
+    </div>
+
+    @if (notice()) { <p class="success">{{ notice() }}</p> }
+    @if (error()) { <p class="error">{{ error() }}</p> }
+
+    @if (createOpen() && auth.isLoggedIn()) {
+      <section class="panel tool">
+        <h2>➕ New Visit</h2>
+        <div class="field"><label>Property listing ID</label><input type="number" min="1" [(ngModel)]="propertyListingId" /></div>
+        <div class="field"><label>Lead ID</label><input type="number" min="0" [(ngModel)]="leadId" /></div>
+        <div class="field"><label>Scheduled at</label><input type="datetime-local" [(ngModel)]="scheduledAt" /></div>
+        <div class="field">
+          <label>Status</label>
+          <select [(ngModel)]="status">
+            @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+          </select>
+        </div>
+        <div class="field"><label>Notes</label><input type="text" [(ngModel)]="notes" /></div>
+        <div class="actions">
+          <button class="btn-primary" type="button" (click)="create()">Create visit</button>
+        </div>
+      </section>
+    }
+
+    @if (loading()) {
+      <div class="panel">Loading...</div>
+    } @else if (items().length === 0) {
+      <div class="panel empty">
+        <h3>Abhi koi visit nahi</h3>
+        <p>Lead ko property visit schedule karein.</p>
+      </div>
+    } @else {
+      <div class="cards">
+        @for (item of items(); track item.id) {
+          <div class="panel card">
+            <div class="card-top">
+              <h3>Visit #{{ item.id }}</h3>
+              <span class="badge">{{ item.status }}</span>
+            </div>
+            <p class="query">Property #{{ item.propertyListingId }}{{ item.leadId ? ` · Lead #${item.leadId}` : '' }}</p>
+            <p class="meta">Scheduled: {{ item.scheduledAt | date: 'dd MMM yyyy HH:mm' }}</p>
+            <div class="card-actions">
+              @if (item.status === 'Scheduled') {
+                <button class="btn-light" type="button" (click)="complete(item.id)">Complete</button>
+              }
+              @if (item.status === 'Scheduled') {
+                <button class="btn-light" type="button" (click)="cancel(item.id)">Cancel</button>
+              }
+              <button class="btn-light" type="button" (click)="remove(item)">Delete</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

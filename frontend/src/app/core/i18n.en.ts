@@ -25,6 +25,7 @@ export const en: Record<TranslationKey, string> = {
   'nav.leases': 'My Leases',
   'nav.leads': 'Leads',
   'nav.reports': 'Reports',
+  'nav.visits': 'Site Visits',
   'auth.login': 'Login',
   'auth.logout': 'Logout',
   'notif.title': 'Notifications',

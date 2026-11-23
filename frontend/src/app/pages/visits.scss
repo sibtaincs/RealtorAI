@@ -1,0 +1,46 @@
+.saved-page { padding: 36px 20px; }
+
+.head { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 22px;
+  h1 { margin: 0 0 6px; font-size: 1.7rem; }
+  p { margin: 0; color: #64748b; font-size: .9rem; }
+}
+
+.panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px;
+  h2 { margin: 0 0 12px; font-size: 1.15rem; } }
+
+.tool { max-width: 720px; display: flex; flex-direction: column; gap: 12px;
+  .field { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; font-weight: 600; color: #334155; }
+  input, select, textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font: inherit; }
+}
+
+.actions { display: flex; gap: 8px; }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.card { display: flex; flex-direction: column; gap: 6px;
+  .card-top { display: flex; justify-content: space-between; align-items: start; }
+  h3 { margin: 0; font-size: 1.05rem; }
+}
+
+.badge { background: #eef2ff; color: #4338ca; border-radius: 999px; padding: 3px 10px; font-size: .72rem; font-weight: 700; }
+.badge[data-status='Terminated'] { background: #fef3c7; color: #92400e; }
+.badge[data-status='Expired'] { background: #fee2e2; color: #991b1b; }
+
+.query { color: var(--primary, #2563eb); font-weight: 600; font-size: .85rem; margin: 2px 0; }
+.meta { color: #94a3b8; font-size: .75rem; margin: 0 0 8px; }
+
+.card-actions { display: flex; gap: 8px; margin-top: 12px;
+  button { flex: 1; font-size: .8rem; padding: 9px 10px; }
+}
+
+.empty { text-align: center; padding: 50px; color: #64748b;
+  .btn-primary { display: inline-block; text-decoration: none; margin-top: 12px; }
+}
+
+.gate { max-width: 520px; margin: 60px auto; text-align: center; padding: 40px;
+  h1 { margin-top: 0; } p { color: #64748b; }
+  .btn-primary { display: inline-block; text-decoration: none; margin-top: 12px; }
+}

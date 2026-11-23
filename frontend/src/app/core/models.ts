@@ -197,6 +197,26 @@ export interface LeaseInput {
   notes?: string | null;
 }
 
+export interface VisitInput {
+  propertyListingId: number;
+  leadId: number | null;
+  scheduledAt: string;
+  status: string;
+  notes?: string | null;
+}
+
+export interface Visit {
+  id: number;
+  propertyListingId: number;
+  agentId: string;
+  leadId: number | null;
+  status: string;
+  scheduledAt: string;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface NotificationItem {
   id: number;
   title: string;
