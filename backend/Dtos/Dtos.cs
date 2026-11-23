@@ -296,6 +296,28 @@ public record WhatsAppReplyInputDto(string Message, int? PropertyId);
 
 public record WhatsAppReplyDto(string Reply, int[] RecommendedPropertyIds);
 
+public record LeaseDto(
+    int Id,
+    int PropertyListingId,
+    string AgentId,
+    string TenantName,
+    string? TenantEmail,
+    DateTime StartDate,
+    DateTime EndDate,
+    decimal MonthlyRent,
+    string Status,
+    DateTime CreatedAt,
+    DateTime UpdatedAt);
+
+public record LeaseInputDto(
+    int PropertyListingId,
+    string TenantName,
+    string? TenantEmail,
+    DateTime StartDate,
+    DateTime EndDate,
+    decimal MonthlyRent,
+    string? Notes = null);
+
 // ---------- Phase 2: OCR verification, trust badges, duplicate/fraud detection ----------
 
 public record OcrScanDto(string Text);

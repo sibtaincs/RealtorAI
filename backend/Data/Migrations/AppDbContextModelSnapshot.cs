@@ -617,6 +617,59 @@ namespace RealEstateAI.Api.Data.Migrations
                     b.ToTable("Leads");
                 });
 
+            modelBuilder.Entity("RealEstateAI.Api.Models.Lease", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AgentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("MonthlyRent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PropertyListingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TenantEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TenantName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyListingId");
+
+                    b.HasIndex("AgentId", "PropertyListingId");
+
+                    b.ToTable("Leases");
+                });
+
             modelBuilder.Entity("RealEstateAI.Api.Models.MasterData", b =>
                 {
                     b.Property<int>("Id")
@@ -1185,6 +1238,25 @@ namespace RealEstateAI.Api.Data.Migrations
                         .WithMany("Leads")
                         .HasForeignKey("PropertyListingId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("PropertyListing");
+                });
+
+            modelBuilder.Entity("RealEstateAI.Api.Models.Lease", b =>
+                {
+                    b.HasOne("RealEstateAI.Api.Models.ApplicationUser", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("RealEstateAI.Api.Models.PropertyListing", "PropertyListing")
+                        .WithMany()
+                        .HasForeignKey("PropertyListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
 
                     b.Navigation("PropertyListing");
                 });

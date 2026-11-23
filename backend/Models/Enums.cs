@@ -54,3 +54,10 @@ public enum DealerApprovalStatus
     Approved,
     Rejected
 }
+
+public enum LeaseStatus
+{
+    Active,
+    Terminated,
+    Expired
+}
