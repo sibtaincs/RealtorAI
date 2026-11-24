@@ -1,12 +1,10 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ContentService } from '../core/content.service';
 import { DisplayService } from '../core/display.service';
-import { AreaGuide } from '../core/market.data';
 import { TOOL_AREA_UNITS, ToolAreaUnit, constructionCost, convertArea, estimateValue, monthlyInstallment, rentalYieldPct, registrationCostPkr, stampDutyPkr } from '../core/tools';
-import { PriceEstimate } from '../core/models';
+import { PriceEstimate, SellPriceResponse } from '../core/models';
 import { MasterDataService } from '../core/master-data.service';
 import { AiService } from '../core/ai.service';
 
@@ -16,9 +14,8 @@ import { AiService } from '../core/ai.service';
   templateUrl: './tools.html',
   styleUrl: './tools.scss'
 })
-export class ToolsPage implements OnInit {
+export class ToolsPage {
   display = inject(DisplayService);
-  private content = inject(ContentService);
   master = inject(MasterDataService);
   private ai = inject(AiService);
   areaUnits = TOOL_AREA_UNITS;
@@ -36,9 +33,12 @@ export class ToolsPage implements OnInit {
     { icon: '📊', label: 'Property Price Index', route: '/market', fragment: 'price-index' }
   ];
 
-  valuationAreas = signal<AreaGuide[]>([]);
-  valuationArea = signal('');
-  valuationSqFt = 2250;
+  zCity = 'Lahore';
+  zType = 'House';
+  zMarla = 5;
+  zTargetDays = 30;
+  zResult: SellPriceResponse | null = null;
+  zBusy = false;
 
   loanAmount = 5000000;
   loanRate = 12;
@@ -101,15 +101,21 @@ export class ToolsPage implements OnInit {
   convertFrom: ToolAreaUnit = 'Marla';
   convertTo: ToolAreaUnit = 'Sq Ft';
 
-  ngOnInit(): void {
-    this.content.list<AreaGuide>('area-guide').subscribe(items => {
-      this.valuationAreas.set(items);
-      if (items.length && !items.some(a => a.name === this.valuationArea())) this.valuationArea.set(items[0].name);
+  estimateZValue(): void {
+    this.zBusy = true;
+    this.zResult = null;
+    this.ai.sellPrice({
+      type: this.zType,
+      city: this.zCity,
+      locality: this.zCity,
+      areaMarla: this.zMarla,
+      targetDays: this.zTargetDays
+    }).subscribe({
+      next: res => { this.zResult = res; this.zBusy = false; },
+      error: () => { this.zBusy = false; }
     });
   }
 
-  get valuationRate(): number { return this.valuationAreas().find(a => a.name === this.valuationArea())?.pricePerSqFt ?? 0; }
-  get estimatedValue(): number { return estimateValue(this.valuationSqFt, this.valuationRate); }
   get emi(): number { return monthlyInstallment(this.loanAmount, this.loanRate, this.loanYears); }
   get totalPayable(): number { return this.emi * this.loanYears * 12; }
   get totalInterest(): number { return this.totalPayable - this.loanAmount; }

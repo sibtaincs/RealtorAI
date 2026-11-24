@@ -148,19 +148,41 @@
 
     <div class="panel tool" id="valuation">
       <h2>🏷 Z-Value</h2>
-      <p class="sub">Indicative estimate based on area guide rates.</p>
+      <p class="sub">Comparable price estimate from similar active listings in your city.</p>
       <div class="field">
-        <label>Area</label>
-        <select [ngModel]="valuationArea()" (ngModelChange)="valuationArea.set($event)">
-          @for (a of valuationAreas(); track a.name) { <option [value]="a.name">{{ a.name }} · {{ a.city }}</option> }
+        <label>City</label>
+        <select [(ngModel)]="zCity">
+          @for (c of master.values('city'); track c) { <option [value]="c">{{ c }}</option> }
         </select>
       </div>
-      <div class="field"><label>Property area (sq ft)</label><input type="number" min="0" [(ngModel)]="valuationSqFt" /></div>
-      <div class="result">
-        <small>Estimated value</small>
-        <strong>{{ display.money(estimatedValue) }}</strong>
-        <span>Area rate {{ display.money(valuationRate) }}/sq ft — not an appraisal.</span>
+      <div class="field">
+        <label>Property type</label>
+        <select [(ngModel)]="zType">
+          @for (t of master.values('property-type'); track t) { <option [value]="t">{{ t }}</option> }
+        </select>
       </div>
+      <div class="field"><label>Area (marla)</label><input type="number" min="1" [(ngModel)]="zMarla" /></div>
+      <div class="field">
+        <label>Target days to sell</label>
+        <select [(ngModel)]="zTargetDays">
+          <option [ngValue]="15">Fast sale (15 days)</option>
+          <option [ngValue]="30">Standard (30 days)</option>
+          <option [ngValue]="60">Patient sale (60 days)</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" [disabled]="zBusy" (click)="estimateZValue()">Estimate Z-Value</button>
+      </div>
+      @if (zResult) {
+        <div class="result">
+          <small>Recommended price</small>
+          <strong>{{ display.money(zResult.recommendedPrice) }}</strong>
+          <span>Range: {{ display.money(zResult.low) }} - {{ display.money(zResult.high) }}</span>
+          <span>Confidence: {{ zResult.confidence }}</span>
+          <span>{{ zResult.basis }}</span>
+          <span>{{ zResult.advice }}</span>
+        </div>
+      }
     </div>
   </div>
 
