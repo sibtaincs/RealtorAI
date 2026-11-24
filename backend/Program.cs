@@ -106,6 +106,7 @@ builder.Services.AddScoped<ILeaseService, LeaseService>();
 builder.Services.AddScoped<IVisitService, VisitService>();
 builder.Services.AddHostedService<AlertWorker>();
 
+builder.Services.AddMemoryCache();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));

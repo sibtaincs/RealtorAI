@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using RealEstateAI.Api.Data;
 using RealEstateAI.Api.Dtos;
 using RealEstateAI.Api.Models;
@@ -27,14 +28,26 @@ public interface IContentService
 public class ContentService : IContentService
 {
     private readonly AppDbContext _db;
+    private readonly IMemoryCache _cache;
     private static readonly JsonSerializerOptions CamelOpts = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(5);
 
-    public ContentService(AppDbContext db)
+    public ContentService(AppDbContext db, IMemoryCache cache)
     {
         _db = db;
+        _cache = cache;
     }
 
     public async Task<IReadOnlyList<ContentItemDto>> ListAsync(string? kind)
+    {
+        var listKey = $"content:list:{kind ?? "all"}";
+        if (_cache.TryGetValue<List<ContentItemDto>>(listKey, out var cached) && cached is not null) return cached;
+        var items = await ListCoreAsync(kind);
+        _cache.Set(listKey, items, CacheTtl);
+        return items;
+    }
+
+    private async Task<IReadOnlyList<ContentItemDto>> ListCoreAsync(string? kind)
     {
         if (string.IsNullOrWhiteSpace(kind))
         {
@@ -72,6 +85,17 @@ public class ContentService : IContentService
 
     public async Task<ContentItemDto?> GetAsync(string kind, int id)
     {
+        var getKey = $"content:get:{kind}:{id}";
+        if (_cache.TryGetValue<ContentItemDto>(getKey, out var cached) && cached is not null) return cached;
+
+        var entity = await GetCoreAsync(kind, id);
+        if (entity is null) return null;
+        _cache.Set(getKey, entity, CacheTtl);
+        return entity;
+    }
+
+    public async Task<ContentItemDto?> GetCoreAsync(string kind, int id)
+    {
         return kind.ToLowerInvariant() switch
         {
             "project" => await GetTypedAsync("project", _db.ProjectContents, id, e => new ProjectContentDto(e.Name, e.Developer, e.City, e.Locality, e.Type, e.PriceFrom, e.PriceTo, e.Status), e => e.UpdatedAt),
@@ -94,6 +118,13 @@ public class ContentService : IContentService
     }
 
     public async Task<ContentItemDto> CreateAsync(ContentUpsertDto input)
+    {
+        var kind = input.Kind.Trim().ToLowerInvariant();
+        _cache.Remove($"content:list:{kind}");
+        return await CreateCoreAsync(input);
+    }
+
+    private async Task<ContentItemDto> CreateCoreAsync(ContentUpsertDto input)
     {
         var kind = input.Kind.Trim().ToLowerInvariant();
         var now = DateTime.UtcNow;
@@ -170,6 +201,10 @@ public class ContentService : IContentService
 
     public async Task<ContentItemDto?> UpdateAsync(string kind, int id, ContentUpsertDto input)
     {
+        var listKey = $"content:list:{kind.Trim().ToLowerInvariant()}";
+        var getKey = $"content:get:{kind.Trim().ToLowerInvariant()}:{id}";
+        _cache.Remove(getKey);
+        _cache.Remove(listKey);
         kind = kind.Trim().ToLowerInvariant();
         var now = DateTime.UtcNow;
         switch (kind)
@@ -253,6 +288,8 @@ public class ContentService : IContentService
 
     public async Task<bool> DeleteAsync(string kind, int id)
     {
+        var listKey = $"content:list:{kind.Trim().ToLowerInvariant()}";
+        _cache.Remove(listKey);
         kind = kind.Trim().ToLowerInvariant();
         switch (kind)
         {

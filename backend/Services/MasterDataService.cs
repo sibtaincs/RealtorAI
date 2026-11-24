@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using RealEstateAI.Api.Data;
 using RealEstateAI.Api.Dtos;
 using RealEstateAI.Api.Models;
@@ -41,27 +42,43 @@ public interface IMasterDataService
 public class MasterDataService : IMasterDataService
 {
     private readonly AppDbContext _db;
+    private readonly IMemoryCache _cache;
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(5);
 
-    public MasterDataService(AppDbContext db)
+    public MasterDataService(AppDbContext db, IMemoryCache cache)
     {
         _db = db;
+        _cache = cache;
     }
 
     public async Task<IReadOnlyList<MasterDataDto>> ListAsync(string? kind)
     {
+        var listKey = $"master:list:{kind ?? "all"}";
+        if (_cache.TryGetValue<List<MasterDataDto>>(listKey, out var cached) && cached is not null) return cached;
+
         var query = _db.MasterData.AsNoTracking().AsQueryable();
         if (!string.IsNullOrWhiteSpace(kind))
             query = query.Where(m => m.Kind == kind.ToLowerInvariant());
 
-        return await query.OrderBy(m => m.Kind).ThenBy(m => m.SortOrder).ThenBy(m => m.Id)
+        var items = await query.OrderBy(m => m.Kind).ThenBy(m => m.SortOrder).ThenBy(m => m.Id)
             .Select(m => new MasterDataDto(m.Id, m.Kind, m.Value, m.Label, m.SortOrder, m.IsActive))
             .ToListAsync();
+        _cache.Set(listKey, items, CacheTtl);
+        return items;
     }
 
-    public async Task<MasterDataDto?> GetAsync(int id) =>
-        await _db.MasterData.AsNoTracking().Where(m => m.Id == id)
+    public async Task<MasterDataDto?> GetAsync(int id)
+    {
+        var getKey = $"master:get:{id}";
+        if (_cache.TryGetValue<MasterDataDto>(getKey, out var cached) && cached is not null) return cached;
+
+        var item = await _db.MasterData.AsNoTracking().Where(m => m.Id == id)
             .Select(m => new MasterDataDto(m.Id, m.Kind, m.Value, m.Label, m.SortOrder, m.IsActive))
             .FirstOrDefaultAsync();
+        if (item is null) return null;
+        _cache.Set(getKey, item, CacheTtl);
+        return item;
+    }
 
     public async Task<MasterDataDto> CreateAsync(MasterDataUpsertDto input)
     {
@@ -75,6 +92,8 @@ public class MasterDataService : IMasterDataService
         };
         _db.MasterData.Add(item);
         await _db.SaveChangesAsync();
+        _cache.Remove($"master:list:{input.Kind.Trim().ToLowerInvariant()}");
+        _cache.Remove($"master:list:all");
         return Dto(item);
     }
 
@@ -89,6 +108,9 @@ public class MasterDataService : IMasterDataService
         item.SortOrder = input.SortOrder;
         item.IsActive = input.IsActive;
         await _db.SaveChangesAsync();
+        _cache.Remove($"master:list:{item.Kind}");
+        _cache.Remove($"master:list:all");
+        _cache.Remove($"master:get:{item.Id}");
         return Dto(item);
     }
 
@@ -99,6 +121,9 @@ public class MasterDataService : IMasterDataService
 
         _db.MasterData.Remove(item);
         await _db.SaveChangesAsync();
+        _cache.Remove($"master:get:{item.Id}");
+        _cache.Remove($"master:list:{item.Kind}");
+        _cache.Remove($"master:list:all");
         return true;
     }
 
