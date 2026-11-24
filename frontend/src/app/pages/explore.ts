@@ -25,13 +25,46 @@ export class ExplorePage implements OnInit {
   recordCity = signal('Lahore');
   recordPlot = signal('');
 
+  minPrice = 0;
+  maxPrice = 0;
+  minMarla = 0;
+  maxMarla = 0;
+  status = '';
+
+  private marlaOf(text: string): number {
+    const m = text.match(/\d+(\.\d+)?/);
+    return m ? Number(m[0]) : 0;
+  }
+
+  toNumber(value: unknown): number {
+    return Number(value) || 0;
+  }
+
   ngOnInit(): void {
     this.content.list<Society>('society').subscribe(items => this.societies.set(items));
     this.content.list<CommunityArticle>('article').subscribe(items => this.articles.set(items));
     this.content.list<LandRecord>('land-record').subscribe(items => this.landRecords.set(items));
   }
 
-  filteredSocieties = computed(() => this.societies().filter(s => !this.city() || s.city === this.city()));
+  filteredSocieties = computed(() => {
+    const minP = this.minPrice;
+    const maxP = this.maxPrice;
+    const minM = this.minMarla;
+    const maxM = this.maxMarla;
+    const st = this.status;
+    return this.societies().filter(s => {
+      if (this.city() && s.city !== this.city()) return false;
+      if (minP > 0 && s.priceFrom < minP) return false;
+      if (maxP > 0 && s.priceFrom > maxP) return false;
+      if (st && s.status !== st) return false;
+      const marla = this.marlaOf(s.plotSizes);
+      if (minM > 0 && marla < minM) return false;
+      if (maxM > 0 && marla > maxM) return false;
+      return true;
+    });
+  });
+
+  statuses = computed(() => [...new Set(this.societies().map(s => s.status))].sort());
   filteredArticles = computed(() => this.articles().filter(a => !this.category() || a.category === this.category()));
   record = computed(() => {
     const plot = this.recordPlot().trim().toLowerCase();
