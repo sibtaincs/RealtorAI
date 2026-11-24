@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateAI.Api.Dtos;
+using RealEstateAI.Api.Services;
 using RealEstateAI.Api.Models;
 
 namespace RealEstateAI.Api.Controllers;
@@ -12,10 +13,12 @@ namespace RealEstateAI.Api.Controllers;
 public class AdminDealersController : ControllerBase
 {
     private readonly UserManager<ApplicationUser> _users;
+    private readonly IAuditService _audit;
 
-    public AdminDealersController(UserManager<ApplicationUser> users)
+    public AdminDealersController(UserManager<ApplicationUser> users, IAuditService audit)
     {
         _users = users;
+        _audit = audit;
     }
 
     [HttpGet]
@@ -41,6 +44,7 @@ public class AdminDealersController : ControllerBase
         if (user is null) return NotFound();
         user.ApprovalStatus = DealerApprovalStatus.Approved;
         await _users.UpdateAsync(user);
+        await _audit.LogAsync("DealerApproved", user.Id, user.Email, "Dealer", user.Id, $"Dealer approved: {user.Email}");
         return NoContent();
     }
 
@@ -51,6 +55,7 @@ public class AdminDealersController : ControllerBase
         if (user is null) return NotFound();
         user.ApprovalStatus = DealerApprovalStatus.Rejected;
         await _users.UpdateAsync(user);
+        await _audit.LogAsync("DealerRejected", user.Id, user.Email, "Dealer", user.Id, $"Dealer rejected: {user.Email}");
         return NoContent();
     }
 
@@ -62,6 +67,7 @@ public class AdminDealersController : ControllerBase
         user.IsKycVerified = true;
         user.ApprovalStatus = DealerApprovalStatus.Approved;
         await _users.UpdateAsync(user);
+        await _audit.LogAsync("DealerKycVerified", user.Id, user.Email, "Dealer", user.Id, $"KYC verified: {user.Email}");
         return NoContent();
     }
 }
