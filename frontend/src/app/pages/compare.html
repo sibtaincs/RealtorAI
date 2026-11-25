@@ -1,0 +1,83 @@
+<div class="wrap compare-page">
+  <div class="head">
+    <div>
+      <h1>⚖️ Compare Properties</h1>
+      <p>Side-by-side comparison of up to 3 properties.</p>
+    </div>
+    <button class="btn-light" (click)="clear()" [disabled]="items().length === 0">Clear all</button>
+    <a routerLink="/" class="btn-outline">+ Add more properties</a>
+  </div>
+
+  @if (loading()) {
+    <div class="panel">Loading comparison...</div>
+  } @else if (error()) {
+    <div class="panel empty">{{ error() }}</div>
+  } @else if (items().length === 0) {
+    <div class="panel empty">
+      <h3>Koi property compare mein nahi hai</h3>
+      <p>Property card par ⚖ dabayein — yahan side-by-side dikhega.</p>
+      <a routerLink="/" class="btn-primary">Browse properties</a>
+    </div>
+  } @else {
+    <div class="compare-grid">
+      @for (p of items(); track p.id) {
+        <div class="compare-col">
+          <div class="col-head">
+            <button type="button" class="remove" (click)="remove(p.id)" aria-label="Remove from compare">✕</button>
+            @if (p.isTrusted) { <span class="trusted">✅ Verified</span> }
+          </div>
+          <div class="thumb">
+            @if (hasImage(p)) {
+              <img [src]="image(p)" [alt]="p.title" loading="lazy" />
+            } @else {
+              <div class="no-image">No image</div>
+            }
+          </div>
+          <h3>{{ p.title }}</h3>
+          <p class="location">📍 {{ p.address }}, {{ p.city }}, {{ p.locality }}</p>
+          <div class="price">{{ display.money(p.price, p.listingType) }}</div>
+          <div class="specs">
+            <div><span>🏷</span><strong>{{ p.type }}</strong><small>Type</small></div>
+            <div><span>📋</span><strong>{{ p.listingType }}</strong><small>Listing</small></div>
+            @if (p.bedrooms) { <div><span>🛏</span><strong>{{ p.bedrooms }}</strong><small>Bedrooms</small></div> }
+            @if (p.bathrooms) { <div><span>🚿</span><strong>{{ p.bathrooms }}</strong><small>Bathrooms</small></div> }
+            @if (p.areaMarla || p.areaSqFt) { <div><span>📐</span><strong>{{ display.area(p.areaMarla, p.areaSqFt) }}</strong><small>Area</small></div> }
+            <div><span>📄</span><strong>{{ p.verifiedDocuments }}/{{ p.totalDocuments }}</strong><small>Documents verified</small></div>
+            @if (p.isFeatured) { <div><span>⭐</span><strong>Featured</strong><small></small></div> }
+          </div>
+          <h4>Description</h4>
+          <p class="description">{{ p.description }}</p>
+          <div class="details">
+            @if (p.plotNumber) { <div><span>🏠</span><strong>{{ p.plotNumber }}</strong><small>Plot number</small></div> }
+            @if (p.builtInYear) { <div><span>📅</span><strong>{{ p.builtInYear }}</strong><small>Built in</small></div> }
+            @if (p.floors) { <div><span>🏢</span><strong>{{ p.floors }}</strong><small>Floors</small></div> }
+            @if (p.parkingSpaces) { <div><span>🅿</span><strong>{{ p.parkingSpaces }}</strong><small>Parking</small></div> }
+            @if (p.electricityBackup) { <div><span>⚡</span><strong>{{ p.electricityBackup }}</strong><small>Power backup</small></div> }
+            @if (p.view) { <div><span>🏞</span><strong>{{ p.view }}</strong><small>View</small></div> }
+          </div>
+          <div class="amenities">
+            <h4>Amenities</h4>
+            @if (amenitiesOf(p).length > 0) {
+              <div class="ami-list">
+                @for (a of amenitiesOf(p); track a) { <span class="ami-chip">{{ a }}</span> }
+              </div>
+            } @else {
+              <p class="hint">No amenities listed.</p>
+            }
+          </div>
+          <div class="contact">
+            <h4>Contact</h4>
+            @if (p.contactMobile) { <div><span>📞</span>{{ p.contactMobile }}</div> }
+            @if (p.contactWhatsapp) { <div><span>💬</span>WhatsApp {{ p.contactWhatsapp }}</div> }
+            @if (p.contactEmail) { <div><span>✉</span>{{ p.contactEmail }}</div> }
+            @if (p.contactLandline) { <div><span>☎</span>{{ p.contactLandline }}</div> }
+            @if (!p.contactMobile && !p.contactWhatsapp && !p.contactEmail && !p.contactLandline) {
+              <p class="hint">No contact info.</p>
+            }
+          </div>
+          <a [routerLink]="['/property', p.id]" class="btn-primary view-btn">View full details →</a>
+        </div>
+      }
+    </div>
+  }
+</div>

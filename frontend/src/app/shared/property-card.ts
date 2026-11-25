@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PropertyDto } from '../core/models';
 import { assetUrl } from '../core/api';
@@ -16,4 +16,6 @@ export class PropertyCard {
   display = inject(DisplayService);
   shortlist = inject(ShortlistService);
   imageUrl = assetUrl;
+
+  compareCount = computed(() => this.shortlist.compare().length);
 }

@@ -20,6 +20,7 @@ export const ur = {
   'nav.dashboard': 'Dashboard',
   'nav.saved': 'Saved Searches',
   'nav.shortlist': 'Saved Homes',
+  'nav.compare': 'Compare',
   'nav.leases': 'My Leases',
   'nav.leads': 'Leads',
   'nav.reports': 'Reports',

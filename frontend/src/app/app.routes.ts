@@ -17,6 +17,7 @@ export const routes: Routes = [
   { path: 'saved', loadComponent: () => import('./pages/saved-searches').then(m => m.SavedSearches) },
   { path: 'leases', canActivate: [authGuard], loadComponent: () => import('./pages/leases').then(m => m.Leases) },
   { path: 'visits', canActivate: [authGuard], loadComponent: () => import('./pages/visits').then(m => m.Visits) },
+  { path: 'compare', loadComponent: () => import('./pages/compare').then(m => m.Compare) },
   { path: 'shortlist', loadComponent: () => import('./pages/shortlist').then(m => m.ShortlistPage) },
   { path: 'my-listings', canActivate: [authGuard], loadComponent: () => import('./pages/my-listings').then(m => m.MyListings) },
   { path: 'agent/:id', loadComponent: () => import('./pages/agent').then(m => m.AgentPage) },
